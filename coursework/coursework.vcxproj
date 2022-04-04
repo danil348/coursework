@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="coursework.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObgect.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="variables.cpp" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameObgect.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>

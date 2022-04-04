@@ -18,7 +18,6 @@ public:
 	bool running();
 	bool NeedUpdate();
 	SDL_Event event;
-	static SDL_Renderer* renderer;
 private:
 	
 	

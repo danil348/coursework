@@ -1,7 +1,6 @@
 #include "Game.h"
 
 Map* map;
-SDL_Renderer* Game::renderer = nullptr;
 
 void Game::init(const char* title, int xpos, int ypos, int width, int heigth, bool fullscrean)
 {
@@ -24,9 +23,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigth, bo
 			printf("Window created!\n");
 		}
 
-		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-		if (renderer) {
-			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		map->textureManager.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+		if (map->textureManager.renderer) {
+			SDL_SetRenderDrawColor(map->textureManager.renderer, 255, 255, 255, 255);
 			printf("Renderer created!\n");
 		}
 
@@ -92,11 +91,11 @@ void Game::update()
 void Game::render()
 {
 	if (NeedUpdate() == true) {
-		SDL_SetRenderDrawColor(renderer, 12, 123, 123, 0);
-		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(map->textureManager.renderer, 27, 28, 50, 0);
+		SDL_RenderClear(map->textureManager.renderer);
 		map->DrawMap();
 		//TextureManager::Drow(player, src, dest);
-		SDL_RenderPresent(renderer);
+		SDL_RenderPresent(map->textureManager.renderer);
 		needUpdate = false;
 	}
 }
@@ -104,7 +103,7 @@ void Game::render()
 void Game::clean()
 {
 	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(renderer);
+	SDL_DestroyRenderer(map->textureManager.renderer);
 	SDL_Quit();
 
 	printf("game cleaned\n");
