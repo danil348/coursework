@@ -1,7 +1,11 @@
+#include <string>
 #include "Map.h"
+using namespace std;
+
 SDL_Renderer* TextureManager::renderer = nullptr;
 Map::Map()
 {
+
 	wall_1 = TextureManager::LoadTexture("assets/0.png");
 	ground_1 = TextureManager::LoadTexture("assets/1.png");
 	ground_2 = TextureManager::LoadTexture("assets/2.png");
@@ -10,6 +14,8 @@ Map::Map()
 	ground_5 = TextureManager::LoadTexture("assets/5.png");
 	chest_1 = TextureManager::LoadTexture("assets/6.png");
 	chest_2 = TextureManager::LoadTexture("assets/7.png");
+	coin = TextureManager::LoadTexture("assets/9.png");
+	hpBoard = TextureManager::LoadTexture("assets/hp.png");
 
 	statue.setMainTexture(TextureManager::LoadTexture("assets/player.png"));
 	statue.setSrcDest_W_H(288, 320, tile_w*3, tile_h*3);
@@ -48,7 +54,7 @@ Map::Map()
 }
 
 
-void Map::DrawMap()
+void Map::DrawMap(SDL_Window* window)
 {
 	int type = 0;
 	int tmpOffset = 0;
@@ -90,7 +96,10 @@ void Map::DrawMap()
 							if (IntersectionWithGameObg(chest[i]) == true && chest[i].isOpen() == false) {
 								chest[i].chengeOpenState();
 #ifdef DEBUG
-								scorePlayer += 100;
+								if (manaPlayer < 100) {
+									manaPlayer += 10;
+								}
+								scorePlayer += 1;
 								cout << "\n\nу игрока " << scorePlayer << " очков\n\n";
 #endif // DEBUG
 							}
@@ -119,13 +128,51 @@ void Map::DrawMap()
 			}
 		}
 	}
+
+	// монеты
+	_rect = { 10, 170, 40, 40 };
+	_srect = { 0, 0, 56, 80 };
+	TextureManager::Drow(coin, _srect, _rect);
+	textManager.Drow(textureManager.renderer, to_string(scorePlayer), 50, 50, 80, 170, 232, 221, 186);
+
+	// доска с характеристиками
+	_srect = { 0,0, 280,148 };
+	_rect = { 5,2, 270,145 };
+	SDL_SetRenderDrawColor(textureManager.renderer, 30, 30, 30, 0);
+	SDL_RenderFillRect(textureManager.renderer, &_rect);
+	//
+	//тут обработка брони, здоровья, маны
+	//
+	_rect = { 0,0, 280,148 };
+	TextureManager::Drow(hpBoard, _srect, _rect);
+
+	_rect = { 52,16, 212*hpPlayer/100, 28 };
+	SDL_SetRenderDrawColor(textureManager.renderer, 237, 65, 63, 0);
+	SDL_RenderFillRect(textureManager.renderer, &_rect);
+	textManager.Drow(textureManager.renderer, to_string(hpPlayer), 52, 26, 138, 20, 255, 255, 255);
+
+
+	_rect = { 52, 56, 212 * armorPlayer / 100,28 };
+	SDL_SetRenderDrawColor(textureManager.renderer, 136, 142, 140, 0);
+	SDL_RenderFillRect(textureManager.renderer, &_rect);
+	textManager.Drow(textureManager.renderer, to_string(armorPlayer), 52, 26, 138, 60, 255, 255, 255);
+
+	_rect = { 52, 96, 212 * manaPlayer / 100,28 };
+	SDL_SetRenderDrawColor(textureManager.renderer, 15, 123, 178, 0);
+	SDL_RenderFillRect(textureManager.renderer, &_rect);
+	textManager.Drow(textureManager.renderer, to_string(manaPlayer), 52, 26, 138, 100, 255, 255, 255);
+
+	SDL_SetRenderDrawColor(textureManager.renderer, 12, 123, 123, 0);
+
+
 #ifdef DEBUG
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
-	SDL_Rect rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
+	rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
 	SDL_SetRenderDrawColor(textureManager.renderer, 12, 123, 123, 0);
 #endif // DEBUG
 }
+
 
 void Map::UpdateMapX(float value)
 {
@@ -195,4 +242,10 @@ bool Map::IntersectionWithGameObg(Chest chest)
 		return 1;
 	}
 	return 0;
+}
+
+void Map::SetSize(int w, int h)
+{
+	WIDTH = w;
+	HEIGTH = h;
 }

@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	int frameTime;
 
     game = new Game();
-    game->init("dota 2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGTH, false);
+    game->init("dota 2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, true);
 
 	while (game->running())
 	{
@@ -24,7 +24,6 @@ int main(int argc, char** argv)
 		game->update();
 		game->render();
 		frameTime = SDL_GetTicks() - frameStart;
-
 		if (frameDelay > frameTime) {
 			SDL_Delay(frameDelay - frameTime);
 		}

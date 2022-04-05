@@ -2,8 +2,9 @@
 
 Map* map;
 
-void Game::init(const char* title, int xpos, int ypos, int width, int heigth, bool fullscrean)
+void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 {
+
 	int flag = 0;
 	if (fullscrean) {
 		flag = SDL_WINDOW_FULLSCREEN;
@@ -18,11 +19,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigth, bo
 	}
 	else {
 		printf("Initialised!\n");
-		window = SDL_CreateWindow(title, xpos, ypos, width, heigth, flag);
+		window = SDL_CreateWindow(title, xpos, ypos, SDL_WINDOW_FULLSCREEN_DESKTOP, SDL_WINDOW_FULLSCREEN_DESKTOP, flag);
 		if (window) {
 			printf("Window created!\n");
 		}
-
+		SDL_SetWindowFullscreen(window, 1);
 		map->textureManager.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 		if (map->textureManager.renderer) {
 			SDL_SetRenderDrawColor(map->textureManager.renderer, 255, 255, 255, 255);
@@ -35,6 +36,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigth, bo
 	event.key.keysym.scancode = SDL_SCANCODE_0;
 	event.type = NULL;
 
+	int w, h;
+	SDL_GetRendererOutputSize(map->textureManager.renderer, &w, &h);
+	map->SetSize(w, h);
+	cout << w << " " << h;
 	/*player = TextureManager::LoadTexture("assets/player.png");
 	src.x = src.y = 0;
 	src.w = 1001;
@@ -93,8 +98,7 @@ void Game::render()
 	if (NeedUpdate() == true) {
 		SDL_SetRenderDrawColor(map->textureManager.renderer, 27, 28, 50, 0);
 		SDL_RenderClear(map->textureManager.renderer);
-		map->DrawMap();
-		//TextureManager::Drow(player, src, dest);
+		map->DrawMap(window);
 		SDL_RenderPresent(map->textureManager.renderer);
 		needUpdate = false;
 	}

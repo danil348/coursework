@@ -9,7 +9,7 @@ using namespace std;
 class Game
 {
 public:
-	void init(const char* title, int xpos, int ypos, int width, int heigth, bool fullscrean);
+	void init(const char* title, int xpos, int ypos, bool fullscrean);
 
 	void habdleEvents();
 	void update();
