@@ -98,6 +98,7 @@ void Game::clean()
 {
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(map->textureManager.renderer);
+	TTF_Quit();
 	SDL_Quit();
 
 	printf("game cleaned\n");
