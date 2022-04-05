@@ -58,12 +58,26 @@ void GameObgect::chengeMainTexture()
 	playerIsClose = true;
 }
 
+void Chest::setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y)
+{
+	if (open == true) {
+		dest.x = dest_x - dest.w / 6;
+	}
+	else {
+		dest.x = dest_x;
+	}
+	src.x = src_x;
+	src.y = src_y;
+	dest.y = dest_y;
+}
+
 bool Chest::isOpen()
 {
 	return open;
 }
 
-void Chest::chengeOpenState()
+void Chest::chengeOpenState(bool flag)
 {
-	open = !open;
+	dest.w = dest.w + int(dest.w / 2.1);
+	open = flag;
 }

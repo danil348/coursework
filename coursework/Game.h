@@ -19,12 +19,6 @@ public:
 	bool NeedUpdate();
 	SDL_Event event;
 private:
-	
-	
-	/*SDL_Rect src, dest;
-	SDL_Texture* player;*/
-
-
 	int count = 0;
 	bool isRunning = false;
 	bool needUpdate = true;

@@ -94,7 +94,7 @@ void Map::DrawMap(SDL_Window* window)
 						if (chest[i].posX == column && chest[i].posY == row) {
 							chest[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 							if (IntersectionWithGameObg(chest[i]) == true && chest[i].isOpen() == false) {
-								chest[i].chengeOpenState();
+								chest[i].chengeOpenState(true);
 #ifdef DEBUG
 								if (manaPlayer < 100) {
 									manaPlayer += 10;
@@ -116,11 +116,11 @@ void Map::DrawMap(SDL_Window* window)
 					TextureManager::Drow(ground_5, src, dest);
 					statue.setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
 					TextureManager::Drow(statue.getMainTexture(), statue.src, statue.dest);
-					if (Intersection(8) == true) {
 #ifdef DEBUG
+					if (Intersection(8) == true) {
 						cout << "игрок зашёл на статую\n";
-#endif // DEBUG
 					}
+#endif // DEBUG
 					break;
 				default:
 					break;
@@ -136,14 +136,16 @@ void Map::DrawMap(SDL_Window* window)
 	textManager.Drow(textureManager.renderer, to_string(scorePlayer), 50, 50, 80, 170, 232, 221, 186);
 
 	// доска с характеристиками
-	_srect = { 0,0, 280,148 };
+	_srect = { 0,0, 292,148 };
 	_rect = { 5,2, 270,145 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 30, 30, 30, 0);
 	SDL_RenderFillRect(textureManager.renderer, &_rect);
+	//--------------------------
 	//
-	//тут обработка брони, здоровья, маны
+	// тут обработка брони, здоровья, маны
 	//
-	_rect = { 0,0, 280,148 };
+	//--------------------------
+	_rect = { 0,0, 292, 148 };
 	TextureManager::Drow(hpBoard, _srect, _rect);
 
 	_rect = { 52,16, 212*hpPlayer/100, 28 };

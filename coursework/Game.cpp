@@ -39,16 +39,6 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 	int w, h;
 	SDL_GetRendererOutputSize(map->textureManager.renderer, &w, &h);
 	map->SetSize(w, h);
-	cout << w << " " << h;
-	/*player = TextureManager::LoadTexture("assets/player.png");
-	src.x = src.y = 0;
-	src.w = 1001;
-	src.h = 1001;
-
-	dest.x = WIDTH / 2 - 50;
-	dest.y = HEIGTH/2 - 50;
-	dest.w = 100;
-	dest.h = 100;*/
 }
 
 
