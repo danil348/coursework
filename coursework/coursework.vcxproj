@@ -145,7 +145,6 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="variables.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

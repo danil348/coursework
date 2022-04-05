@@ -3,7 +3,6 @@
 #include <SDL_image.h>
 #include <iostream>
 #include "Map.h"
-#include "variables.cpp"
 
 using namespace std;
 class Game

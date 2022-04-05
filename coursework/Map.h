@@ -1,8 +1,9 @@
 #pragma once
 #include "TextureManager.h"
-#include "variables.cpp"
 #include "GameObgect.h"
 #include "TextManager.h"
+
+#define DEBUG
 
 class Map
 {

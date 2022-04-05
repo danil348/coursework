@@ -27,9 +27,6 @@
     <ClCompile Include="Map.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="variables.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="GameObgect.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
