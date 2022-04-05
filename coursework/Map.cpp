@@ -12,7 +12,7 @@ Map::Map()
 	chest_2 = TextureManager::LoadTexture("assets/7.png");
 
 	statue.setMainTexture(TextureManager::LoadTexture("assets/player.png"));
-	statue.setSrcDest_W_H(288, 320, 400, 400);
+	statue.setSrcDest_W_H(288, 320, tile_w*3, tile_h*3);
 
 	//сундуки
 	int x, y;
@@ -30,7 +30,7 @@ Map::Map()
 			if (lvl1[row][column] == 7) {
 				chest[chestCount].posX = column;
 				chest[chestCount].posY = row;
-				chest[chestCount].setSrcDest_W_H(120, 120, 120, 120);
+				chest[chestCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
 				chest[chestCount].setMainTexture(TextureManager::LoadTexture("assets/6.png"));
 				chest[chestCount].setSecondTexture(TextureManager::LoadTexture("assets/7.png"));
 				chestCount++;
@@ -105,10 +105,12 @@ void Map::DrawMap()
 					break;
 				case 8:
 					TextureManager::Drow(ground_5, src, dest);
-					statue.setSrcDest_X_Y(src.x, src.y, dest.x - statue.dest.w / 2, dest.y - statue.dest.h / 2);
-					TextureManager::Drow(statue.getMainTexture(), statue.src, statue.dest); 
+					statue.setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
+					TextureManager::Drow(statue.getMainTexture(), statue.src, statue.dest);
 					if (Intersection(8) == true) {
-						cout << " asd ";
+#ifdef DEBUG
+						cout << "игрок зашёл на статую\n";
+#endif // DEBUG
 					}
 					break;
 				default:
@@ -117,12 +119,12 @@ void Map::DrawMap()
 			}
 		}
 	}
+#ifdef DEBUG
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
-
 	SDL_Rect rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
-	SDL_RenderDrawPoint(textureManager.renderer, WIDTH / 2, HEIGTH / 2);
 	SDL_SetRenderDrawColor(textureManager.renderer, 12, 123, 123, 0);
+#endif // DEBUG
 }
 
 void Map::UpdateMapX(float value)
