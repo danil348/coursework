@@ -17,6 +17,7 @@ public:
 	bool IntersectionWithGameObg(Chest chest);
 	void SetSize(int w, int h);
 	TextureManager textureManager;
+	float playerSpeed = 1.7f;
 private:
 	int WIDTH;
 	int HEIGTH;
@@ -24,9 +25,7 @@ private:
 	SDL_Rect src, dest;
 	SDL_Rect _rect;
 
-#ifdef DEBUG
 	SDL_Rect rect;
-#endif // DEBUG
 	
 	SDL_Rect _srect;
 	SDL_Texture* ground_1;
@@ -43,8 +42,9 @@ private:
 	int scorePlayer = 9;
 
 	int hpPlayer = 30;
-	int armorPlayer = 100;
-	int manaPlayer = 80;
+	int armorPlayer = 50;
+	int manaPlayer = 36;
+
 
 	int chestCount = 0;
 	Chest* chest;

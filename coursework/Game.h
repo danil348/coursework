@@ -22,7 +22,6 @@ private:
 	int count = 0;
 	bool isRunning = false;
 	bool needUpdate = true;
-	float speed = 1.7f;
 	const Uint8* keyboard_state_array = SDL_GetKeyboardState(NULL);
 	SDL_Window* window;
 };

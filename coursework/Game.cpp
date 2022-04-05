@@ -54,23 +54,23 @@ void Game::habdleEvents()
 	else {
 		if (keyboard_state_array[SDL_SCANCODE_UP] && !(keyboard_state_array[SDL_SCANCODE_DOWN]))
 		{
-			map->UpdateMapY(speed);
+			map->UpdateMapY(map->playerSpeed);
 			needUpdate = true;
 		}
 		else if (!keyboard_state_array[SDL_SCANCODE_UP] && keyboard_state_array[SDL_SCANCODE_DOWN])
 		{
-			map->UpdateMapY(-speed);
+			map->UpdateMapY(-map->playerSpeed);
 			needUpdate = true;
 		}
 
 		if (keyboard_state_array[SDL_SCANCODE_RIGHT] && !keyboard_state_array[SDL_SCANCODE_LEFT])
 		{
-			map->UpdateMapX(-speed);
+			map->UpdateMapX(-map->playerSpeed);
 			needUpdate = true;
 		}
 		else if (!keyboard_state_array[SDL_SCANCODE_RIGHT] && keyboard_state_array[SDL_SCANCODE_LEFT])
 		{
-			map->UpdateMapX(speed);
+			map->UpdateMapX(map->playerSpeed);
 			needUpdate = true;
 		}
 	}

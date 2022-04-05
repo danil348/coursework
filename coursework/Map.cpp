@@ -95,11 +95,12 @@ void Map::DrawMap(SDL_Window* window)
 							chest[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 							if (IntersectionWithGameObg(chest[i]) == true && chest[i].isOpen() == false) {
 								chest[i].chengeOpenState(true);
-#ifdef DEBUG
+
 								if (manaPlayer < 100) {
 									manaPlayer += 10;
 								}
 								scorePlayer += 1;
+#ifdef DEBUG
 								cout << "\n\nу игрока " << scorePlayer << " очков\n\n";
 #endif // DEBUG
 							}
@@ -167,12 +168,10 @@ void Map::DrawMap(SDL_Window* window)
 	SDL_SetRenderDrawColor(textureManager.renderer, 12, 123, 123, 0);
 
 
-#ifdef DEBUG
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
 	rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
 	SDL_SetRenderDrawColor(textureManager.renderer, 12, 123, 123, 0);
-#endif // DEBUG
 }
 
 
