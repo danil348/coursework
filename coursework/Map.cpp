@@ -56,6 +56,7 @@ Map::Map()
 
 void Map::DrawMap(SDL_Window* window)
 {
+	cout << playerSpeed << endl;
 	int type = 0;
 	int tmpOffset = 0;
 	for (int row = 0; row < lvl1_h; row++) {
