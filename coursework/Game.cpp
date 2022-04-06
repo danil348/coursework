@@ -55,30 +55,23 @@ void Game::habdleEvents()
 		if (keyboard_state_array[SDL_SCANCODE_UP] && !(keyboard_state_array[SDL_SCANCODE_DOWN]))
 		{
 			map->UpdateMapY(map->playerSpeed);
-			needUpdate = true;
 		}
 		else if (!keyboard_state_array[SDL_SCANCODE_UP] && keyboard_state_array[SDL_SCANCODE_DOWN])
 		{
 			map->UpdateMapY(-map->playerSpeed);
-			needUpdate = true;
 		}
 
 		if (keyboard_state_array[SDL_SCANCODE_RIGHT] && !keyboard_state_array[SDL_SCANCODE_LEFT])
 		{
 			map->UpdateMapX(-map->playerSpeed);
-			needUpdate = true;
 		}
 		else if (!keyboard_state_array[SDL_SCANCODE_RIGHT] && keyboard_state_array[SDL_SCANCODE_LEFT])
 		{
 			map->UpdateMapX(map->playerSpeed);
-			needUpdate = true;
 		}
 	}
-	if (keyboard_state_array[SDL_SCANCODE_SPACE]) {
-		map->changingKeyState(keyboard_state_array);
-		needUpdate = true;
-	}
-	
+
+	map->changingKeyState(keyboard_state_array);
 }
 
 void Game::update()
@@ -88,13 +81,10 @@ void Game::update()
 
 void Game::render()
 {
-	if (NeedUpdate() == true) {
-		SDL_SetRenderDrawColor(map->textureManager.renderer, 27, 28, 50, 0);
-		SDL_RenderClear(map->textureManager.renderer);
-		map->DrawMap(window);
-		SDL_RenderPresent(map->textureManager.renderer);
-		needUpdate = false;
-	}
+	SDL_SetRenderDrawColor(map->textureManager.renderer, 27, 28, 50, 0);
+	SDL_RenderClear(map->textureManager.renderer);
+	map->DrawMap(window);
+	SDL_RenderPresent(map->textureManager.renderer);
 }
 
 void Game::clean()
@@ -110,9 +100,4 @@ void Game::clean()
 bool Game::running()
 {
 	return isRunning;
-}
-
-bool Game::NeedUpdate()
-{
-	return needUpdate;
 }

@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 	setlocale(LC_ALL, "RU");
 	srand(time(0));
 
-	const int FPS = 300;
+	const int FPS = 200;
 	const int frameDelay = 1000 / FPS;
 	Uint32 frameStart;
 	int frameTime;
@@ -33,6 +33,7 @@ int main(int argc, char** argv)
 		{
 			frameTime = clock() - frameStart;
 		}
+		//cout << frameStart << " " << frameTime << endl;
 		game->render();
 	}
 

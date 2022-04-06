@@ -1,5 +1,6 @@
 #include <string>
 #include "Map.h"
+
 using namespace std;
 
 SDL_Renderer* TextureManager::renderer = nullptr;
@@ -67,7 +68,6 @@ Map::Map()
 void Map::DrawMap(SDL_Window* window)
 {
 	int type = 0;
-	int tmpOffset = 0;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
 			type = lvl1[row][column];
@@ -82,37 +82,14 @@ void Map::DrawMap(SDL_Window* window)
 				case 4: TextureManager::Drow(ground_3, src, dest); break;
 				case 5: TextureManager::Drow(ground_4, src, dest); break;
 				case 6: TextureManager::Drow(ground_5, src, dest); break;
-				case 9:
-					TextureManager::Drow(ground_5, src, dest);
-					TextureManager::Drow(chest_2, src, dest); break;
-				default:
-					break;
-				}
-			}
-		}
-	}
-	for (int row = 0; row < lvl1_h; row++) {
-		for (int column = 0; column < lvl1_w; column++) {
-			type = lvl1[row][column];
-			dest.x = column * tile_w + offsetX;
-			dest.y = row * tile_h + offsetY;
-			if (dest.x > -tile_w && dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h && type != 0) {
-				switch (type)
-				{
 				case 7: TextureManager::Drow(ground_5, src, dest);
 					for (int i = 0; i < chestCount; i++) {
 						if (chest[i].posX == column && chest[i].posY == row) {
 							chest[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 							if (IntersectionWithGameObg(chest[i]) == true && chest[i].isOpen() == false) {
-								chest[i].chengeOpenState(true);
 								chest[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
 							}
-							if (chest[i].isOpen() == false) {
-								TextureManager::Drow(chest[i].getMainTexture(), chest[i].src, chest[i].dest);
-							}
-							else {
-								TextureManager::Drow(chest[i].getSecondTexture(), chest[i].src, chest[i].dest);
-							}
+							TextureManager::Drow(chest[i].getMainTexture(), chest[i].src, chest[i].dest);
 						}
 					}
 					break;
@@ -123,18 +100,15 @@ void Map::DrawMap(SDL_Window* window)
 							statue[i].setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
 							TextureManager::Drow(statue[i].getMainTexture(), statue[i].src, statue[i].dest);
 							if (IntersectionWithGameObg(statue[i]) == true && statue[i].isUsed() == false) {
-								textManager.Drow(textureManager.renderer, u8"всего 15 монет,\nа столько пользы", 400, 90, statue[i].dest.x, statue[i].dest.y, 232, 221, 186);
 								if (key.space == true) {
-									statue[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
+									statue[i].wasUsed = true;
 								}
+							}
+							if (statue[i].wasUsed == true) {
+								statue[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
 							}
 						}
 					}
-#ifdef DEBUG
-					if (Intersection(8) == true) {
-						cout << "игрок зашёл на статую\n";
-					}
-#endif // DEBUG
 					break;
 				default:
 					break;
@@ -154,11 +128,6 @@ void Map::DrawMap(SDL_Window* window)
 	_rect = { 5,2, 270,145 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 30, 30, 30, 0);
 	SDL_RenderFillRect(textureManager.renderer, &_rect);
-	//--------------------------
-	//
-	// тут обработка брони, здоровья, маны
-	//
-	//--------------------------
 	_rect = { 0,0, 292, 148 };
 	TextureManager::Drow(hpBoard, _srect, _rect);
 
@@ -214,16 +183,6 @@ bool Map::Intersection(int type)
 				x = column * tile_w + offsetX;
 				y = row * tile_h + offsetY;
 				if (WIDTH / 2 >= x && WIDTH / 2 <= x + tile_w && HEIGTH / 2 >= y && HEIGTH / 2 <= y + tile_h) {
-					
-#ifdef DEBUG
-					switch (type)
-					{
-					case 1: cout << "игрок касается стены " << offsetX << '\n'; break;
-					case 7: cout << "игрок на сундуке " << offsetX << '\n'; break;
-					default: break;
-					}
-#endif // DEBUG
-
 					return 1;
 				}
 			}
@@ -235,11 +194,6 @@ bool Map::Intersection(int type)
 bool Map::IntersectionWithGameObg(GameObgect gameObgect)
 {
 	if (WIDTH / 2 >= gameObgect.dest.x && WIDTH / 2 <= gameObgect.dest.x + gameObgect.dest.w && HEIGTH / 2 >= gameObgect.dest.y && HEIGTH / 2 <= gameObgect.dest.y + gameObgect.dest.h) {
-
-#ifdef DEBUG
-		cout << "игрок на сундуке " << offsetX << '\n';
-#endif // DEBUG
-
 		return 1;
 	}
 	return 0;
@@ -248,11 +202,6 @@ bool Map::IntersectionWithGameObg(GameObgect gameObgect)
 bool Map::IntersectionWithGameObg(Chest chest)
 {
 	if (WIDTH / 2 >= chest.dest.x && WIDTH / 2 <= chest.dest.x + chest.dest.w && HEIGTH / 2 >= chest.dest.y && HEIGTH / 2 <= chest.dest.y + chest.dest.h) {
-
-#ifdef DEBUG
-		cout << "игрок на сундуке " << offsetX << '\n';
-#endif // DEBUG
-
 		return 1;
 	}
 	return 0;
@@ -266,8 +215,5 @@ void Map::SetSize(int w, int h)
 
 void Map::changingKeyState(const Uint8* arr)
 {
-	if (key.space != arr[SDL_SCANCODE_SPACE]) {
-		
-	}
 	key.space = arr[SDL_SCANCODE_SPACE];
 }

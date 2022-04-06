@@ -58,6 +58,26 @@ void GameObgect::chengeMainTexture()
 	playerIsClose = true;
 }
 
+Chest::Chest()
+{
+	int flag = rand() % 2;
+	if (flag == 0) {
+		hpBust = rand() % 2;
+	}
+
+	flag = rand() % 2;
+	if (flag == 0) {
+		armorBust += rand() % 15;
+	}
+
+	flag = rand() % 2;
+	if (flag == 0) {
+		manaBust += rand() % 15;
+	}
+
+	coinsBust = rand() % 2 + 1;
+}
+
 void Chest::setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y)
 {
 	if (open == true) {
@@ -76,32 +96,61 @@ bool Chest::isOpen()
 	return open;
 }
 
-void Chest::chengeOpenState(bool flag)
-{
-	dest.w = dest.w + int(dest.w / 2.1);
-	open = flag;
-}
-
 void Chest::getBonus(int& hp, int& armor, int& mana, int& coins)
 {
-	int flag = rand() % 10;
+	if (stateIsChanged == false) {
+		chengeMainTexture();
+		dest.w = dest.w + int(dest.w / 2.1);
+		stateIsChanged = true;
+	}
+
+	if ((hpBust != 0 || armorBust != 0 || manaBust != 0 || coinsBust != 0) && open == false) {
+		if (hpBust != 0) {
+			if (hp < 100) {
+				hp++;
+			}
+			hpBust--;
+		}
+		if (armorBust != 0) {
+			if (armor < 100) {
+				armor++;
+			}
+			armorBust--;
+		}
+		if (manaBust != 0) {
+			if (mana < 100) {
+				mana++;
+			}
+			manaBust--;
+		}
+		if (coinsBust != 0) {
+			coins++;
+			coinsBust--;
+		}
+	}
+	else {
+		open = true;
+	}
+}
+
+Statue::Statue()
+{
+	int flag = rand() % 2;
+
+	flag = rand() % 2;
 	if (flag == 0) {
-		hp += rand() % 2 + 1;
-		hp = hp % 101;
+		hpBust = rand() % 11 + 1;
 	}
 
 	flag = rand() % 2;
 	if (flag == 0) {
-		armor += rand() % 10 + 1;
-		armor = armor % 101;
+		armorBust += rand() % 21 + 10;
 	}
-	
+
 	flag = rand() % 2;
 	if (flag == 0) {
-		mana += rand() % 10 + 1;
-		mana = mana % 101;
+		manaBust += rand() % 21 + 10;
 	}
-	coins += rand() % 2 + 1;
 }
 
 void Statue::setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y)
@@ -112,11 +161,6 @@ void Statue::setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y)
 	dest.y = dest_y;
 }
 
-void Statue::chengeUsedState(bool flag)
-{
-	used = flag;
-}
-
 bool Statue::isUsed()
 {
 	return used;
@@ -124,25 +168,36 @@ bool Statue::isUsed()
 
 void Statue::getBonus(int& hp, int& armor, int& mana, int& coins)
 {
-	if (coins >= 15) {
-		used = true;
-		coins -= 15; 
-		int flag = rand() % 2;
-		if (flag == 0) {
-			hp += rand() % 10 + 1;
-			hp = hp % 101;
+	if (coins >= 15 && used == false) {
+		if (hpBust != 0 || armorBust != 0 || manaBust != 0 || coinsBust != 0) {
+			if (hpBust != 0) {
+				if (hp < 100) {
+					hp++;
+				}
+				hpBust--;
+			}
+			if (armorBust != 0) {
+				if (armor < 100) {
+					armor++;
+				}
+				armorBust--;
+			}
+			if (manaBust != 0) {
+				if (mana < 100) {
+					mana++;
+				}
+				manaBust--;
+			}
+			if (coinsBust != 0) {
+				if (coins > 0) {
+					coins--;
+					coinsBust--;
+				}
+			}
 		}
-
-		flag = rand() % 2;
-		if (flag == 0) {
-			armor += rand() % 30 + 1;
-			armor = armor % 101;
-		}
-
-		flag = rand() % 2;
-		if (flag == 0) {
-			mana += rand() % 30 + 1;
-			mana = mana % 101;
+		else {
+			used = true;
+			wasUsed = false;
 		}
 	}
 }

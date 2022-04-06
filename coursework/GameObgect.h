@@ -30,21 +30,31 @@ private:
 class Chest: public GameObgect
 {
 public:
+	Chest();
 	void setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y) override;
 	bool isOpen();
-	void chengeOpenState(bool flag);
 	void getBonus(int& hp, int& armor, int& mana, int& coins);
 private:
+	int hpBust = 0;
+	int armorBust = 0;
+	int manaBust = 0;
+	int coinsBust = 0;
 	bool open = false;
+	bool stateIsChanged = false;
 };
 
 class Statue: public GameObgect
 { 
 public:
+	Statue();
 	void setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y) override;
-	void chengeUsedState(bool flag);
 	bool isUsed();
 	void getBonus(int& hp, int& armor, int& mana, int& coins);
+	bool wasUsed = false;
 private:
+	int hpBust = 0;
+	int armorBust = 0;
+	int manaBust = 0;
+	int coinsBust = 15;
 	bool used = false;
 };
