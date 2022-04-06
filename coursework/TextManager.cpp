@@ -9,7 +9,6 @@ TextManager::TextManager()
 TextManager::~TextManager()
 {
 	TTF_CloseFont(my_font);
-	TTF_Quit();
 }
 
 void TextManager::Drow(SDL_Renderer* renderer, string text, int dest_w, int dest_h, int dest_x, int dest_y,
