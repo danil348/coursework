@@ -58,3 +58,13 @@ private:
 	int coinsBust = 15;
 	bool used = false;
 };
+
+
+class ClosingWall: public GameObgect
+{
+public:
+	int type;
+	bool isClos = false;
+	bool mayClose = true;
+private:
+};
