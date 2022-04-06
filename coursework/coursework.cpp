@@ -9,8 +9,9 @@ Game* game = nullptr;
 int main(int argc, char** argv)
 {
 	setlocale(LC_ALL, "RU");
+	srand(time(0));
 
-	const int FPS = 60;
+	const int FPS = 300;
 	const int frameDelay = 1000 / FPS;
 	Uint32 frameStart;
 	int frameTime;
@@ -26,11 +27,13 @@ int main(int argc, char** argv)
 		frameStart = clock();
 		game->habdleEvents();
 		game->update();
-		frameTime = clock() - frameStart;
-		if (frameDelay > frameTime) {
 
-			game->render();
+		frameTime = clock() - frameStart;
+		while (frameTime < frameDelay)
+		{
+			frameTime = clock() - frameStart;
 		}
+		game->render();
 	}
 
 	game->clean();

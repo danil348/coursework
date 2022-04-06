@@ -81,3 +81,68 @@ void Chest::chengeOpenState(bool flag)
 	dest.w = dest.w + int(dest.w / 2.1);
 	open = flag;
 }
+
+void Chest::getBonus(int& hp, int& armor, int& mana, int& coins)
+{
+	int flag = rand() % 10;
+	if (flag == 0) {
+		hp += rand() % 2 + 1;
+		hp = hp % 101;
+	}
+
+	flag = rand() % 2;
+	if (flag == 0) {
+		armor += rand() % 10 + 1;
+		armor = armor % 101;
+	}
+	
+	flag = rand() % 2;
+	if (flag == 0) {
+		mana += rand() % 10 + 1;
+		mana = mana % 101;
+	}
+	coins += rand() % 2 + 1;
+}
+
+void Statue::setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y)
+{
+	dest.x = dest_x;
+	src.x = src_x;
+	src.y = src_y;
+	dest.y = dest_y;
+}
+
+void Statue::chengeUsedState(bool flag)
+{
+	used = flag;
+}
+
+bool Statue::isUsed()
+{
+	return used;
+}
+
+void Statue::getBonus(int& hp, int& armor, int& mana, int& coins)
+{
+	if (coins >= 15) {
+		used = true;
+		coins -= 15; 
+		int flag = rand() % 2;
+		if (flag == 0) {
+			hp += rand() % 10 + 1;
+			hp = hp % 101;
+		}
+
+		flag = rand() % 2;
+		if (flag == 0) {
+			armor += rand() % 30 + 1;
+			armor = armor % 101;
+		}
+
+		flag = rand() % 2;
+		if (flag == 0) {
+			mana += rand() % 30 + 1;
+			mana = mana % 101;
+		}
+	}
+}

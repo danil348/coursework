@@ -74,7 +74,10 @@ void Game::habdleEvents()
 			needUpdate = true;
 		}
 	}
-
+	if (keyboard_state_array[SDL_SCANCODE_SPACE]) {
+		map->changingKeyState(keyboard_state_array);
+		needUpdate = true;
+	}
 	
 }
 

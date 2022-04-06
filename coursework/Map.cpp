@@ -3,9 +3,9 @@
 using namespace std;
 
 SDL_Renderer* TextureManager::renderer = nullptr;
+
 Map::Map()
 {
-
 	wall_1 = TextureManager::LoadTexture("assets/0.png");
 	ground_1 = TextureManager::LoadTexture("assets/1.png");
 	ground_2 = TextureManager::LoadTexture("assets/2.png");
@@ -17,9 +17,6 @@ Map::Map()
 	coin = TextureManager::LoadTexture("assets/9.png");
 	hpBoard = TextureManager::LoadTexture("assets/hp.png");
 
-	statue.setMainTexture(TextureManager::LoadTexture("assets/player.png"));
-	statue.setSrcDest_W_H(288, 320, tile_w*3, tile_h*3);
-
 	//сундуки
 	int x, y;
 	for (int row = 0; row < lvl1_h; row++) {
@@ -27,10 +24,16 @@ Map::Map()
 			if (lvl1[row][column] == 7) {
 				chestCount++;
 			}
+			else if (lvl1[row][column] == 8) {
+				statueCount++;
+			}
+			
 		}
 	}
 	chest = new Chest[chestCount];
+	statue = new Statue[statueCount];
 	chestCount = 0;
+	statueCount = 0;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
 			if (lvl1[row][column] == 7) {
@@ -40,6 +43,13 @@ Map::Map()
 				chest[chestCount].setMainTexture(TextureManager::LoadTexture("assets/6.png"));
 				chest[chestCount].setSecondTexture(TextureManager::LoadTexture("assets/7.png"));
 				chestCount++;
+			}
+			else if (lvl1[row][column] == 8) {
+				statue[statueCount].posX = column;
+				statue[statueCount].posY = row;
+				statue[statueCount].setSrcDest_W_H(288, 320, tile_w * 3, tile_h * 3);
+				statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/player.png"));
+				statueCount++;
 			}
 		}
 	}
@@ -56,7 +66,6 @@ Map::Map()
 
 void Map::DrawMap(SDL_Window* window)
 {
-	cout << playerSpeed << endl;
 	int type = 0;
 	int tmpOffset = 0;
 	for (int row = 0; row < lvl1_h; row++) {
@@ -96,14 +105,7 @@ void Map::DrawMap(SDL_Window* window)
 							chest[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 							if (IntersectionWithGameObg(chest[i]) == true && chest[i].isOpen() == false) {
 								chest[i].chengeOpenState(true);
-
-								if (manaPlayer < 100) {
-									manaPlayer += 10;
-								}
-								scorePlayer += 1;
-#ifdef DEBUG
-								cout << "\n\nу игрока " << scorePlayer << " очков\n\n";
-#endif // DEBUG
+								chest[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
 							}
 							if (chest[i].isOpen() == false) {
 								TextureManager::Drow(chest[i].getMainTexture(), chest[i].src, chest[i].dest);
@@ -116,8 +118,18 @@ void Map::DrawMap(SDL_Window* window)
 					break;
 				case 8:
 					TextureManager::Drow(ground_5, src, dest);
-					statue.setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
-					TextureManager::Drow(statue.getMainTexture(), statue.src, statue.dest);
+					for (int i = 0; i < statueCount; i++) {
+						if (statue[i].posX == column && statue[i].posY == row) {
+							statue[i].setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
+							TextureManager::Drow(statue[i].getMainTexture(), statue[i].src, statue[i].dest);
+							if (IntersectionWithGameObg(statue[i]) == true && statue[i].isUsed() == false) {
+								textManager.Drow(textureManager.renderer, u8"всего 15 монет,\nа столько пользы", 400, 90, statue[i].dest.x, statue[i].dest.y, 232, 221, 186);
+								if (key.space == true) {
+									statue[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
+								}
+							}
+						}
+					}
 #ifdef DEBUG
 					if (Intersection(8) == true) {
 						cout << "игрок зашёл на статую\n";
@@ -250,4 +262,12 @@ void Map::SetSize(int w, int h)
 {
 	WIDTH = w;
 	HEIGTH = h;
+}
+
+void Map::changingKeyState(const Uint8* arr)
+{
+	if (key.space != arr[SDL_SCANCODE_SPACE]) {
+		
+	}
+	key.space = arr[SDL_SCANCODE_SPACE];
 }

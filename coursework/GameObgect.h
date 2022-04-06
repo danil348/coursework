@@ -33,6 +33,18 @@ public:
 	void setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y) override;
 	bool isOpen();
 	void chengeOpenState(bool flag);
+	void getBonus(int& hp, int& armor, int& mana, int& coins);
 private:
 	bool open = false;
+};
+
+class Statue: public GameObgect
+{ 
+public:
+	void setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y) override;
+	void chengeUsedState(bool flag);
+	bool isUsed();
+	void getBonus(int& hp, int& armor, int& mana, int& coins);
+private:
+	bool used = false;
 };
