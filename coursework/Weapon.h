@@ -24,5 +24,7 @@ private:
 	int angle;
 	int screanW;
 	int screanH;
+	float cosVal;
+	float sinVal;
 };
 

@@ -83,24 +83,19 @@ Map::Map()
 	dest.x = dest.y = 0;
 	dest.w = tile_w;
 	dest.h = tile_h;
+	cout << "Game objects created!\n";
 }
 
 
 void Map::DrawMap(SDL_Window* window)
 {
 	SDL_GetMouseState(&mousePosX, &mousePosY);
-
-	
-
-
-	int type = 0;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
-			type = lvl1[row][column];
 			dest.x = column * tile_w + offsetX;
 			dest.y = row * tile_h + offsetY;
-			if (dest.x > -tile_w && dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h && type!=0) {
-				switch (type) {
+			if (dest.x > -tile_w && dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h && lvl1[row][column] !=0) {
+				switch (lvl1[row][column]) {
 				case 0: break;
 				case 1: TextureManager::Drow(defoltWall[0].getMainTexture(), src, dest); break;
 				case 2: TextureManager::Drow(ground_1, src, dest); break;
@@ -116,6 +111,7 @@ void Map::DrawMap(SDL_Window* window)
 								chest[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
 							}
 							TextureManager::Drow(chest[i].getMainTexture(), chest[i].src, chest[i].dest);
+							break;
 						}
 					}
 					break;
@@ -133,6 +129,7 @@ void Map::DrawMap(SDL_Window* window)
 							if (statue[i].wasUsed == true) {
 								statue[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
 							}
+							break;
 						}
 					}
 					break;
@@ -163,9 +160,9 @@ void Map::DrawMap(SDL_Window* window)
 							else {
 								TextureManager::Drow(closingWall[i].getSecondTexture(), closingWall[i].src, closingWall[i].dest);
 							}
+							break;
 						}
 					}
-
 					break;
 				default:
 					break;
@@ -204,27 +201,19 @@ void Map::DrawMap(SDL_Window* window)
 	SDL_RenderFillRect(textureManager.renderer, &_rect);
 	textManager.Drow(textureManager.renderer, to_string(manaPlayer), 52, 26, 138, 100, 255, 255, 255);
 
-	SDL_SetRenderDrawColor(textureManager.renderer, 12, 123, 123, 0);
-
-
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
 	rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
-	SDL_SetRenderDrawColor(textureManager.renderer, 12, 123, 123, 0);
-
 
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 255, 255, 0);
-#ifdef DEBUG
-	if (key.ledtMouseKey == true) {
+	if (key.leftMouseKey == true) {
 		for (int i = 0; i < bulletsCount; i++) {
 			if (bullets[i].isFly == false) {
-				bullets[i].isFly = true;
 				bullets[i].setAngl(mousePosX, mousePosY, WIDTH, HEIGTH);
 				break;
 			}
 		}
 	}
-#endif // DEBUG
 	for (int i = 0; i < bulletsCount; i++) {
 		if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, tile_w, tile_h, offsetX, offsetY) == true) {
 			bullets[i].reset();
@@ -244,13 +233,7 @@ void Map::UpdateMapX(float value)
 		offsetX -= value;
 	}else if (Intersection(10) == true) {
 		offsetX -= value;
-	}else if (Intersection(11) == true) {
-		offsetX -= value;
-	}else if (Intersection(12) == true) {
-		offsetX -= value;
-	}else if (Intersection(13) == true) {
-		offsetX -= value;
-	}
+	} 
 	else {
 		for (int i = 0; i < bulletsCount; i++) {
 			if (bullets[i].isFly == true) {
@@ -266,12 +249,6 @@ void Map::UpdateMapY(float value)
 	if (Intersection(1) == true) {
 		offsetY -= value;
 	}else if (Intersection(10) == true) {
-		offsetY -= value;
-	}else if (Intersection(11) == true) {
-		offsetY -= value;
-	}else if (Intersection(12) == true) {
-		offsetY -= value;
-	}else if (Intersection(13) == true) {
 		offsetY -= value;
 	}
 	else {
@@ -359,5 +336,5 @@ void Map::changingKeyState(const Uint8* arr)
 
 void Map::changingKeyState(bool mouseDown)
 {
-	key.ledtMouseKey = mouseDown;
+	key.leftMouseKey = mouseDown;
 }

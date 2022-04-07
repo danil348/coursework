@@ -169,6 +169,9 @@ bool Statue::isUsed()
 void Statue::getBonus(int& hp, int& armor, int& mana, int& coins)
 {
 	if (coins >= 15 && used == false) {
+		used = true;
+	}
+	if (used == true) {
 		if (hpBust != 0 || armorBust != 0 || manaBust != 0 || coinsBust != 0) {
 			if (hpBust != 0) {
 				if (hp < 100) {
@@ -196,7 +199,6 @@ void Statue::getBonus(int& hp, int& armor, int& mana, int& coins)
 			}
 		}
 		else {
-			used = true;
 			wasUsed = false;
 		}
 	}

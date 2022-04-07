@@ -2,8 +2,8 @@
 
 void Bullets::fly()
 {
-	Bx = screanW /2 + dist * cos(angle * M_PI / 180) + offX;
-	By = screanH /2 + dist * -sin(angle * M_PI / 180) + offY;
+	Bx = screanW /2 + dist * cosVal + offX;
+	By = screanH /2 + dist * -sinVal + offY;
 	dist += 3.9f;
 }
 
@@ -19,10 +19,16 @@ void Bullets::setAngl(int x, int y, int w, int h)
 	if (angle < 0) {
 		angle = 270 + angle + 90;
 	}
+	cosVal = cos(angle * M_PI / 180);
+	sinVal = sin(angle * M_PI / 180);
+	isFly = true;
 }
 
 bool Bullets::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int tile_w, int tile_h, int offsetX, int offsetY)
 {
+	if (dist > maxDist) {
+		return 1;
+	}
 	for (int j = 0; j < defoltWallCount; j++) {
 		if (Bx >= defoltWall[j].posX * tile_w + offsetX && Bx <= defoltWall[j].posX * tile_w + offsetX + tile_w &&
 			By >= defoltWall[j].posY * tile_h + offsetY && By <= defoltWall[j].posY * tile_h + offsetY + tile_h) {
@@ -35,9 +41,6 @@ bool Bullets::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingW
 			closingWall[j].isClos == true) {
 			return 1;
 		}
-	}
-	if (dist > maxDist) {
-		return 1;
 	}
 	return 0;
 }

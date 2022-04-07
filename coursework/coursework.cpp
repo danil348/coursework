@@ -19,7 +19,6 @@ int main(int argc, char** argv)
     game = new Game();
     game->init("dota 2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, true);
 
-
 	clock_t start, end;
 
 	while (game->running())
@@ -33,7 +32,6 @@ int main(int argc, char** argv)
 		{
 			frameTime = clock() - frameStart;
 		}
-		//cout << frameStart << " " << frameTime << endl;
 		game->render();
 	}
 

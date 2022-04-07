@@ -12,7 +12,7 @@ using namespace std;
 struct Key
 {
 	bool space = false;
-	bool ledtMouseKey = false;
+	bool leftMouseKey = false;
 };
 
 
@@ -42,11 +42,10 @@ private:
 	int HEIGTH;
 	TextManager textManager;
 	SDL_Rect src, dest;
-	SDL_Rect _rect;
+	SDL_Rect _rect, _srect;
 
 	SDL_Rect rect;
 	
-	SDL_Rect _srect;
 	SDL_Texture* ground_1;
 	SDL_Texture* ground_2;
 	SDL_Texture* ground_3;
@@ -55,7 +54,7 @@ private:
 	SDL_Texture* coin;
 	SDL_Texture* hpBoard;
 	
-	int scorePlayer = 1114;
+	int scorePlayer = 14;
 
 	int hpPlayer = 30;
 	int armorPlayer = 50;
@@ -71,7 +70,7 @@ private:
 	int closingWallCount = 0;
 	ClosingWall* closingWall;
 
-	int bulletsCount = 1200;
+	int bulletsCount = 100;
 	Bullets* bullets;
 
 	int defoltWallCount = 0;

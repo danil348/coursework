@@ -4,11 +4,10 @@ SDL_Texture* TextureManager::LoadTexture(const char* texture)
 {
 	SDL_Surface* tempSurface = IMG_Load(texture);
 	if (tempSurface == NULL) {
-		cout << "error";
+		cout << "TextureManager error";
 	}
 	SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, tempSurface);
 	SDL_FreeSurface(tempSurface);
-
 	return tex;
 }
 
