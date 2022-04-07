@@ -52,25 +52,26 @@ void Game::habdleEvents()
 		isRunning = false;
 	}
 	else {
-		if (keyboard_state_array[SDL_SCANCODE_UP] && !(keyboard_state_array[SDL_SCANCODE_DOWN]))
+		if (keyboard_state_array[SDL_SCANCODE_W] && !(keyboard_state_array[SDL_SCANCODE_S]))
 		{
 			map->UpdateMapY(map->playerSpeed);
 		}
-		else if (!keyboard_state_array[SDL_SCANCODE_UP] && keyboard_state_array[SDL_SCANCODE_DOWN])
+		else if (!keyboard_state_array[SDL_SCANCODE_W] && keyboard_state_array[SDL_SCANCODE_S])
 		{
 			map->UpdateMapY(-map->playerSpeed);
 		}
 
-		if (keyboard_state_array[SDL_SCANCODE_RIGHT] && !keyboard_state_array[SDL_SCANCODE_LEFT])
+		if (keyboard_state_array[SDL_SCANCODE_D] && !keyboard_state_array[SDL_SCANCODE_A])
 		{
 			map->UpdateMapX(-map->playerSpeed);
 		}
-		else if (!keyboard_state_array[SDL_SCANCODE_RIGHT] && keyboard_state_array[SDL_SCANCODE_LEFT])
+		else if (!keyboard_state_array[SDL_SCANCODE_D] && keyboard_state_array[SDL_SCANCODE_A])
 		{
 			map->UpdateMapX(map->playerSpeed);
 		}
 	}
 
+	map->changingKeyState((GetKeyState(VK_LBUTTON) & 0x8000));
 	map->changingKeyState(keyboard_state_array);
 }
 

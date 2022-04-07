@@ -6,6 +6,9 @@
 class GameObgect
 {
 public:
+	SDL_Rect src, dest;
+	int posX, posY;
+
 	void setMainTexture(SDL_Texture* value);
 	void setSecondTexture(SDL_Texture* value);
 	void chengeMainTexture();
@@ -17,9 +20,6 @@ public:
 	virtual void setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y);
 	void setSrc(int w, int h, int x, int y);
 	void setDest(int w, int h, int x, int y);
-
-	SDL_Rect src, dest;
-	int posX, posY;
 
 private:
 	bool playerIsClose = false;
@@ -46,11 +46,12 @@ private:
 class Statue: public GameObgect
 { 
 public:
+	bool wasUsed = false;
+
 	Statue();
 	void setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y) override;
 	bool isUsed();
 	void getBonus(int& hp, int& armor, int& mana, int& coins);
-	bool wasUsed = false;
 private:
 	int hpBust = 0;
 	int armorBust = 0;

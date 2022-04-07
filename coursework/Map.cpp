@@ -4,14 +4,11 @@ SDL_Renderer* TextureManager::renderer = nullptr;
 
 Map::Map()
 {
-	wall_1 = TextureManager::LoadTexture("assets/0.png");
 	ground_1 = TextureManager::LoadTexture("assets/1.png");
 	ground_2 = TextureManager::LoadTexture("assets/2.png");
 	ground_3 = TextureManager::LoadTexture("assets/3.png");
 	ground_4 = TextureManager::LoadTexture("assets/4.png");
 	ground_5 = TextureManager::LoadTexture("assets/5.png");
-	chest_1 = TextureManager::LoadTexture("assets/6.png");
-	chest_2 = TextureManager::LoadTexture("assets/7.png");
 	coin = TextureManager::LoadTexture("assets/9.png");
 	hpBoard = TextureManager::LoadTexture("assets/hp.png");
 
@@ -28,6 +25,9 @@ Map::Map()
 			else if (lvl1[row][column] == 10 || lvl1[row][column] == 11 || lvl1[row][column] == 12 || lvl1[row][column] == 13) {
 				closingWallCount++;
 			}
+			else if (lvl1[row][column] == 1) {
+				defoltWallCount++;
+			}
 			
 		}
 	}
@@ -35,9 +35,11 @@ Map::Map()
 	statue = new Statue[statueCount];
 	closingWall = new ClosingWall[closingWallCount];
 	bullets = new Bullets[bulletsCount];
+	defoltWall = new GameObgect[defoltWallCount];
 	chestCount = 0;
 	statueCount = 0;
 	closingWallCount = 0;
+	defoltWallCount = 0;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
 			if (lvl1[row][column] == 7) {
@@ -63,6 +65,13 @@ Map::Map()
 				closingWall[closingWallCount].setMainTexture(TextureManager::LoadTexture("assets/2.png"));
 				closingWall[closingWallCount].setSecondTexture(TextureManager::LoadTexture("assets/0.png"));
 				closingWallCount++;
+			}
+			else if (lvl1[row][column] == 1) {
+				defoltWall[defoltWallCount].posX = column;
+				defoltWall[defoltWallCount].posY = row;
+				defoltWall[defoltWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				defoltWall[defoltWallCount].setMainTexture(TextureManager::LoadTexture("assets/0.png"));
+				defoltWallCount++;
 			}
 		}
 	}
@@ -93,7 +102,7 @@ void Map::DrawMap(SDL_Window* window)
 			if (dest.x > -tile_w && dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h && type!=0) {
 				switch (type) {
 				case 0: break;
-				case 1: TextureManager::Drow(wall_1, src, dest); break;
+				case 1: TextureManager::Drow(defoltWall[0].getMainTexture(), src, dest); break;
 				case 2: TextureManager::Drow(ground_1, src, dest); break;
 				case 3: TextureManager::Drow(ground_2, src, dest); break;
 				case 4: TextureManager::Drow(ground_3, src, dest); break;
@@ -205,7 +214,8 @@ void Map::DrawMap(SDL_Window* window)
 
 
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 255, 255, 0);
-	if (key.space == true) {
+#ifdef DEBUG
+	if (key.ledtMouseKey == true) {
 		for (int i = 0; i < bulletsCount; i++) {
 			if (bullets[i].isFly == false) {
 				bullets[i].isFly = true;
@@ -214,7 +224,11 @@ void Map::DrawMap(SDL_Window* window)
 			}
 		}
 	}
+#endif // DEBUG
 	for (int i = 0; i < bulletsCount; i++) {
+		if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, tile_w, tile_h, offsetX, offsetY) == true) {
+			bullets[i].reset();
+		}
 		if (bullets[i].isFly == true) {
 			bullets[i].fly();
 			SDL_RenderDrawPoint(textureManager.renderer, bullets[i].Bx, bullets[i].By);
@@ -228,18 +242,21 @@ void Map::UpdateMapX(float value)
 	offsetX += value;
 	if (Intersection(1) == true) {
 		offsetX -= value;
-	}
-	if (Intersection(10) == true) {
+	}else if (Intersection(10) == true) {
+		offsetX -= value;
+	}else if (Intersection(11) == true) {
+		offsetX -= value;
+	}else if (Intersection(12) == true) {
+		offsetX -= value;
+	}else if (Intersection(13) == true) {
 		offsetX -= value;
 	}
-	if (Intersection(11) == true) {
-		offsetX -= value;
-	}
-	if (Intersection(12) == true) {
-		offsetX -= value;
-	}
-	if (Intersection(13) == true) {
-		offsetX -= value;
+	else {
+		for (int i = 0; i < bulletsCount; i++) {
+			if (bullets[i].isFly == true) {
+				bullets[i].offX += value;
+			}
+		}
 	}
 }
 
@@ -248,44 +265,40 @@ void Map::UpdateMapY(float value)
 	offsetY += value;
 	if (Intersection(1) == true) {
 		offsetY -= value;
-	}
-	if (Intersection(10) == true) {
+	}else if (Intersection(10) == true) {
+		offsetY -= value;
+	}else if (Intersection(11) == true) {
+		offsetY -= value;
+	}else if (Intersection(12) == true) {
+		offsetY -= value;
+	}else if (Intersection(13) == true) {
 		offsetY -= value;
 	}
-	if (Intersection(11) == true) {
-		offsetY -= value;
-	}
-	if (Intersection(12) == true) {
-		offsetY -= value;
-	}
-	if (Intersection(13) == true) {
-		offsetY -= value;
+	else {
+		for (int i = 0; i < bulletsCount; i++) {
+			if (bullets[i].isFly == true) {
+				bullets[i].offY += value;
+			}
+		}
 	}
 }
 
 bool Map::Intersection(int type)
 {
-	int x;
-	int y;
-	for (int row = 0; row < lvl1_h; row++) {
-		for (int column = 0; column < lvl1_w; column++) {
-			if (lvl1[row][column] == type && (type == 10 || type == 11 || type == 12 || type == 13)) {
-				for (int i = 0; i < closingWallCount; i++) {
-					if (closingWall[i].posX == column && closingWall[i].posY == row && closingWall[i].isClos == true) {
-						x = column * tile_w + offsetX;
-						y = row * tile_h + offsetY;
-						if (WIDTH / 2 >= x && WIDTH / 2 <= x + tile_w && HEIGTH / 2 >= y && HEIGTH / 2 <= y + tile_h) {
-							return 1;
-						}
-					}
-				}
+	if (type == 10 || type == 11 || type == 12 || type == 13) {
+		for (int j = 0; j < closingWallCount; j++) {
+			if (WIDTH / 2 >= closingWall[j].posX * tile_w + offsetX && WIDTH / 2 <= closingWall[j].posX * tile_w + offsetX + tile_w &&
+				HEIGTH / 2 >= closingWall[j].posY * tile_h + offsetY && HEIGTH / 2 <= closingWall[j].posY * tile_h + offsetY + tile_h &&
+				closingWall[j].isClos == true) {
+				return 1;
 			}
-			else if (lvl1[row][column] == type) {
-				x = column * tile_w + offsetX;
-				y = row * tile_h + offsetY;
-				if (WIDTH / 2 >= x && WIDTH / 2 <= x + tile_w && HEIGTH / 2 >= y && HEIGTH / 2 <= y + tile_h) {
-					return 1;
-				}
+		}
+	}
+	else if (type == 1) {
+		for (int j = 0; j < defoltWallCount; j++) {
+			if (WIDTH / 2 >= defoltWall[j].posX * tile_w + offsetX && WIDTH / 2 <= defoltWall[j].posX * tile_w + offsetX + tile_w &&
+				HEIGTH / 2 >= defoltWall[j].posY * tile_h + offsetY && HEIGTH / 2 <= defoltWall[j].posY * tile_h + offsetY + tile_h) {
+				return 1;
 			}
 		}
 	}
@@ -342,4 +355,9 @@ void Map::SetSize(int w, int h)
 void Map::changingKeyState(const Uint8* arr)
 {
 	key.space = arr[SDL_SCANCODE_SPACE];
+}
+
+void Map::changingKeyState(bool mouseDown)
+{
+	key.ledtMouseKey = mouseDown;
 }
