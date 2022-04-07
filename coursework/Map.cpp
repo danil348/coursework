@@ -12,6 +12,7 @@ Map::Map()
 	coin = TextureManager::LoadTexture("assets/9.png");
 	hpBoard = TextureManager::LoadTexture("assets/hp.png");
 	bullet = TextureManager::LoadTexture("assets/bullet.png");
+	enemyTx = TextureManager::LoadTexture("assets/enemy.png");
 
 	//сундуки
 	int x, y;
@@ -29,6 +30,9 @@ Map::Map()
 			else if (lvl1[row][column] == 1) {
 				defoltWallCount++;
 			}
+			else if (lvl1[row][column] == 14) {
+				enemyCount++;
+			}
 			
 		}
 	}
@@ -37,10 +41,12 @@ Map::Map()
 	closingWall = new ClosingWall[closingWallCount];
 	bullets = new Bullets[bulletsCount];
 	defoltWall = new GameObgect[defoltWallCount];
+	enemy = new Enemy[enemyCount];
 	chestCount = 0;
 	statueCount = 0;
 	closingWallCount = 0;
 	defoltWallCount = 0;
+	enemyCount = 0;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
 			if (lvl1[row][column] == 7) {
@@ -73,6 +79,13 @@ Map::Map()
 				defoltWall[defoltWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
 				defoltWall[defoltWallCount].setMainTexture(TextureManager::LoadTexture("assets/0.png"));
 				defoltWallCount++;
+			}
+			else if (lvl1[row][column] == 14) {
+				enemy[enemyCount].posX = column;
+				enemy[enemyCount].posY = row;
+				enemy[enemyCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				enemy[enemyCount].setMainTexture(TextureManager::LoadTexture("assets/enemy.png"));
+				enemyCount++;
 			}
 		}
 	}
@@ -143,18 +156,32 @@ void Map::DrawMap(SDL_Window* window)
 									if (abs(closingWall[i].posX - closingWall[j].posX) < 10 && abs(closingWall[i].posY - closingWall[j].posY) < 10) {
 										closingWall[j].isClos = true;
 										closingWall[j].mayClose = false;
+										for (int k = 0; k < enemyCount; k++) {
+											if (abs(closingWall[i].posX - enemy[k].posX) < 10 && abs(closingWall[i].posY - enemy[k].posY) < 10) {
+												enemy[k].needSpawn = true;
+											}
+										}
 									}
 								}
 							}
-#ifdef DEBUG
-							if (key.space == true) {
+							enemyDie = true;
+							for (int j = 0; j < closingWallCount; j++) {
+								if (closingWall[j].isClos == true) {
+									for (int k = 0; k < enemyCount; k++) {
+										if (abs(closingWall[j].posX - enemy[k].posX) < 10 && abs(closingWall[j].posY - enemy[k].posY) < 10 && enemy[k].hasHp == true) {
+											enemyDie = false;
+										}
+									}
+								}
+							}
+							if (enemyDie == true) {
 								for (int j = 0; j < closingWallCount; j++) {
 									if (abs(closingWall[i].posX - closingWall[j].posX) < 10 && abs(closingWall[i].posY - closingWall[j].posY) < 10) {
 										closingWall[j].isClos = false;
 									}
 								}
+								enemyDie = false;
 							}
-#endif // DEBUG
 							if (closingWall[i].isClos == false) {
 								TextureManager::Drow(closingWall[i].getMainTexture(), closingWall[i].src, closingWall[i].dest);
 							}
@@ -167,6 +194,18 @@ void Map::DrawMap(SDL_Window* window)
 					break;
 				default:
 					break;
+				}
+
+				for (int i = 0; i < enemyCount; i++) {
+					if (enemy[i].needSpawn == true && enemy[i].posX == column && enemy[i].posY == row && enemy[i].hasHp == true) {
+						enemy[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
+						TextureManager::Drow(enemy[i].getMainTexture(), enemy[i].src, enemy[i].dest);
+						enemy[i].islive = true;
+						enemy[i].update();
+						_rect = { enemy[i].dest.x, enemy[i].dest.y - 20, 120 * enemy[i].hp / 100, 10 };
+						SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
+						SDL_RenderFillRect(textureManager.renderer, &_rect);
+					}
 				}
 			}
 		}
@@ -182,7 +221,7 @@ void Map::DrawMap(SDL_Window* window)
 		}
 	}
 	for (int i = 0; i < bulletsCount; i++) {
-		if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, tile_w, tile_h, offsetX, offsetY) == true) {
+		if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount,enemy,enemyCount, tile_w, tile_h, offsetX, offsetY) == true) {
 			bullets[i].reset();
 		}
 		if (bullets[i].isFly == true) {

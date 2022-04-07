@@ -36,7 +36,7 @@ void Bullets::setAngl(int x, int y, int w, int h)
 	isFly = true;
 }
 
-bool Bullets::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int tile_w, int tile_h, int offsetX, int offsetY)
+bool Bullets::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, Enemy* enemy, int enemyCount, int tile_w, int tile_h, int offsetX, int offsetY)
 {
 	if (dist > maxDist) {
 		return 1;
@@ -51,6 +51,14 @@ bool Bullets::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingW
 		if (Bx >= closingWall[j].posX * tile_w + offsetX && Bx <= closingWall[j].posX * tile_w + offsetX + tile_w &&
 			By >= closingWall[j].posY * tile_h + offsetY && By <= closingWall[j].posY * tile_h + offsetY + tile_h &&
 			closingWall[j].isClos == true) {
+			return 1;
+		}
+	}
+	for (int j = 0; j < enemyCount; j++) {
+		if (Bx >= enemy[j].posX * tile_w + offsetX && Bx <= enemy[j].posX * tile_w + offsetX + tile_w &&
+			By >= enemy[j].posY * tile_h + offsetY && By <= enemy[j].posY * tile_h + offsetY + tile_h &&
+			enemy[j].islive == true) {
+			enemy[j].hp -= 10;
 			return 1;
 		}
 	}

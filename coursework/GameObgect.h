@@ -69,3 +69,16 @@ public:
 	bool mayClose = true;
 private:
 };
+
+
+class Enemy: public GameObgect
+{
+public:
+	bool needSpawn = false;
+	bool islive = false;
+	bool hasHp = true;
+	int hp = 100;
+	void update();
+	void reset();
+private:
+};

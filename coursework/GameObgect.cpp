@@ -203,3 +203,15 @@ void Statue::getBonus(int& hp, int& armor, int& mana, int& coins)
 		}
 	}
 }
+
+void Enemy::update()
+{
+	if (hp <= 0) {
+		hasHp = false;
+		islive = false;
+	}
+}
+
+void Enemy::reset()
+{
+}

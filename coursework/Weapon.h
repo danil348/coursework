@@ -18,7 +18,7 @@ public:
 	void fly();
 	void setAngl(int x, int y, int w, int h);
 	void reset();
-	bool intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int tile_w, int tile_h, int offsetX, int offsetY);
+	bool intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, Enemy* enemy, int enemyCount, int tile_w, int tile_h, int offsetX, int offsetY);
 private:
 	float dist = 0.0f;
 	int maxDist = 8000;
