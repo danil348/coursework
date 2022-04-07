@@ -140,7 +140,7 @@ void Map::DrawMap(SDL_Window* window)
 							closingWall[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 							if (IntersectionWithGameObg(closingWall[i]) == true && closingWall[i].mayClose == true) {
 								for (int j = 0; j < closingWallCount; j++) {
-									if (abs(closingWall[i].posX - closingWall[j].posX) < 15 && abs(closingWall[i].posY - closingWall[j].posY) < 15) {
+									if (abs(closingWall[i].posX - closingWall[j].posX) < 10 && abs(closingWall[i].posY - closingWall[j].posY) < 10) {
 										closingWall[j].isClos = true;
 										closingWall[j].mayClose = false;
 									}
@@ -149,7 +149,7 @@ void Map::DrawMap(SDL_Window* window)
 #ifdef DEBUG
 							if (key.space == true) {
 								for (int j = 0; j < closingWallCount; j++) {
-									if (abs(closingWall[i].posX - closingWall[j].posX) < 15 && abs(closingWall[i].posY - closingWall[j].posY) < 15) {
+									if (abs(closingWall[i].posX - closingWall[j].posX) < 10 && abs(closingWall[i].posY - closingWall[j].posY) < 10) {
 										closingWall[j].isClos = false;
 									}
 								}
