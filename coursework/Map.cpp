@@ -1,7 +1,4 @@
-#include <string>
 #include "Map.h"
-
-using namespace std;
 
 SDL_Renderer* TextureManager::renderer = nullptr;
 
@@ -37,6 +34,7 @@ Map::Map()
 	chest = new Chest[chestCount];
 	statue = new Statue[statueCount];
 	closingWall = new ClosingWall[closingWallCount];
+	bullets = new Bullets[bulletsCount];
 	chestCount = 0;
 	statueCount = 0;
 	closingWallCount = 0;
@@ -81,6 +79,11 @@ Map::Map()
 
 void Map::DrawMap(SDL_Window* window)
 {
+	SDL_GetMouseState(&mousePosX, &mousePosY);
+
+	
+
+
 	int type = 0;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
@@ -130,7 +133,7 @@ void Map::DrawMap(SDL_Window* window)
 							closingWall[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 							if (IntersectionWithGameObg(closingWall[i]) == true && closingWall[i].mayClose == true) {
 								for (int j = 0; j < closingWallCount; j++) {
-									if (abs(closingWall[i].posX - closingWall[j].posX) < 5 && abs(closingWall[i].posY - closingWall[j].posY) < 5) {
+									if (abs(closingWall[i].posX - closingWall[j].posX) < 15 && abs(closingWall[i].posY - closingWall[j].posY) < 15) {
 										closingWall[j].isClos = true;
 										closingWall[j].mayClose = false;
 									}
@@ -139,7 +142,7 @@ void Map::DrawMap(SDL_Window* window)
 #ifdef DEBUG
 							if (key.space == true) {
 								for (int j = 0; j < closingWallCount; j++) {
-									if (abs(closingWall[i].posX - closingWall[j].posX) < 5 && abs(closingWall[i].posY - closingWall[j].posY) < 5) {
+									if (abs(closingWall[i].posX - closingWall[j].posX) < 15 && abs(closingWall[i].posY - closingWall[j].posY) < 15) {
 										closingWall[j].isClos = false;
 									}
 								}
@@ -199,6 +202,24 @@ void Map::DrawMap(SDL_Window* window)
 	rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
 	SDL_SetRenderDrawColor(textureManager.renderer, 12, 123, 123, 0);
+
+
+	SDL_SetRenderDrawColor(textureManager.renderer, 255, 255, 255, 0);
+	if (key.space == true) {
+		for (int i = 0; i < bulletsCount; i++) {
+			if (bullets[i].isFly == false) {
+				bullets[i].isFly = true;
+				bullets[i].setAngl(mousePosX, mousePosY, WIDTH, HEIGTH);
+				break;
+			}
+		}
+	}
+	for (int i = 0; i < bulletsCount; i++) {
+		if (bullets[i].isFly == true) {
+			bullets[i].fly();
+			SDL_RenderDrawPoint(textureManager.renderer, bullets[i].Bx, bullets[i].By);
+		}
+	}
 }
 
 
@@ -290,22 +311,22 @@ bool Map::IntersectionWithGameObg(Chest chest)
 bool Map::IntersectionWithGameObg(ClosingWall wall)
 {
 	if (wall.type == 10) {
-		if (WIDTH / 2 >= wall.dest.x && WIDTH / 2 < wall.dest.x + wall.dest.w && HEIGTH / 2 > wall.dest.y + wall.dest.h + 5 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10) {
+		if (WIDTH / 2 >= wall.dest.x && WIDTH / 2 < wall.dest.x + wall.dest.w && HEIGTH / 2 > wall.dest.y + wall.dest.h + 1 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10) {
 			return 1;
 		}
 	}
 	else if (wall.type == 11) {
-		if (HEIGTH / 2 > wall.dest.y && HEIGTH / 2 < wall.dest.y + wall.dest.h && WIDTH / 2 < wall.dest.x - 5 && WIDTH / 2 > wall.dest.x - 10) {
+		if (HEIGTH / 2 > wall.dest.y && HEIGTH / 2 < wall.dest.y + wall.dest.h && WIDTH / 2 < wall.dest.x - 1 && WIDTH / 2 > wall.dest.x - 10) {
 			return 1;
 		}
 	}
 	else if (wall.type == 12) {
-		if (WIDTH / 2 > wall.dest.x && WIDTH / 2 < wall.dest.x + wall.dest.w && HEIGTH / 2 < wall.dest.y - 5 && HEIGTH / 2 > wall.dest.y - 10) {
+		if (WIDTH / 2 > wall.dest.x && WIDTH / 2 < wall.dest.x + wall.dest.w && HEIGTH / 2 < wall.dest.y - 1 && HEIGTH / 2 > wall.dest.y - 10) {
 			return 1;
 		}
 	}
 	else if (wall.type == 13) {
-		if (HEIGTH / 2 > wall.dest.y && HEIGTH / 2 < wall.dest.y + wall.dest.h && WIDTH / 2 > wall.dest.x + wall.dest.w + 5 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10) {
+		if (HEIGTH / 2 > wall.dest.y && HEIGTH / 2 < wall.dest.y + wall.dest.h && WIDTH / 2 > wall.dest.x + wall.dest.w + 1 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10) {
 			return 1;
 		}
 	}
