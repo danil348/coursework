@@ -9,10 +9,11 @@ using namespace std;
 class Bullets
 {
 public:
+	Bullets();
 	float offX = 0;
 	float offY = 0;
-	int Bx, By;
 	bool isFly = false;
+	SDL_Rect src, dest;
 
 	void fly();
 	void setAngl(int x, int y, int w, int h);
@@ -26,5 +27,6 @@ private:
 	int screanH;
 	float cosVal;
 	float sinVal;
+	int Bx, By;
 };
 

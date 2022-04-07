@@ -11,6 +11,7 @@ Map::Map()
 	ground_5 = TextureManager::LoadTexture("assets/5.png");
 	coin = TextureManager::LoadTexture("assets/9.png");
 	hpBoard = TextureManager::LoadTexture("assets/hp.png");
+	bullet = TextureManager::LoadTexture("assets/bullet.png");
 
 	//сундуки
 	int x, y;
@@ -170,6 +171,25 @@ void Map::DrawMap(SDL_Window* window)
 			}
 		}
 	}
+	if (key.leftMouseKey == true) {
+		timeOfCurrentBullet = clock();
+		for (int i = 0; i < bulletsCount; i++) {
+			if (bullets[i].isFly == false && timeOfCurrentBullet - timeOfLastBullet > bulletsDelay) {
+				bullets[i].setAngl(mousePosX, mousePosY, WIDTH, HEIGTH);
+				timeOfLastBullet = clock();
+				break;
+			}
+		}
+	}
+	for (int i = 0; i < bulletsCount; i++) {
+		if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, tile_w, tile_h, offsetX, offsetY) == true) {
+			bullets[i].reset();
+		}
+		if (bullets[i].isFly == true) {
+			bullets[i].fly();
+			TextureManager::Drow(bullet, bullets[i].src, bullets[i].dest);
+		}
+	}
 
 	// монеты
 	_rect = { 10, 170, 40, 40 };
@@ -204,25 +224,6 @@ void Map::DrawMap(SDL_Window* window)
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
 	rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
-
-	SDL_SetRenderDrawColor(textureManager.renderer, 255, 255, 255, 0);
-	if (key.leftMouseKey == true) {
-		for (int i = 0; i < bulletsCount; i++) {
-			if (bullets[i].isFly == false) {
-				bullets[i].setAngl(mousePosX, mousePosY, WIDTH, HEIGTH);
-				break;
-			}
-		}
-	}
-	for (int i = 0; i < bulletsCount; i++) {
-		if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, tile_w, tile_h, offsetX, offsetY) == true) {
-			bullets[i].reset();
-		}
-		if (bullets[i].isFly == true) {
-			bullets[i].fly();
-			SDL_RenderDrawPoint(textureManager.renderer, bullets[i].Bx, bullets[i].By);
-		}
-	}
 }
 
 

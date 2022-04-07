@@ -33,10 +33,14 @@ public:
 	void changingKeyState(bool mouseDown);
 
 	TextureManager textureManager;
-	float playerSpeed = 4.0f;
+	float playerSpeed = 3.7f;
 	int mousePosX = 0;
 	int mousePosY = 0;
 private:
+	const int bulletsDelay = 100;
+	int timeOfLastBullet = -10000;
+	int timeOfCurrentBullet = 0;
+
 	Key key;
 	int WIDTH;
 	int HEIGTH;
@@ -53,6 +57,7 @@ private:
 	SDL_Texture* ground_5;
 	SDL_Texture* coin;
 	SDL_Texture* hpBoard;
+	SDL_Texture* bullet;
 	
 	int scorePlayer = 14;
 

@@ -1,10 +1,22 @@
 #include "Weapon.h"
 
+Bullets::Bullets()
+{
+	src.x = 0;
+	src.y = 0;
+	src.w = 60;
+	src.h = 60;
+	dest.w = 20;
+	dest.h = 20;
+}
+
 void Bullets::fly()
 {
 	Bx = screanW /2 + dist * cosVal + offX;
 	By = screanH /2 + dist * -sinVal + offY;
-	dist += 3.9f;
+	dest.x = Bx;
+	dest.y = By;
+	dist += 6.2f;
 }
 
 void Bullets::setAngl(int x, int y, int w, int h)

@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 	setlocale(LC_ALL, "RU");
 	srand(time(0));
 
-	const int FPS = 200;
+	const int FPS = 180;
 	const int frameDelay = 1000 / FPS;
 	Uint32 frameStart;
 	int frameTime;
@@ -25,7 +25,6 @@ int main(int argc, char** argv)
 	{
 		frameStart = clock();
 		game->habdleEvents();
-		game->update();
 
 		frameTime = clock() - frameStart;
 		while (frameTime < frameDelay)
