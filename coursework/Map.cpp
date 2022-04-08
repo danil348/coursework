@@ -49,22 +49,23 @@ Map::Map()
 	enemyCount = 0;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
-			if (lvl1[row][column] == 7) {
+			switch (lvl1[row][column]) {
+			case 7:
 				chest[chestCount].posX = column;
 				chest[chestCount].posY = row;
 				chest[chestCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
 				chest[chestCount].setMainTexture(TextureManager::LoadTexture("assets/6.png"));
 				chest[chestCount].setSecondTexture(TextureManager::LoadTexture("assets/7.png"));
 				chestCount++;
-			}
-			else if (lvl1[row][column] == 8) {
+				break;
+			case 8:
 				statue[statueCount].posX = column;
 				statue[statueCount].posY = row;
 				statue[statueCount].setSrcDest_W_H(288, 320, tile_w * 3, tile_h * 3);
 				statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/player.png"));
 				statueCount++;
-			}
-			else if (lvl1[row][column] == 10 || lvl1[row][column] == 11 || lvl1[row][column] == 12 || lvl1[row][column] == 13) {
+				break;
+			case 10: case 11: case 12: case 13:
 				closingWall[closingWallCount].posX = column;
 				closingWall[closingWallCount].posY = row;
 				closingWall[closingWallCount].type = lvl1[row][column];
@@ -72,20 +73,22 @@ Map::Map()
 				closingWall[closingWallCount].setMainTexture(TextureManager::LoadTexture("assets/2.png"));
 				closingWall[closingWallCount].setSecondTexture(TextureManager::LoadTexture("assets/0.png"));
 				closingWallCount++;
-			}
-			else if (lvl1[row][column] == 1) {
+				break;
+			case 1:
 				defoltWall[defoltWallCount].posX = column;
 				defoltWall[defoltWallCount].posY = row;
 				defoltWall[defoltWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
 				defoltWall[defoltWallCount].setMainTexture(TextureManager::LoadTexture("assets/0.png"));
 				defoltWallCount++;
-			}
-			else if (lvl1[row][column] == 14) {
+				break;
+			case 14:
 				enemy[enemyCount].posX = column;
 				enemy[enemyCount].posY = row;
 				enemy[enemyCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
 				enemy[enemyCount].setMainTexture(TextureManager::LoadTexture("assets/enemy.png"));
 				enemyCount++;
+				break;
+			default: break;
 			}
 		}
 	}
@@ -108,18 +111,13 @@ void Map::DrawMap(SDL_Window* window)
 		for (int column = 0; column < lvl1_w; column++) {
 			dest.x = column * tile_w + offsetX;
 			dest.y = row * tile_h + offsetY;
-			if (dest.x > -tile_w*7 && dest.x < WIDTH + tile_w*7 && dest.y > -tile_h*7 && dest.y < HEIGTH + tile_h*7 && lvl1[row][column] != 0) {
+			if (lvl1[row][column] == 0) {
+				continue;
+			}
+
+			if (lvl1[row][column] >= 2 && lvl1[row][column] <= 8 && dest.x > -tile_w && 
+				dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h) {
 				switch (lvl1[row][column]) {
-				case 0: break;
-				case 1:
-					for (int i = 0; i < defoltWallCount; i++) {
-						if (defoltWall[i].posX == column && defoltWall[i].posY == row) {
-							defoltWall[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
-							TextureManager::Drow(defoltWall[0].getMainTexture(), src, dest);
-							break;
-						}
-					}
-					break;
 				case 2: TextureManager::Drow(ground_1, src, dest); break;
 				case 3: TextureManager::Drow(ground_2, src, dest); break;
 				case 4: TextureManager::Drow(ground_3, src, dest); break;
@@ -151,6 +149,21 @@ void Map::DrawMap(SDL_Window* window)
 							if (statue[i].wasUsed == true) {
 								statue[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
 							}
+							break;
+						}
+					}
+					break;
+				default:
+					break;
+				}
+			}
+			else if (dest.x > -tile_w*7 && dest.x < WIDTH + tile_w*7 && dest.y > -tile_h*7 && dest.y < HEIGTH + tile_h*7) {
+				switch (lvl1[row][column]) {
+				case 1:
+					for (int i = 0; i < defoltWallCount; i++) {
+						if (defoltWall[i].posX == column && defoltWall[i].posY == row) {
+							defoltWall[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
+							TextureManager::Drow(defoltWall[0].getMainTexture(), src, dest);
 							break;
 						}
 					}
@@ -229,8 +242,10 @@ void Map::DrawMap(SDL_Window* window)
 		}
 	}
 	for (int i = 0; i < bulletsCount; i++) {
-		if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount,enemy,enemyCount, tile_w, tile_h, offsetX, offsetY) == true) {
-			bullets[i].reset();
+		if (bullets[i].isFly == true) {
+			if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, enemy, enemyCount, tile_w, tile_h, offsetX, offsetY) == true) {
+				bullets[i].reset();
+			}
 		}
 		if (bullets[i].isFly == true) {
 			bullets[i].fly();
@@ -310,7 +325,8 @@ void Map::UpdateMapY(float value)
 
 bool Map::Intersection(int type)
 {
-	if (type == 10 || type == 11 || type == 12 || type == 13) {
+	switch (type) {
+	case 10: case 11: case 12: case 13:
 		for (int j = 0; j < closingWallCount; j++) {
 			if (WIDTH / 2 >= closingWall[j].posX * tile_w + offsetX && WIDTH / 2 <= closingWall[j].posX * tile_w + offsetX + tile_w &&
 				HEIGTH / 2 >= closingWall[j].posY * tile_h + offsetY && HEIGTH / 2 <= closingWall[j].posY * tile_h + offsetY + tile_h &&
@@ -318,55 +334,37 @@ bool Map::Intersection(int type)
 				return 1;
 			}
 		}
-	}
-	else if (type == 1) {
+	case 1:
 		for (int j = 0; j < defoltWallCount; j++) {
 			if (WIDTH / 2 >= defoltWall[j].posX * tile_w + offsetX && WIDTH / 2 <= defoltWall[j].posX * tile_w + offsetX + tile_w &&
 				HEIGTH / 2 >= defoltWall[j].posY * tile_h + offsetY && HEIGTH / 2 <= defoltWall[j].posY * tile_h + offsetY + tile_h) {
 				return 1;
 			}
 		}
+	default:
+		return 0;
 	}
 	return 0;
 }
 
 bool Map::IntersectionWithGameObg(GameObgect gameObgect)
 {
-	if (WIDTH / 2 >= gameObgect.dest.x && WIDTH / 2 <= gameObgect.dest.x + gameObgect.dest.w && HEIGTH / 2 >= gameObgect.dest.y && HEIGTH / 2 <= gameObgect.dest.y + gameObgect.dest.h) {
-		return 1;
-	}
-	return 0;
+	return (WIDTH / 2 >= gameObgect.dest.x && WIDTH / 2 <= gameObgect.dest.x + gameObgect.dest.w && HEIGTH / 2 >= gameObgect.dest.y && HEIGTH / 2 <= gameObgect.dest.y + gameObgect.dest.h);
 }
 
 bool Map::IntersectionWithGameObg(Chest chest)
 {
-	if (WIDTH / 2 >= chest.dest.x && WIDTH / 2 <= chest.dest.x + chest.dest.w && HEIGTH / 2 >= chest.dest.y && HEIGTH / 2 <= chest.dest.y + chest.dest.h) {
-		return 1;
-	}
-	return 0;
+	return (WIDTH / 2 >= chest.dest.x && WIDTH / 2 <= chest.dest.x + chest.dest.w && HEIGTH / 2 >= chest.dest.y && HEIGTH / 2 <= chest.dest.y + chest.dest.h);
 }
 
 bool Map::IntersectionWithGameObg(ClosingWall wall)
 {
-	if (wall.type == 10) {
-		if (WIDTH / 2 >= wall.dest.x && WIDTH / 2 < wall.dest.x + wall.dest.w && HEIGTH / 2 > wall.dest.y + wall.dest.h + 1 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10) {
-			return 1;
-		}
-	}
-	else if (wall.type == 11) {
-		if (HEIGTH / 2 > wall.dest.y && HEIGTH / 2 < wall.dest.y + wall.dest.h && WIDTH / 2 < wall.dest.x - 1 && WIDTH / 2 > wall.dest.x - 10) {
-			return 1;
-		}
-	}
-	else if (wall.type == 12) {
-		if (WIDTH / 2 > wall.dest.x && WIDTH / 2 < wall.dest.x + wall.dest.w && HEIGTH / 2 < wall.dest.y - 1 && HEIGTH / 2 > wall.dest.y - 10) {
-			return 1;
-		}
-	}
-	else if (wall.type == 13) {
-		if (HEIGTH / 2 > wall.dest.y && HEIGTH / 2 < wall.dest.y + wall.dest.h && WIDTH / 2 > wall.dest.x + wall.dest.w + 1 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10) {
-			return 1;
-		}
+	switch (wall.type) {
+	case 10: return (WIDTH / 2 >= wall.dest.x - 10 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10 && HEIGTH / 2 > wall.dest.y + wall.dest.h + 1 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10);
+	case 11: return (HEIGTH / 2 > wall.dest.y - 10 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10 && WIDTH / 2 < wall.dest.x - 1 && WIDTH / 2 > wall.dest.x - 10);
+	case 12: return (WIDTH / 2 > wall.dest.x - 10 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10 && HEIGTH / 2 < wall.dest.y - 1 && HEIGTH / 2 > wall.dest.y - 10);
+	case 13: return (HEIGTH / 2 > wall.dest.y - 10 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10 && WIDTH / 2 > wall.dest.x + wall.dest.w + 1 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10);
+	default: return 0;
 	}
 	return 0;
 }
