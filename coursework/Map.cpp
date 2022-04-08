@@ -276,12 +276,12 @@ void Map::DrawMap(SDL_Window* window)
 	_rect = { 52, 56, 212 * armorPlayer / 100,28 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 136, 142, 140, 0);
 	SDL_RenderFillRect(textureManager.renderer, &_rect);
-	textManager.Drow(textureManager.renderer, to_string(armorPlayer), 52, 26, 138, 60, 255, 255, 255);
+	textManager.Drow(textureManager.renderer, to_string(armorPlayer), 52, 26, 138, 60, 255, (armorPlayer > 0) ? 255 : 33, (armorPlayer > 0) ? 255 : 33);
 
 	_rect = { 52, 96, 212 * manaPlayer / 100,28 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 15, 123, 178, 0);
 	SDL_RenderFillRect(textureManager.renderer, &_rect);
-	textManager.Drow(textureManager.renderer, to_string(manaPlayer), 52, 26, 138, 100, 255, 255, 255);
+	textManager.Drow(textureManager.renderer, to_string(manaPlayer), 52, 26, 138, 100, 255, (manaPlayer>0) ? 255 : 33, (manaPlayer > 0) ? 255 : 33);
 
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
 	rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
