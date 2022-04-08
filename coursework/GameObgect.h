@@ -81,8 +81,13 @@ public:
 	bool hasHp = true;
 	bool isSpawn = false;
 	int hp = 100;
-	void update(GameObgect* defoltWall, int defoltWallCount);
+	void update();
+	void setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, int src_x, int src_y, int dest_x, int dest_y);
 	void reset();
+	bool intersection(GameObgect* defoltWall, int defoltWallCount);
 private:
-
+	float offX = 0;
+	float offY = 0;
+	float coeffX = 0.6f;
+	float coeffY = 0.6f;
 };

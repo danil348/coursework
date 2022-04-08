@@ -108,7 +108,7 @@ void Map::DrawMap(SDL_Window* window)
 		for (int column = 0; column < lvl1_w; column++) {
 			dest.x = column * tile_w + offsetX;
 			dest.y = row * tile_h + offsetY;
-			if (dest.x > -tile_w && dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h && lvl1[row][column] !=0) {
+			if (dest.x > -tile_w*7 && dest.x < WIDTH + tile_w*7 && dest.y > -tile_h*7 && dest.y < HEIGTH + tile_h*7 && lvl1[row][column] != 0) {
 				switch (lvl1[row][column]) {
 				case 0: break;
 				case 1:
@@ -206,9 +206,9 @@ void Map::DrawMap(SDL_Window* window)
 
 				for (int i = 0; i < enemyCount; i++) {
 					if (enemy[i].needSpawn == true && enemy[i].posX == column && enemy[i].posY == row && enemy[i].hasHp == true) {
-						enemy[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
-						enemy[i].update(defoltWall, defoltWallCount);
 						enemy[i].islive = true;
+						enemy[i].setSrcDest_X_Y(defoltWall, defoltWallCount, src.x, src.y, dest.x, dest.y);
+						enemy[i].update();
 						TextureManager::Drow(enemy[i].getMainTexture(), enemy[i].src, enemy[i].dest);
 						_rect = { enemy[i].dest.x, enemy[i].dest.y - 20, 120 * enemy[i].hp / 100, 10 };
 						SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);

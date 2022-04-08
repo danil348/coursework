@@ -204,7 +204,7 @@ void Statue::getBonus(int& hp, int& armor, int& mana, int& coins)
 	}
 }
 
-void Enemy::update(GameObgect* defoltWall, int defoltWallCount)
+void Enemy::update()
 {
 	if (hp <= 0) {
 		hasHp = false;
@@ -212,6 +212,38 @@ void Enemy::update(GameObgect* defoltWall, int defoltWallCount)
 	}
 }
 
+void Enemy::setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, int src_x, int src_y, int dest_x, int dest_y)
+{
+	dest.x = dest_x;
+	dest.y = dest_y;
+
+	if (intersection(defoltWall, defoltWallCount) == true) {
+		coeffX *= -1;
+		coeffY *= -1;
+	}
+	offX += coeffX;
+	offY += coeffY;
+	src.x = src_x;
+	src.y = src_y;
+	dest.x = dest_x + offX;
+	dest.y = dest_y + offY;
+}
+
 void Enemy::reset()
 {
+}
+
+bool Enemy::intersection(GameObgect* defoltWall, int defoltWallCount)
+{
+	for (int j = 0; j < defoltWallCount; j++) {
+		if (dest.x + coeffX + offX >= defoltWall[j].dest.x && dest.x + coeffX + offX <= defoltWall[j].dest.x + defoltWall[j].dest.w &&
+			dest.y + coeffY + offY >= defoltWall[j].dest.y && dest.y + coeffY + offY <= defoltWall[j].dest.y + defoltWall[j].dest.h) {
+			return 1;
+		}
+		if (dest.x + coeffX + offX + dest.w >= defoltWall[j].dest.x && dest.x + coeffX + offX + dest.w <= defoltWall[j].dest.x + defoltWall[j].dest.w &&
+			dest.y + coeffY + offY + dest.h >= defoltWall[j].dest.y && dest.y + coeffY + offY + dest.h <= defoltWall[j].dest.y + defoltWall[j].dest.h) {
+			return 1;
+		}
+	}
+	return 0;
 }
