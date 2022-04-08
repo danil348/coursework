@@ -76,18 +76,21 @@ private:
 class Enemy: public GameObgect
 {
 public:
+	Enemy();
 	bool needSpawn = false;
 	bool islive = false;
 	bool hasHp = true;
 	bool isSpawn = false;
 	int hp = 100;
-	void update();
-	void setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, int src_x, int src_y, int dest_x, int dest_y);
+	void update(int& manaPlayer, int& scorePlayer);
+	void setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int src_x, int src_y, int dest_x, int dest_y);
 	void reset();
-	bool intersection(GameObgect* defoltWall, int defoltWallCount);
+	bool intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount);
 private:
 	float offX = 0;
 	float offY = 0;
-	float coeffX = 0.6f;
-	float coeffY = 0.6f;
+	float coeffX;
+	float coeffY;
+	int manaPlayerBonus;
+	int scorePlayerBonus;
 };

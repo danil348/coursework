@@ -204,20 +204,29 @@ void Statue::getBonus(int& hp, int& armor, int& mana, int& coins)
 	}
 }
 
-void Enemy::update()
+Enemy::Enemy()
+{
+	coeffX = rand() % 6 / 10.0f + 0.5f;
+	coeffY = rand() % 6 / 10.0f + 0.5f;
+	manaPlayerBonus = rand() % 11 + 1;
+	scorePlayerBonus = rand() % 2 + 1;
+}
+
+void Enemy::update(int& manaPlayer, int& scorePlayer)
 {
 	if (hp <= 0) {
 		hasHp = false;
 		islive = false;
+		scorePlayer += scorePlayerBonus;
 	}
 }
 
-void Enemy::setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, int src_x, int src_y, int dest_x, int dest_y)
+void Enemy::setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int src_x, int src_y, int dest_x, int dest_y)
 {
 	dest.x = dest_x;
 	dest.y = dest_y;
 
-	if (intersection(defoltWall, defoltWallCount) == true) {
+	if (intersection(defoltWall, defoltWallCount, closingWall, closingWallCount) == true) {
 		coeffX *= -1;
 		coeffY *= -1;
 	}
@@ -233,7 +242,7 @@ void Enemy::reset()
 {
 }
 
-bool Enemy::intersection(GameObgect* defoltWall, int defoltWallCount)
+bool Enemy::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount)
 {
 	for (int j = 0; j < defoltWallCount; j++) {
 		if (dest.x + coeffX + offX >= defoltWall[j].dest.x && dest.x + coeffX + offX <= defoltWall[j].dest.x + defoltWall[j].dest.w &&
@@ -242,6 +251,16 @@ bool Enemy::intersection(GameObgect* defoltWall, int defoltWallCount)
 		}
 		if (dest.x + coeffX + offX + dest.w >= defoltWall[j].dest.x && dest.x + coeffX + offX + dest.w <= defoltWall[j].dest.x + defoltWall[j].dest.w &&
 			dest.y + coeffY + offY + dest.h >= defoltWall[j].dest.y && dest.y + coeffY + offY + dest.h <= defoltWall[j].dest.y + defoltWall[j].dest.h) {
+			return 1;
+		}
+	}
+	for (int j = 0; j < closingWallCount; j++) {
+		if (dest.x + coeffX + offX >= closingWall[j].dest.x && dest.x + coeffX + offX <= closingWall[j].dest.x + closingWall[j].dest.w &&
+			dest.y + coeffY + offY >= closingWall[j].dest.y && dest.y + coeffY + offY <= closingWall[j].dest.y + closingWall[j].dest.h) {
+			return 1;
+		}
+		if (dest.x + coeffX + offX + dest.w >= closingWall[j].dest.x && dest.x + coeffX + offX + dest.w <= closingWall[j].dest.x + closingWall[j].dest.w &&
+			dest.y + coeffY + offY + dest.h >= closingWall[j].dest.y && dest.y + coeffY + offY + dest.h <= closingWall[j].dest.y + closingWall[j].dest.h) {
 			return 1;
 		}
 	}

@@ -71,7 +71,7 @@ Map::Map()
 				closingWall[closingWallCount].type = lvl1[row][column];
 				closingWall[closingWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
 				closingWall[closingWallCount].setMainTexture(TextureManager::LoadTexture("assets/2.png"));
-				closingWall[closingWallCount].setSecondTexture(TextureManager::LoadTexture("assets/0.png"));
+				closingWall[closingWallCount].setSecondTexture(TextureManager::LoadTexture("assets/clwall.png"));
 				closingWallCount++;
 				break;
 			case 1:
@@ -213,15 +213,14 @@ void Map::DrawMap(SDL_Window* window)
 						}
 					}
 					break;
-				default:
-					break;
+				default: break;
 				}
 
 				for (int i = 0; i < enemyCount; i++) {
 					if (enemy[i].needSpawn == true && enemy[i].posX == column && enemy[i].posY == row && enemy[i].hasHp == true) {
 						enemy[i].islive = true;
-						enemy[i].setSrcDest_X_Y(defoltWall, defoltWallCount, src.x, src.y, dest.x, dest.y);
-						enemy[i].update();
+						enemy[i].setSrcDest_X_Y(defoltWall, defoltWallCount, closingWall, closingWallCount, src.x, src.y, dest.x, dest.y);
+						enemy[i].update(manaPlayer, scorePlayer);
 						TextureManager::Drow(enemy[i].getMainTexture(), enemy[i].src, enemy[i].dest);
 						_rect = { enemy[i].dest.x, enemy[i].dest.y - 20, 120 * enemy[i].hp / 100, 10 };
 						SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
@@ -234,7 +233,8 @@ void Map::DrawMap(SDL_Window* window)
 	if (key.leftMouseKey == true) {
 		timeOfCurrentBullet = clock();
 		for (int i = 0; i < bulletsCount; i++) {
-			if (bullets[i].isFly == false && timeOfCurrentBullet - timeOfLastBullet > bulletsDelay) {
+			if (bullets[i].isFly == false && timeOfCurrentBullet - timeOfLastBullet > bulletsDelay && manaPlayer > 0) {
+				manaPlayer--;
 				bullets[i].setAngl(mousePosX, mousePosY, WIDTH, HEIGTH);
 				timeOfLastBullet = clock();
 				break;
