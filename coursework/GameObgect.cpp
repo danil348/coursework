@@ -204,7 +204,7 @@ void Statue::getBonus(int& hp, int& armor, int& mana, int& coins)
 	}
 }
 
-void Enemy::update()
+void Enemy::update(GameObgect* defoltWall, int defoltWallCount)
 {
 	if (hp <= 0) {
 		hasHp = false;

@@ -18,7 +18,6 @@ public:
 	bool running();
 	SDL_Event event;
 private:
-	int count = 0;
 	bool isRunning = false;
 	const Uint8* keyboard_state_array = SDL_GetKeyboardState(NULL);
 	SDL_Window* window;

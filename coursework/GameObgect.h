@@ -3,6 +3,8 @@
 #include <SDL_image.h>
 #include <iostream>
 
+using namespace std;
+
 class GameObgect
 {
 public:
@@ -77,8 +79,10 @@ public:
 	bool needSpawn = false;
 	bool islive = false;
 	bool hasHp = true;
+	bool isSpawn = false;
 	int hp = 100;
-	void update();
+	void update(GameObgect* defoltWall, int defoltWallCount);
 	void reset();
 private:
+
 };

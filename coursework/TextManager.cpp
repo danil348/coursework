@@ -14,14 +14,13 @@ TextManager::~TextManager()
 void TextManager::Drow(SDL_Renderer* renderer, string text, int dest_w, int dest_h, int dest_x, int dest_y,
 	int colorR, int colorG, int colorB)
 {
-	textSurface = NULL;
 	fore_color.r = colorR;
 	fore_color.g = colorG;
 	fore_color.b = colorB;
 	textSurface = TTF_RenderUTF8_Solid(my_font, text.c_str(), fore_color);
 	texture = SDL_CreateTextureFromSurface(renderer, textSurface);
-	SDL_FreeSurface(textSurface);
 	rect = { dest_x, dest_y, dest_w, dest_h };
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
+	SDL_FreeSurface(textSurface);
 	SDL_DestroyTexture(texture);
 }
