@@ -106,11 +106,11 @@ Map::Map()
 
 void Map::DrawMap(SDL_Window* window)
 {
-	SDL_GetMouseState(&mousePosX, &mousePosY);
+	SDL_GetMouseState(&key.mousePosX, &key.mousePosY);
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
-			dest.x = column * tile_w + offsetX;
-			dest.y = row * tile_h + offsetY;
+			dest.x = column * tile_w + playerSettings.offsetX;
+			dest.y = row * tile_h + playerSettings.offsetY;
 			if (lvl1[row][column] == 0) {
 				continue;
 			}
@@ -128,7 +128,7 @@ void Map::DrawMap(SDL_Window* window)
 						if (chest[i].posX == column && chest[i].posY == row) {
 							chest[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 							if (IntersectionWithGameObg(chest[i]) == true && chest[i].isOpen() == false) {
-								chest[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
+								chest[i].getBonus(playerSettings.hp, playerSettings.armor, playerSettings.mana, playerSettings.score);
 							}
 							TextureManager::Drow(chest[i].getMainTexture(), chest[i].src, chest[i].dest);
 							break;
@@ -147,7 +147,7 @@ void Map::DrawMap(SDL_Window* window)
 								}
 							}
 							if (statue[i].wasUsed == true) {
-								statue[i].getBonus(hpPlayer, armorPlayer, manaPlayer, scorePlayer);
+								statue[i].getBonus(playerSettings.hp, playerSettings.armor, playerSettings.mana, playerSettings.score);
 							}
 							break;
 						}
@@ -220,7 +220,7 @@ void Map::DrawMap(SDL_Window* window)
 					if (enemy[i].needSpawn == true && enemy[i].posX == column && enemy[i].posY == row && enemy[i].hasHp == true) {
 						enemy[i].islive = true;
 						enemy[i].setSrcDest_X_Y(defoltWall, defoltWallCount, closingWall, closingWallCount, src.x, src.y, dest.x, dest.y);
-						enemy[i].update(manaPlayer, scorePlayer);
+						enemy[i].update(playerSettings.mana, playerSettings.score);
 						TextureManager::Drow(enemy[i].getMainTexture(), enemy[i].src, enemy[i].dest);
 						_rect = { enemy[i].dest.x, enemy[i].dest.y - 20, 120 * enemy[i].hp / 100, 10 };
 						SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
@@ -231,19 +231,19 @@ void Map::DrawMap(SDL_Window* window)
 		}
 	}
 	if (key.leftMouseKey == true) {
-		timeOfCurrentBullet = clock();
+		bulletsSettings.timeOfCurrentBullet = clock();
 		for (int i = 0; i < bulletsCount; i++) {
-			if (bullets[i].isFly == false && timeOfCurrentBullet - timeOfLastBullet > bulletsDelay && manaPlayer > 0) {
-				manaPlayer--;
-				bullets[i].setAngl(mousePosX, mousePosY, WIDTH, HEIGTH);
-				timeOfLastBullet = clock();
+			if (bullets[i].isFly == false && bulletsSettings.timeOfCurrentBullet - bulletsSettings.timeOfLastBullet > bulletsSettings.delay && playerSettings.mana > 0) {
+				playerSettings.mana--;
+				bullets[i].setAngl(key.mousePosX, key.mousePosY, WIDTH, HEIGTH);
+				bulletsSettings.timeOfLastBullet = clock();
 				break;
 			}
 		}
 	}
 	for (int i = 0; i < bulletsCount; i++) {
 		if (bullets[i].isFly == true) {
-			if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, enemy, enemyCount, tile_w, tile_h, offsetX, offsetY) == true) {
+			if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, enemy, enemyCount, tile_w, tile_h, playerSettings.offsetX, playerSettings.offsetY, playerSettings.shotDamage) == true) {
 				bullets[i].reset();
 			}
 		}
@@ -253,11 +253,22 @@ void Map::DrawMap(SDL_Window* window)
 		}
 	}
 
+	if (key.space == true && enemyDie == false) {
+		for (int i = 0; i < enemyCount; i++) {
+			if (enemy[i].islive == true && IntersectionWithGameObg(enemy[i]) == true) {
+				if (enemy[i].hp > 0) {
+					enemy[i].hp -= playerSettings.damage;
+				}
+				break;
+			}
+		}
+	}
+
 	// монеты
 	_rect = { 10, 170, 40, 40 };
 	_srect = { 0, 0, 56, 80 };
 	TextureManager::Drow(coin, _srect, _rect);
-	textManager.Drow(textureManager.renderer, to_string(scorePlayer), 50, 50, 80, 170, 232, 221, 186);
+	textManager.Drow(textureManager.renderer, to_string(playerSettings.score), 50, 50, 80, 170, 232, 221, 186);
 
 	// доска с характеристиками
 	_srect = { 0,0, 292,148 };
@@ -267,21 +278,21 @@ void Map::DrawMap(SDL_Window* window)
 	_rect = { 0,0, 292, 148 };
 	TextureManager::Drow(hpBoard, _srect, _rect);
 
-	_rect = { 52,16, 212*hpPlayer/100, 28 };
+	_rect = { 52,16, 212* playerSettings.hp /100, 28 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 237, 65, 63, 0);
 	SDL_RenderFillRect(textureManager.renderer, &_rect);
-	textManager.Drow(textureManager.renderer, to_string(hpPlayer), 52, 26, 138, 20, 255, 255, 255);
+	textManager.Drow(textureManager.renderer, to_string(playerSettings.hp), 52, 26, 138, 20, 255, 255, 255);
 
 
-	_rect = { 52, 56, 212 * armorPlayer / 100,28 };
+	_rect = { 52, 56, 212 * playerSettings.armor / 100,28 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 136, 142, 140, 0);
 	SDL_RenderFillRect(textureManager.renderer, &_rect);
-	textManager.Drow(textureManager.renderer, to_string(armorPlayer), 52, 26, 138, 60, 255, (armorPlayer > 0) ? 255 : 33, (armorPlayer > 0) ? 255 : 33);
+	textManager.Drow(textureManager.renderer, to_string(playerSettings.armor), 52, 26, 138, 60, 255, (playerSettings.armor > 0) ? 255 : 33, (playerSettings.armor > 0) ? 255 : 33);
 
-	_rect = { 52, 96, 212 * manaPlayer / 100,28 };
+	_rect = { 52, 96, 212 * playerSettings.mana / 100,28 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 15, 123, 178, 0);
 	SDL_RenderFillRect(textureManager.renderer, &_rect);
-	textManager.Drow(textureManager.renderer, to_string(manaPlayer), 52, 26, 138, 100, 255, (manaPlayer>0) ? 255 : 33, (manaPlayer > 0) ? 255 : 33);
+	textManager.Drow(textureManager.renderer, to_string(playerSettings.mana), 52, 26, 138, 100, 255, (playerSettings.mana >0) ? 255 : 33, (playerSettings.mana > 0) ? 255 : 33);
 
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
 	rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
@@ -291,11 +302,11 @@ void Map::DrawMap(SDL_Window* window)
 
 void Map::UpdateMapX(float value)
 {
-	offsetX += value;
+	playerSettings.offsetX += value;
 	if (Intersection(1) == true) {
-		offsetX -= value;
+		playerSettings.offsetX -= value;
 	}else if (Intersection(10) == true) {
-		offsetX -= value;
+		playerSettings.offsetX -= value;
 	} 
 	else {
 		for (int i = 0; i < bulletsCount; i++) {
@@ -308,11 +319,11 @@ void Map::UpdateMapX(float value)
 
 void Map::UpdateMapY(float value)
 {
-	offsetY += value;
+	playerSettings.offsetY += value;
 	if (Intersection(1) == true) {
-		offsetY -= value;
+		playerSettings.offsetY -= value;
 	}else if (Intersection(10) == true) {
-		offsetY -= value;
+		playerSettings.offsetY -= value;
 	}
 	else {
 		for (int i = 0; i < bulletsCount; i++) {
@@ -328,16 +339,16 @@ bool Map::Intersection(int type)
 	switch (type) {
 	case 10: case 11: case 12: case 13:
 		for (int j = 0; j < closingWallCount; j++) {
-			if (WIDTH / 2 >= closingWall[j].posX * tile_w + offsetX && WIDTH / 2 <= closingWall[j].posX * tile_w + offsetX + tile_w &&
-				HEIGTH / 2 >= closingWall[j].posY * tile_h + offsetY && HEIGTH / 2 <= closingWall[j].posY * tile_h + offsetY + tile_h &&
+			if (WIDTH / 2 >= closingWall[j].posX * tile_w + playerSettings.offsetX && WIDTH / 2 <= closingWall[j].posX * tile_w + playerSettings.offsetX + tile_w &&
+				HEIGTH / 2 >= closingWall[j].posY * tile_h + playerSettings.offsetY && HEIGTH / 2 <= closingWall[j].posY * tile_h + playerSettings.offsetY + tile_h &&
 				closingWall[j].isClos == true) {
 				return 1;
 			}
 		}
 	case 1:
 		for (int j = 0; j < defoltWallCount; j++) {
-			if (WIDTH / 2 >= defoltWall[j].posX * tile_w + offsetX && WIDTH / 2 <= defoltWall[j].posX * tile_w + offsetX + tile_w &&
-				HEIGTH / 2 >= defoltWall[j].posY * tile_h + offsetY && HEIGTH / 2 <= defoltWall[j].posY * tile_h + offsetY + tile_h) {
+			if (WIDTH / 2 >= defoltWall[j].posX * tile_w + playerSettings.offsetX && WIDTH / 2 <= defoltWall[j].posX * tile_w + playerSettings.offsetX + tile_w &&
+				HEIGTH / 2 >= defoltWall[j].posY * tile_h + playerSettings.offsetY && HEIGTH / 2 <= defoltWall[j].posY * tile_h + playerSettings.offsetY + tile_h) {
 				return 1;
 			}
 		}
@@ -355,6 +366,11 @@ bool Map::IntersectionWithGameObg(GameObgect gameObgect)
 bool Map::IntersectionWithGameObg(Chest chest)
 {
 	return (WIDTH / 2 >= chest.dest.x && WIDTH / 2 <= chest.dest.x + chest.dest.w && HEIGTH / 2 >= chest.dest.y && HEIGTH / 2 <= chest.dest.y + chest.dest.h);
+}
+
+bool Map::IntersectionWithGameObg(Enemy enemy)
+{
+	return (WIDTH / 2 >= enemy.dest.x && WIDTH / 2 <= enemy.dest.x + enemy.dest.w && HEIGTH / 2 >= enemy.dest.y && HEIGTH / 2 <= enemy.dest.y + enemy.dest.h);
 }
 
 bool Map::IntersectionWithGameObg(ClosingWall wall)
@@ -377,7 +393,15 @@ void Map::SetSize(int w, int h)
 
 void Map::changingKeyState(const Uint8* arr)
 {
-	key.space = arr[SDL_SCANCODE_SPACE];
+	int tmpTime = clock();
+	if (key.space == true) {
+		key.space = false;
+		key.timeOfLastspace = tmpTime;
+	}
+	if (tmpTime - key.timeOfLastspace > key.spaceDelay) {
+		key.timeOfCurrentspace = tmpTime;
+		key.space = arr[SDL_SCANCODE_SPACE];
+	}
 }
 
 void Map::changingKeyState(bool mouseDown)

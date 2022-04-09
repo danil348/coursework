@@ -36,7 +36,7 @@ void Bullets::setAngl(int x, int y, int w, int h)
 	isFly = true;
 }
 
-bool Bullets::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, Enemy* enemy, int enemyCount, int tile_w, int tile_h, int offsetX, int offsetY)
+bool Bullets::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, Enemy* enemy, int enemyCount, int tile_w, int tile_h, int offsetX, int offsetY, float damage)
 {
 	if (dist > maxDist) {
 		return 1;
@@ -58,7 +58,7 @@ bool Bullets::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingW
 		if (Bx >= enemy[j].dest.x && Bx <= enemy[j].dest.x + enemy[j].dest.w &&
 			By >= enemy[j].dest.y && By <= enemy[j].dest.y + enemy[j].dest.h &&
 			enemy[j].islive == true) {
-			enemy[j].hp -= 10;
+			enemy[j].hp -= damage;
 			return 1;
 		}
 	}
