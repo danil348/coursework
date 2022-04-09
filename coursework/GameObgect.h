@@ -54,12 +54,15 @@ public:
 	void setSrcDest_X_Y(int src_x, int src_y, int dest_x, int dest_y) override;
 	bool isUsed();
 	void getBonus(int& hp, int& armor, int& mana, int& coins);
+	void setType(int type);
+	int getType();
 private:
 	int hpBust = 0;
 	int armorBust = 0;
 	int manaBust = 0;
 	int coinsBust = 15;
 	bool used = false;
+	int type;
 };
 
 

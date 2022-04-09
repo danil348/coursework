@@ -16,12 +16,13 @@ public:
 	SDL_Rect src, dest;
 
 	void fly();
-	void setAngl(int x, int y, int w, int h);
+	void setAngl(int x, int y, int w, int h, float offsetR);
 	void reset();
 	bool intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, Enemy* enemy, int enemyCount, int tile_w, int tile_h, int offsetX, int offsetY, float damage);
 private:
 	float dist = 0.0f;
 	int maxDist = 8000;
+	float offsetRadius;
 	int angle;
 	int screanW;
 	int screanH;

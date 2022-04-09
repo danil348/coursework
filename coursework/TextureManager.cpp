@@ -15,3 +15,8 @@ void TextureManager::Drow(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest)
 {
 	SDL_RenderCopy(renderer, tex, &src, &dest);
 }
+
+void TextureManager::Drow(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest, float angle)
+{
+	SDL_RenderCopyEx(renderer, tex, &src, &dest, angle, NULL, SDL_FLIP_NONE);
+}

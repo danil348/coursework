@@ -13,9 +13,9 @@ Map::Map()
 	hpBoard = TextureManager::LoadTexture("assets/hp.png");
 	bullet = TextureManager::LoadTexture("assets/bullet.png");
 	enemyTx = TextureManager::LoadTexture("assets/enemy.png");
+	weapon_1 = TextureManager::LoadTexture("assets/w1.png");
 
 	//сундуки
-	int x, y;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
 			if (lvl1[row][column] == 7) {
@@ -62,7 +62,13 @@ Map::Map()
 				statue[statueCount].posX = column;
 				statue[statueCount].posY = row;
 				statue[statueCount].setSrcDest_W_H(288, 320, tile_w * 3, tile_h * 3);
-				statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/player.png"));
+				statue[statueCount].setType((rand() % 3));
+				if (statue[statueCount].getType() == 1) {
+					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st1.png"));
+				}
+				else {
+					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st2.png"));
+				}
 				statueCount++;
 				break;
 			case 10: case 11: case 12: case 13:
@@ -116,7 +122,7 @@ void Map::DrawMap(SDL_Window* window)
 			}
 
 			if (lvl1[row][column] >= 2 && lvl1[row][column] <= 8 && dest.x > -tile_w && 
-				dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h) {
+				dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h && lvl1[row][column-1]!=8) {
 				switch (lvl1[row][column]) {
 				case 2: TextureManager::Drow(ground_1, src, dest); break;
 				case 3: TextureManager::Drow(ground_2, src, dest); break;
@@ -137,6 +143,8 @@ void Map::DrawMap(SDL_Window* window)
 					break;
 				case 8:
 					TextureManager::Drow(ground_5, src, dest);
+					_rect = { dest.x + tile_w, dest.y, tile_w, tile_h };
+					TextureManager::Drow(ground_4, src, _rect);
 					for (int i = 0; i < statueCount; i++) {
 						if (statue[i].posX == column && statue[i].posY == row) {
 							statue[i].setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
@@ -235,7 +243,7 @@ void Map::DrawMap(SDL_Window* window)
 		for (int i = 0; i < bulletsCount; i++) {
 			if (bullets[i].isFly == false && bulletsSettings.timeOfCurrentBullet - bulletsSettings.timeOfLastBullet > bulletsSettings.delay && playerSettings.mana > 0) {
 				playerSettings.mana--;
-				bullets[i].setAngl(key.mousePosX, key.mousePosY, WIDTH, HEIGTH);
+				bullets[i].setAngl(key.mousePosX, key.mousePosY, WIDTH, HEIGTH, bulletsSettings.offsetRadius);
 				bulletsSettings.timeOfLastBullet = clock();
 				break;
 			}
@@ -294,8 +302,18 @@ void Map::DrawMap(SDL_Window* window)
 	SDL_RenderFillRect(textureManager.renderer, &_rect);
 	textManager.Drow(textureManager.renderer, to_string(playerSettings.mana), 52, 26, 138, 100, 255, (playerSettings.mana >0) ? 255 : 33, (playerSettings.mana > 0) ? 255 : 33);
 
+#ifdef DEBUG
+	_srect = { 0,0, 160,16 };
+	_rect = { WIDTH / 2 - 160, HEIGTH / 2 - 16, 320, 32 };
+	int angl = -int(atan2f(float(key.mousePosX - WIDTH/2), float(key.mousePosY - HEIGTH/2)) * 180 / M_PI - 90) % 360;
+	if (angl < 0) {
+		angl = 270 + angl + 90;
+	}
+	TextureManager::Drow(weapon_1, _srect, _rect, angl);
+#endif // DEBUG
+
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
-	rect = { WIDTH / 2, HEIGTH / 2, 10, 10 };
+	rect = { WIDTH / 2, HEIGTH / 2, 1, 1 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
 }
 

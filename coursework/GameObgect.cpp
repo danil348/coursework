@@ -204,6 +204,16 @@ void Statue::getBonus(int& hp, int& armor, int& mana, int& coins)
 	}
 }
 
+int Statue::getType()
+{
+	return type;
+}
+
+void Statue::setType(int type)
+{
+	this->type = type;
+}
+
 Enemy::Enemy()
 {
 	coeffX = rand() % 6 / 10.0f + 0.5f;

@@ -12,15 +12,16 @@ Bullets::Bullets()
 
 void Bullets::fly()
 {
-	Bx = screanW /2 + dist * cosVal + offX;
-	By = screanH /2 + dist * -sinVal + offY;
+	Bx = screanW /2 + (dist + offsetRadius) * cosVal + offX;
+	By = screanH /2 + (dist + offsetRadius) * -sinVal + offY;
 	dest.x = Bx;
 	dest.y = By;
 	dist += 6.2f;
 }
 
-void Bullets::setAngl(int x, int y, int w, int h)
+void Bullets::setAngl(int x, int y, int w, int h, float offsetR)
 {
+	offsetRadius = offsetR;
 	x = x - w / 2;
 	y = (h / 2 - y);
 	screanW = w;
