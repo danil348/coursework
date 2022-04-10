@@ -17,7 +17,7 @@ void TextManager::Drow(SDL_Renderer* renderer, string text, int dest_w, int dest
 	fore_color.r = colorR;
 	fore_color.g = colorG;
 	fore_color.b = colorB;
-	textSurface = TTF_RenderUTF8_Solid(my_font, text.c_str(), fore_color);
+	textSurface = TTF_RenderUTF8_Blended_Wrapped(my_font, text.c_str(), fore_color, 1000);
 	texture = SDL_CreateTextureFromSurface(renderer, textSurface);
 	rect = { dest_x, dest_y, dest_w, dest_h };
 	SDL_RenderCopy(renderer, texture, NULL, &rect);

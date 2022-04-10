@@ -276,3 +276,33 @@ bool Enemy::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWal
 	}
 	return 0;
 }
+
+void WeaponShop::setWeaponTexture(SDL_Texture* value)
+{
+	weaponTexture = value;
+}
+
+void WeaponShop::setBulletTexture(SDL_Texture* value)
+{
+	bulletTexture = value;
+}
+
+void WeaponShop::setType(int type)
+{
+	this->type = type;
+}
+
+int WeaponShop::getType()
+{
+	return type;
+}
+
+SDL_Texture* WeaponShop::getWeaponTexture()
+{
+	return weaponTexture;
+}
+
+SDL_Texture* WeaponShop::getBulletTexture()
+{
+	return bulletTexture;
+}

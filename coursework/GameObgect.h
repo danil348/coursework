@@ -65,6 +65,26 @@ private:
 	int type;
 };
 
+class WeaponShop: public GameObgect
+{
+public:
+	void setWeaponTexture(SDL_Texture* value);
+	void setBulletTexture(SDL_Texture* value);
+	void setType(int type);
+
+	int getType();
+	SDL_Texture* getWeaponTexture();
+	SDL_Texture* getBulletTexture();
+private:
+	SDL_Texture* weaponTexture;
+	SDL_Texture* bulletTexture;
+	int bulletDelay = 100;
+	float bulletOffsetRadius = 140.0f;
+	float bulletDamage = 10.0f;
+	int manaCost = 1;
+	int type = 0;
+};
+
 
 class ClosingWall: public GameObgect
 {

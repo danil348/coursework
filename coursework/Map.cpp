@@ -4,6 +4,8 @@ SDL_Renderer* TextureManager::renderer = nullptr;
 
 Map::Map()
 {
+	weaponSettings.bulletTexture = TextureManager::LoadTexture("assets/b1.png");
+	weaponSettings.weaponTexture = TextureManager::LoadTexture("assets/w1.png");
 	ground_1 = TextureManager::LoadTexture("assets/1.png");
 	ground_2 = TextureManager::LoadTexture("assets/2.png");
 	ground_3 = TextureManager::LoadTexture("assets/3.png");
@@ -11,9 +13,7 @@ Map::Map()
 	ground_5 = TextureManager::LoadTexture("assets/5.png");
 	coin = TextureManager::LoadTexture("assets/9.png");
 	hpBoard = TextureManager::LoadTexture("assets/hp.png");
-	bullet = TextureManager::LoadTexture("assets/bullet.png");
 	enemyTx = TextureManager::LoadTexture("assets/enemy.png");
-	weapon_1 = TextureManager::LoadTexture("assets/w1.png");
 
 	//сундуки
 	for (int row = 0; row < lvl1_h; row++) {
@@ -33,6 +33,9 @@ Map::Map()
 			else if (lvl1[row][column] == 14) {
 				enemyCount++;
 			}
+			else if (lvl1[row][column] == 9) {
+				weaponShopCount++;
+			}
 			
 		}
 	}
@@ -42,11 +45,13 @@ Map::Map()
 	bullets = new Bullets[bulletsCount];
 	defoltWall = new GameObgect[defoltWallCount];
 	enemy = new Enemy[enemyCount];
+	weaponShop = new WeaponShop[weaponShopCount];
 	chestCount = 0;
 	statueCount = 0;
 	closingWallCount = 0;
 	defoltWallCount = 0;
 	enemyCount = 0;
+	weaponShopCount = 0;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
 			switch (lvl1[row][column]) {
@@ -94,6 +99,17 @@ Map::Map()
 				enemy[enemyCount].setMainTexture(TextureManager::LoadTexture("assets/enemy.png"));
 				enemyCount++;
 				break;
+			case 9:
+				weaponShop[weaponShopCount].posX = column;
+				weaponShop[weaponShopCount].posY = row;
+				weaponShop[weaponShopCount].setSrcDest_W_H(320, 32, 320, 32);
+				weaponShop[weaponShopCount].setType(rand() % weaponSettings.totalWeapons + 1);
+				if (weaponShop[weaponShopCount].getType() == 1) {
+					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w2.png"));
+					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b2.png"));
+				}
+				weaponShopCount++;
+				break;
 			default: break;
 			}
 		}
@@ -121,8 +137,9 @@ void Map::DrawMap(SDL_Window* window)
 				continue;
 			}
 
-			if (lvl1[row][column] >= 2 && lvl1[row][column] <= 8 && dest.x > -tile_w && 
-				dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h && lvl1[row][column-1]!=8) {
+			if (lvl1[row][column] >= 2 && lvl1[row][column] <= 9 && dest.x > -tile_w && 
+				dest.x < WIDTH + tile_w && dest.y > -tile_h && dest.y < HEIGTH + tile_h && lvl1[row][column-1] != 8 &&
+				lvl1[row][column - 1] != 9) {
 				switch (lvl1[row][column]) {
 				case 2: TextureManager::Drow(ground_1, src, dest); break;
 				case 3: TextureManager::Drow(ground_2, src, dest); break;
@@ -150,6 +167,7 @@ void Map::DrawMap(SDL_Window* window)
 							statue[i].setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
 							TextureManager::Drow(statue[i].getMainTexture(), statue[i].src, statue[i].dest);
 							if (IntersectionWithGameObg(statue[i]) == true && statue[i].isUsed() == false) {
+								textManager.Drow(textureManager.renderer, u8"всего 15 монет,\nа сколько пользы", 300, 100, statue[i].dest.x + 70, statue[i].dest.y - 50, 232, 221, 186);
 								if (key.space == true) {
 									statue[i].wasUsed = true;
 								}
@@ -161,6 +179,27 @@ void Map::DrawMap(SDL_Window* window)
 						}
 					}
 					break;
+				case 9:
+					TextureManager::Drow(ground_5, src, dest);
+					_rect = { dest.x + tile_w, dest.y, tile_w, tile_h };
+					TextureManager::Drow(ground_4, src, _rect);
+					for (int i = 0; i < weaponShopCount; i++) {
+						if (weaponShop[i].posX == column && weaponShop[i].posY == row) {
+							weaponShop[i].setSrcDest_X_Y(src.x, src.y, dest.x - weaponShop[i].dest.w/2, dest.y);
+							TextureManager::Drow(weaponShop[i].getWeaponTexture(), weaponShop[i].src, weaponShop[i].dest);
+							if (IntersectionWithGameObg(weaponShop[i]) == true) {
+								if (key.space == true) {
+									weaponSettings.tmpWeaponTexture = weaponShop[i].getWeaponTexture();
+									weaponSettings.tmpBulletTexture = weaponShop[i].getBulletTexture();
+									weaponShop[i].setWeaponTexture(weaponSettings.weaponTexture);
+									weaponShop[i].setBulletTexture(weaponSettings.bulletTexture);
+									weaponSettings.weaponTexture = weaponSettings.tmpWeaponTexture;
+									weaponSettings.bulletTexture = weaponSettings.tmpBulletTexture;
+								}
+							}
+							break;
+						}
+					}
 				default:
 					break;
 				}
@@ -239,12 +278,12 @@ void Map::DrawMap(SDL_Window* window)
 		}
 	}
 	if (key.leftMouseKey == true) {
-		bulletsSettings.timeOfCurrentBullet = clock();
+		weaponSettings.timeOfCurrentBullet = clock();
 		for (int i = 0; i < bulletsCount; i++) {
-			if (bullets[i].isFly == false && bulletsSettings.timeOfCurrentBullet - bulletsSettings.timeOfLastBullet > bulletsSettings.delay && playerSettings.mana > 0) {
-				playerSettings.mana--;
-				bullets[i].setAngl(key.mousePosX, key.mousePosY, WIDTH, HEIGTH, bulletsSettings.offsetRadius);
-				bulletsSettings.timeOfLastBullet = clock();
+			if (bullets[i].isFly == false && weaponSettings.timeOfCurrentBullet - weaponSettings.timeOfLastBullet > weaponSettings.bulletDelay && playerSettings.mana > 0) {
+				playerSettings.mana -= weaponSettings.manaCost;
+				bullets[i].setAngl(key.mousePosX, key.mousePosY, WIDTH, HEIGTH, weaponSettings.bulletOffsetRadius);
+				weaponSettings.timeOfLastBullet = clock();
 				break;
 			}
 		}
@@ -257,7 +296,7 @@ void Map::DrawMap(SDL_Window* window)
 		}
 		if (bullets[i].isFly == true) {
 			bullets[i].fly();
-			TextureManager::Drow(bullet, bullets[i].src, bullets[i].dest);
+			TextureManager::Drow(weaponSettings.bulletTexture, bullets[i].src, bullets[i].dest);
 		}
 	}
 
@@ -309,7 +348,7 @@ void Map::DrawMap(SDL_Window* window)
 	if (angl < 0) {
 		angl = 270 + angl + 90;
 	}
-	TextureManager::Drow(weapon_1, _srect, _rect, angl);
+	TextureManager::Drow(weaponSettings.weaponTexture, _srect, _rect, angl);
 #endif // DEBUG
 
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
@@ -389,6 +428,11 @@ bool Map::IntersectionWithGameObg(Chest chest)
 bool Map::IntersectionWithGameObg(Enemy enemy)
 {
 	return (WIDTH / 2 >= enemy.dest.x && WIDTH / 2 <= enemy.dest.x + enemy.dest.w && HEIGTH / 2 >= enemy.dest.y && HEIGTH / 2 <= enemy.dest.y + enemy.dest.h);
+}
+
+bool Map::IntersectionWithGameObg(WeaponShop weaponShop)
+{
+	return (WIDTH / 2 >= weaponShop.dest.x && WIDTH / 2 <= weaponShop.dest.x + weaponShop.dest.w && HEIGTH / 2 >= weaponShop.dest.y - weaponShop.dest.h && HEIGTH / 2 <= weaponShop.dest.y + weaponShop.dest.h * 2);
 }
 
 bool Map::IntersectionWithGameObg(ClosingWall wall)
