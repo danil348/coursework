@@ -105,8 +105,22 @@ Map::Map()
 				weaponShop[weaponShopCount].setSrcDest_W_H(320, 32, 320, 32);
 				weaponShop[weaponShopCount].setType(rand() % weaponSettings.totalWeapons + 1);
 				if (weaponShop[weaponShopCount].getType() == 1) {
+					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w1.png"));
+					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b1.png"));
+					weaponShop[weaponShopCount].setParameters(10, 1);
+					weaponShop[weaponShopCount].cost = 10;
+				}
+				else if (weaponShop[weaponShopCount].getType() == 2) {
 					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w2.png"));
 					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b2.png"));
+					weaponShop[weaponShopCount].setParameters(20, 2);
+					weaponShop[weaponShopCount].cost = 30;
+				}
+				else if (weaponShop[weaponShopCount].getType() == 3) {
+					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w3.png"));
+					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b3.png"));
+					weaponShop[weaponShopCount].setParameters(30, 3);
+					weaponShop[weaponShopCount].cost = 50;
 				}
 				weaponShopCount++;
 				break;
@@ -188,13 +202,19 @@ void Map::DrawMap(SDL_Window* window)
 							weaponShop[i].setSrcDest_X_Y(src.x, src.y, dest.x - weaponShop[i].dest.w/2, dest.y);
 							TextureManager::Drow(weaponShop[i].getWeaponTexture(), weaponShop[i].src, weaponShop[i].dest);
 							if (IntersectionWithGameObg(weaponShop[i]) == true) {
+								if (weaponShop[i].isBuy == false) {
+									textManager.Drow(textureManager.renderer, u8"цена: " + to_string(weaponShop[i].cost), 120, 25, weaponShop[i].dest.x + weaponShop[i].dest.w / 2, weaponShop[i].dest.y - weaponShop[i].dest.h*2, 232, 221, 186);
+								}
+								textManager.Drow(textureManager.renderer, u8"Dm: " + to_string(int(weaponShop[i].bulletDamage)) + u8" M: " + to_string(weaponShop[i].manaCost), 120, 25, weaponShop[i].dest.x + weaponShop[i].dest.w / 2, weaponShop[i].dest.y - weaponShop[i].dest.h, 232, 221, 186);
 								if (key.space == true) {
-									weaponSettings.tmpWeaponTexture = weaponShop[i].getWeaponTexture();
-									weaponSettings.tmpBulletTexture = weaponShop[i].getBulletTexture();
-									weaponShop[i].setWeaponTexture(weaponSettings.weaponTexture);
-									weaponShop[i].setBulletTexture(weaponSettings.bulletTexture);
-									weaponSettings.weaponTexture = weaponSettings.tmpWeaponTexture;
-									weaponSettings.bulletTexture = weaponSettings.tmpBulletTexture;
+									if (weaponShop[i].alrBuy == false && playerSettings.score >= weaponShop[i].cost) {
+										playerSettings.score -= weaponShop[i].cost;
+										weaponShop[i].alrBuy = true;
+										weaponShop[i].isBuy = true;
+									}
+									if (weaponShop[i].isBuy == true) {
+										weaponSettings.setParameters(weaponShop[i]);
+									}
 								}
 							}
 							break;
@@ -282,6 +302,9 @@ void Map::DrawMap(SDL_Window* window)
 		for (int i = 0; i < bulletsCount; i++) {
 			if (bullets[i].isFly == false && weaponSettings.timeOfCurrentBullet - weaponSettings.timeOfLastBullet > weaponSettings.bulletDelay && playerSettings.mana > 0) {
 				playerSettings.mana -= weaponSettings.manaCost;
+				if (playerSettings.mana < 0) {
+					playerSettings.mana = 0;
+				}
 				bullets[i].setAngl(key.mousePosX, key.mousePosY, WIDTH, HEIGTH, weaponSettings.bulletOffsetRadius);
 				weaponSettings.timeOfLastBullet = clock();
 				break;
@@ -290,7 +313,7 @@ void Map::DrawMap(SDL_Window* window)
 	}
 	for (int i = 0; i < bulletsCount; i++) {
 		if (bullets[i].isFly == true) {
-			if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, enemy, enemyCount, tile_w, tile_h, playerSettings.offsetX, playerSettings.offsetY, playerSettings.shotDamage) == true) {
+			if (bullets[i].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, enemy, enemyCount, tile_w, tile_h, playerSettings.offsetX, playerSettings.offsetY, weaponSettings.bulletDamage) == true) {
 				bullets[i].reset();
 			}
 		}
@@ -469,4 +492,28 @@ void Map::changingKeyState(const Uint8* arr)
 void Map::changingKeyState(bool mouseDown)
 {
 	key.leftMouseKey = mouseDown;
+}
+
+void WeaponSettings::setParameters(WeaponShop& weaponShop)
+{
+	tmpWeaponTexture = weaponShop.getWeaponTexture();
+	tmpBulletTexture = weaponShop.getBulletTexture();
+	tmpType = weaponShop.getType();
+	tmpBulletDamage = weaponShop.bulletDamage;
+	tmpManaCost = weaponShop.manaCost;
+	tmpCost = weaponShop.cost;
+
+	weaponShop.cost = cost;
+	weaponShop.manaCost = manaCost;
+	weaponShop.bulletDamage = bulletDamage;
+	weaponShop.setType(type);
+	weaponShop.setWeaponTexture(weaponTexture);
+	weaponShop.setBulletTexture(bulletTexture);
+	
+	cost = tmpCost;
+	manaCost = tmpManaCost;
+	bulletDamage = tmpBulletDamage;
+	type = tmpType;
+	weaponTexture = tmpWeaponTexture;
+	bulletTexture = tmpBulletTexture;
 }

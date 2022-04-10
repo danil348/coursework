@@ -292,6 +292,12 @@ void WeaponShop::setType(int type)
 	this->type = type;
 }
 
+void WeaponShop::setParameters(float bulletDamage, int manaCost)
+{
+	this->bulletDamage = bulletDamage;
+	this->manaCost = manaCost;
+}
+
 int WeaponShop::getType()
 {
 	return type;

@@ -71,17 +71,22 @@ public:
 	void setWeaponTexture(SDL_Texture* value);
 	void setBulletTexture(SDL_Texture* value);
 	void setType(int type);
+	void setParameters(float bulletDamage, int manaCost);
 
 	int getType();
 	SDL_Texture* getWeaponTexture();
 	SDL_Texture* getBulletTexture();
+
+	float bulletDamage = 10.0f;
+	int manaCost = 1;
+	int cost = 10;
+	bool alrBuy = false;
+	bool isBuy = false;
 private:
 	SDL_Texture* weaponTexture;
 	SDL_Texture* bulletTexture;
 	int bulletDelay = 100;
 	float bulletOffsetRadius = 140.0f;
-	float bulletDamage = 10.0f;
-	int manaCost = 1;
 	int type = 0;
 };
 
