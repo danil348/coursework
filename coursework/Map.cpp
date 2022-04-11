@@ -18,23 +18,14 @@ Map::Map()
 	//сундуки
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
-			if (lvl1[row][column] == 7) {
-				chestCount++;
-			}
-			else if (lvl1[row][column] == 8) {
-				statueCount++;
-			}
-			else if (lvl1[row][column] == 10 || lvl1[row][column] == 11 || lvl1[row][column] == 12 || lvl1[row][column] == 13) {
-				closingWallCount++;
-			}
-			else if (lvl1[row][column] == 1) {
-				defoltWallCount++;
-			}
-			else if (lvl1[row][column] == 14) {
-				enemyCount++;
-			}
-			else if (lvl1[row][column] == 9) {
-				weaponShopCount++;
+			switch (lvl1[row][column]) {
+			case 7: chestCount++; break;
+			case 8: statueCount++; break;
+			case 10:case 11:case 12:case 13: closingWallCount++; break;
+			case 1: defoltWallCount++; break;
+			case 14: enemyCount++; break;
+			case 9: weaponShopCount++; break;
+			default: break;
 			}
 			
 		}
@@ -370,11 +361,11 @@ void Map::DrawMap(SDL_Window* window)
 		angl = 270 + angl + 90;
 	}
 	TextureManager::Drow(weaponSettings.weaponTexture, _srect, _rect, angl);
-#endif // DEBUG
 
 	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
 	rect = { WIDTH / 2, HEIGTH / 2, 1, 1 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
+#endif // DEBUG
 }
 
 
