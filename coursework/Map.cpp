@@ -4,6 +4,8 @@ SDL_Renderer* TextureManager::renderer = nullptr;
 
 Map::Map()
 {
+	RoomCreater();
+
 	weaponSettings.bulletTexture = TextureManager::LoadTexture("assets/b1.png");
 	weaponSettings.weaponTexture = TextureManager::LoadTexture("assets/w1.png");
 	ground_1 = TextureManager::LoadTexture("assets/1.png");
@@ -14,111 +16,15 @@ Map::Map()
 	coin = TextureManager::LoadTexture("assets/9.png");
 	hpBoard = TextureManager::LoadTexture("assets/hp.png");
 	enemyTx = TextureManager::LoadTexture("assets/enemy.png");
+	chestClose = TextureManager::LoadTexture("assets/6.png");
+	chestOpen = TextureManager::LoadTexture("assets/7.png");
+	statue_1 = TextureManager::LoadTexture("assets/st1.png");
+	statue_2 = TextureManager::LoadTexture("assets/st2.png");
+	closingWallTx = TextureManager::LoadTexture("assets/clwall.png");
+	wallTx = TextureManager::LoadTexture("assets/0.png");
 
 	//сундуки
-	for (int row = 0; row < lvl1_h; row++) {
-		for (int column = 0; column < lvl1_w; column++) {
-			switch (lvl1[row][column]) {
-			case 7: chestCount++; break;
-			case 8: statueCount++; break;
-			case 10:case 11:case 12:case 13: closingWallCount++; break;
-			case 1: defoltWallCount++; break;
-			case 14: enemyCount++; break;
-			case 9: weaponShopCount++; break;
-			default: break;
-			}
-			
-		}
-	}
-	chest = new Chest[chestCount];
-	statue = new Statue[statueCount];
-	closingWall = new ClosingWall[closingWallCount];
-	bullets = new Bullets[bulletsCount];
-	defoltWall = new GameObgect[defoltWallCount];
-	enemy = new Enemy[enemyCount];
-	weaponShop = new WeaponShop[weaponShopCount];
-	chestCount = 0;
-	statueCount = 0;
-	closingWallCount = 0;
-	defoltWallCount = 0;
-	enemyCount = 0;
-	weaponShopCount = 0;
-	for (int row = 0; row < lvl1_h; row++) {
-		for (int column = 0; column < lvl1_w; column++) {
-			switch (lvl1[row][column]) {
-			case 7:
-				chest[chestCount].posX = column;
-				chest[chestCount].posY = row;
-				chest[chestCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				chest[chestCount].setMainTexture(TextureManager::LoadTexture("assets/6.png"));
-				chest[chestCount].setSecondTexture(TextureManager::LoadTexture("assets/7.png"));
-				chestCount++;
-				break;
-			case 8:
-				statue[statueCount].posX = column;
-				statue[statueCount].posY = row;
-				statue[statueCount].setSrcDest_W_H(288, 320, tile_w * 3, tile_h * 3);
-				statue[statueCount].setType((rand() % 3));
-				if (statue[statueCount].getType() == 1) {
-					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st1.png"));
-				}
-				else {
-					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st2.png"));
-				}
-				statueCount++;
-				break;
-			case 10: case 11: case 12: case 13:
-				closingWall[closingWallCount].posX = column;
-				closingWall[closingWallCount].posY = row;
-				closingWall[closingWallCount].type = lvl1[row][column];
-				closingWall[closingWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				closingWall[closingWallCount].setMainTexture(TextureManager::LoadTexture("assets/2.png"));
-				closingWall[closingWallCount].setSecondTexture(TextureManager::LoadTexture("assets/clwall.png"));
-				closingWallCount++;
-				break;
-			case 1:
-				defoltWall[defoltWallCount].posX = column;
-				defoltWall[defoltWallCount].posY = row;
-				defoltWall[defoltWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				defoltWall[defoltWallCount].setMainTexture(TextureManager::LoadTexture("assets/0.png"));
-				defoltWallCount++;
-				break;
-			case 14:
-				enemy[enemyCount].posX = column;
-				enemy[enemyCount].posY = row;
-				enemy[enemyCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				enemy[enemyCount].setMainTexture(TextureManager::LoadTexture("assets/enemy.png"));
-				enemyCount++;
-				break;
-			case 9:
-				weaponShop[weaponShopCount].posX = column;
-				weaponShop[weaponShopCount].posY = row;
-				weaponShop[weaponShopCount].setSrcDest_W_H(320, 32, 320, 32);
-				weaponShop[weaponShopCount].setType(rand() % weaponSettings.totalWeapons + 1);
-				if (weaponShop[weaponShopCount].getType() == 1) {
-					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w1.png"));
-					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b1.png"));
-					weaponShop[weaponShopCount].setParameters(10, 1);
-					weaponShop[weaponShopCount].cost = 10;
-				}
-				else if (weaponShop[weaponShopCount].getType() == 2) {
-					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w2.png"));
-					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b2.png"));
-					weaponShop[weaponShopCount].setParameters(20, 2);
-					weaponShop[weaponShopCount].cost = 30;
-				}
-				else if (weaponShop[weaponShopCount].getType() == 3) {
-					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w3.png"));
-					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b3.png"));
-					weaponShop[weaponShopCount].setParameters(30, 3);
-					weaponShop[weaponShopCount].cost = 50;
-				}
-				weaponShopCount++;
-				break;
-			default: break;
-			}
-		}
-	}
+	
 
 	src.x = src.y = 0;
 	src.w = tile_w;
@@ -172,7 +78,7 @@ void Map::DrawMap(SDL_Window* window)
 							statue[i].setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
 							TextureManager::Drow(statue[i].getMainTexture(), statue[i].src, statue[i].dest);
 							if (IntersectionWithGameObg(statue[i]) == true && statue[i].isUsed() == false) {
-								textManager.Drow(textureManager.renderer, u8"всего 15 монет,\nа столько пользы", 300, 100, statue[i].dest.x + 70, statue[i].dest.y - 50, 232, 221, 186);
+								//textManager.Drow(textureManager.renderer, u8"всего 15 монет,\nа столько пользы", 300, 100, statue[i].dest.x + 70, statue[i].dest.y - 50, 232, 221, 186);
 								if (key.space == true) {
 									statue[i].wasUsed = true;
 								}
@@ -221,7 +127,7 @@ void Map::DrawMap(SDL_Window* window)
 					for (int i = 0; i < defoltWallCount; i++) {
 						if (defoltWall[i].posX == column && defoltWall[i].posY == row) {
 							defoltWall[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
-							TextureManager::Drow(defoltWall[0].getMainTexture(), src, dest);
+							TextureManager::Drow(wallTx, src, dest);
 							break;
 						}
 					}
@@ -366,6 +272,12 @@ void Map::DrawMap(SDL_Window* window)
 	rect = { WIDTH / 2, HEIGTH / 2, 1, 1 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
 #endif // DEBUG
+	if (key.space) {
+
+#ifdef DEBUG
+		RoomCreater();
+#endif // DEBUG
+	}
 }
 
 
@@ -505,4 +417,336 @@ void WeaponSettings::setParameters(WeaponShop& weaponShop)
 	type = tmpType;
 	weaponTexture = tmpWeaponTexture;
 	bulletTexture = tmpBulletTexture;
+}
+
+void Map::RoomCreater()
+{
+	for (int row = 0; row < lvl1_h; row++) {
+		for (int column = 0; column < lvl1_w; column++) {
+			lvl1[row][column] = 0;
+		}
+	}
+	for (int i = 0; i < rooms.mapH; i++) {
+		for (int j = 0; j < rooms.mapW; j++) {
+			rooms.rooms[i][j] = 0;
+		}
+	}
+	rooms.spawnRoom.hasLeftRoom = false;
+	rooms.spawnRoom.hasLowerRoom = false;
+	rooms.spawnRoom.hasRightRoom = false;
+	rooms.spawnRoom.hasUpperRoom = false;
+
+
+	int wallLength = 8;
+	int startRoom[2] = { rand() % rooms.mapH ,rand() % rooms.mapW };
+	int startRoomY = startRoom[0];
+	int startRoomX = startRoom[1];
+	rooms.rooms[startRoom[0]][startRoom[1]] = 1;
+	for (int i = 0; i < 10; i++) {
+		if (rand() % 2 == 0) { // x
+			if (startRoom[1] == rooms.mapW - 1) {
+				startRoom[1]--;
+			}
+			else if (startRoom[1] == 0) {
+				startRoom[1]++;
+			}
+			else {
+				if (rand() % 2 == 0) {
+					startRoom[1]++;
+				}
+				else {
+					startRoom[1]--;
+				}
+			}
+		}
+		else {
+			if (startRoom[0] == rooms.mapH - 1) {
+				startRoom[0]--;
+			}
+			else if (startRoom[0] == 0) {
+				startRoom[0]++;
+			}
+			else {
+				if (rand() % 2 == 0) {
+					startRoom[0]++;
+				}
+				else {
+					startRoom[0]--;
+				}
+			}
+		}
+		if (rooms.rooms[startRoom[0]][startRoom[1]] != 1) {
+			rooms.rooms[startRoom[0]][startRoom[1]] = rand() % 1 + 2;
+		}
+	}
+
+	int maxOffsetX = 0;
+	int maxOffsetY = 0;
+	int tmpValue = 0;
+	for (int i = 0; i < rooms.mapH; i++) {
+		for (int j = 0; j < startRoomX; j++) {
+			if (rooms.rooms[i][j] == 2) {
+				tmpValue += rooms.room2.w + wallLength;
+			}
+		}
+		if (tmpValue > maxOffsetX) {
+			maxOffsetX = tmpValue;
+		}
+		tmpValue = 0;
+	}
+
+	tmpValue = 0;
+	for (int i = 0; i < rooms.mapW; i++) {
+		for (int j = 0; j < startRoomY; j++) {
+			if (rooms.rooms[j][i] == 2) {
+				tmpValue += rooms.room2.h + wallLength;
+			}
+		}
+		if (tmpValue > maxOffsetY) {
+			maxOffsetY = tmpValue;
+		}
+		tmpValue = 0;
+	}
+
+	if (maxOffsetY == 0) {
+		maxOffsetY += 3;
+	}
+	if (maxOffsetX == 0) {
+		maxOffsetX = 3;
+	}
+	//сдвиг персонажа по х и у
+	playerSettings.offsetX = -(maxOffsetX - rooms.spawnRoom.w / 2) * tile_w;
+	playerSettings.offsetY = -(maxOffsetY - rooms.spawnRoom.h / 2) * tile_h;
+
+	//рисование начальной комнаты
+	for (int i = 0; i < rooms.spawnRoom.h; i++) {
+		for (int j = 0; j < rooms.spawnRoom.w; j++) {
+			lvl1[i + maxOffsetY][j + maxOffsetX] = rooms.spawnRoom.room[i][j];
+		}
+	}
+
+	
+
+	//рисование комнаты 2
+	for (int i = 0; i < rooms.mapH; i++) {
+		for (int j = 0; j < rooms.mapW; j++) {
+			if (i - 1 >= 0) {
+				if (rooms.rooms[i - 1][j] == 1 && rooms.rooms[i][j] == 2) {
+					rooms.spawnRoom.hasLowerRoom = true;
+					for (int k = 0; k < rooms.room2.h; k++) {
+						for (int q = 0; q < rooms.room2.w; q++) {
+							lvl1[k + maxOffsetY + rooms.spawnRoom.h + wallLength][q + maxOffsetX - abs(rooms.spawnRoom.w - rooms.room2.w) / 2] = rooms.room2.room[k][q];
+						}
+					}
+					for (int k = 0; k < wallLength + 2; k++) {
+						lvl1[k + maxOffsetY + rooms.spawnRoom.h - 1][maxOffsetX + rooms.spawnRoom.w / 2 - 2] = 1;
+						lvl1[k + maxOffsetY + rooms.spawnRoom.h - 1][maxOffsetX + rooms.spawnRoom.w / 2 - 1] = rand() % 5 + 2;
+						lvl1[k + maxOffsetY + rooms.spawnRoom.h - 1][maxOffsetX + rooms.spawnRoom.w / 2] = rand() % 5 + 2;
+						lvl1[k + maxOffsetY + rooms.spawnRoom.h - 1][maxOffsetX + rooms.spawnRoom.w / 2 + 1] = 1;
+					}
+				}
+			}
+			if (i + 1 < rooms.mapH) {
+				if (rooms.rooms[i + 1][j] == 1 && rooms.rooms[i][j] == 2) {
+					rooms.spawnRoom.hasUpperRoom = true;
+					for (int k = 0; k < rooms.room2.h; k++) {
+						for (int q = 0; q < rooms.room2.w; q++) {
+							lvl1[k + maxOffsetY - wallLength - rooms.room2.h][q + maxOffsetX - abs(rooms.spawnRoom.w - rooms.room2.w) / 2] = rooms.room2.room[k][q];
+						}
+					}
+					for (int k = 0; k < wallLength + 2; k++) {
+						lvl1[k + maxOffsetY - wallLength - 1][maxOffsetX + rooms.spawnRoom.w / 2 - 2] = 1;
+						lvl1[k + maxOffsetY - wallLength - 1][maxOffsetX + rooms.spawnRoom.w / 2 - 1] = rand() % 5 + 2;
+						lvl1[k + maxOffsetY - wallLength - 1][maxOffsetX + rooms.spawnRoom.w / 2] = rand() % 5 + 2;
+						lvl1[k + maxOffsetY - wallLength - 1][maxOffsetX + rooms.spawnRoom.w / 2 + 1] = 1;
+					}
+				}
+			}
+			if (j + 1 < rooms.mapW) {
+				if (rooms.rooms[i][j + 1] == 1 && rooms.rooms[i][j] == 2) {
+					rooms.spawnRoom.hasLeftRoom = true;
+					for (int k = 0; k < rooms.room2.h; k++) {
+						for (int q = 0; q < rooms.room2.w; q++) {
+							lvl1[k + maxOffsetY - abs(rooms.spawnRoom.h - rooms.room2.h) / 2][q + maxOffsetX - wallLength - rooms.room2.w] = rooms.room2.room[k][q];
+						}
+					}
+					for (int k = 0; k < wallLength + 2; k++) {
+						lvl1[maxOffsetY + rooms.spawnRoom.h / 2 - 2][k + maxOffsetX - wallLength - 1] = 1;
+						lvl1[maxOffsetY + rooms.spawnRoom.h / 2 - 1][k + maxOffsetX - wallLength - 1] = rand() % 5 + 2;
+						lvl1[maxOffsetY + rooms.spawnRoom.h / 2][k + maxOffsetX - wallLength - 1] = rand() % 5 + 2;
+						lvl1[maxOffsetY + rooms.spawnRoom.h / 2 + 1][k + maxOffsetX - wallLength - 1] = 1;
+					}
+				}
+			}
+			if( j - 1 >= 0) {
+				if (rooms.rooms[i][j - 1] == 1 && rooms.rooms[i][j] == 2) {
+					rooms.spawnRoom.hasRightRoom = true;
+					for (int k = 0; k < rooms.room2.h; k++) {
+						for (int q = 0; q < rooms.room2.w; q++) {
+							lvl1[k + maxOffsetY - abs(rooms.spawnRoom.h - rooms.room2.h) / 2][q + maxOffsetX + wallLength + rooms.spawnRoom.w] = rooms.room2.room[k][q];
+						}
+					}
+					for (int k = 0; k < wallLength + 2; k++) {
+						lvl1[maxOffsetY + rooms.spawnRoom.h / 2 - 2][k + maxOffsetX + wallLength - 1] = 1;
+						lvl1[maxOffsetY + rooms.spawnRoom.h / 2 - 1][k + maxOffsetX + wallLength - 1] = rand() % 5 + 2;
+						lvl1[maxOffsetY + rooms.spawnRoom.h / 2][k + maxOffsetX + wallLength - 1] = rand() % 5 + 2;
+						lvl1[maxOffsetY + rooms.spawnRoom.h / 2 + 1][k + maxOffsetX + wallLength - 1] = 1;
+					}
+				}
+			}
+		}
+	}
+
+	//рисование стенок начальной комнаты
+	if (rooms.spawnRoom.hasLowerRoom == false) {
+		lvl1[maxOffsetY + rooms.spawnRoom.h - 1][maxOffsetX + rooms.spawnRoom.w / 2 - 1] = 1;
+		lvl1[maxOffsetY + rooms.spawnRoom.h - 1][maxOffsetX + rooms.spawnRoom.w / 2] = 1;
+	}
+	if (rooms.spawnRoom.hasUpperRoom == false) {
+		lvl1[maxOffsetY][maxOffsetX + rooms.spawnRoom.w / 2 - 1] = 1;
+		lvl1[maxOffsetY][maxOffsetX + rooms.spawnRoom.w / 2] = 1;
+	}
+	if (rooms.spawnRoom.hasLeftRoom == false) {
+		lvl1[maxOffsetY + rooms.spawnRoom.h/2 - 1][maxOffsetX] = 1;
+		lvl1[maxOffsetY + rooms.spawnRoom.h / 2][maxOffsetX] = 1;
+	}
+	if (rooms.spawnRoom.hasRightRoom == false) {
+		lvl1[maxOffsetY + rooms.spawnRoom.h / 2 - 1][maxOffsetX + rooms.spawnRoom.w - 1] = 1;
+		lvl1[maxOffsetY + rooms.spawnRoom.h / 2][maxOffsetX + rooms.spawnRoom.w - 1] = 1;
+	}
+
+#ifdef DEBUG
+	/*for (int i = 0; i < rooms.mapH; i++) {
+		for (int j = 0; j < rooms.mapW; j++) {
+			cout << rooms.rooms[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << maxOffsetX << " " << maxOffsetY << endl;
+
+	for (int i = 0; i < lvl1_h; i++) {
+		for (int j = 0; j < lvl1_w; j++) {
+			cout << lvl1[i][j] << " ";
+		}
+		cout << endl;
+	}*/
+#endif // DEBUG
+
+	chestCount = 0;
+	statueCount = 0;
+	closingWallCount = 0;
+	defoltWallCount = 0;
+	enemyCount = 0;
+	weaponShopCount = 0;
+
+	for (int row = 0; row < lvl1_h; row++) {
+		for (int column = 0; column < lvl1_w; column++) {
+			switch (lvl1[row][column]) {
+			case 7: chestCount++; break;
+			case 8: statueCount++; break;
+			case 10:case 11:case 12:case 13: closingWallCount++; break;
+			case 1: defoltWallCount++; break;
+			case 14: enemyCount++; break;
+			case 9: weaponShopCount++; break;
+			default: break;
+			}
+
+		}
+	}
+	delete [] chest;
+	delete [] statue;
+	delete [] closingWall;
+	delete [] bullets;
+	delete [] defoltWall;
+	delete [] enemy;
+	delete [] weaponShop;
+	chest = new Chest[chestCount];
+	statue = new Statue[statueCount];
+	closingWall = new ClosingWall[closingWallCount];
+	bullets = new Bullets[bulletsCount];
+	defoltWall = new GameObgect[defoltWallCount];
+	enemy = new Enemy[enemyCount];
+	weaponShop = new WeaponShop[weaponShopCount];
+	chestCount = 0;
+	statueCount = 0;
+	closingWallCount = 0;
+	defoltWallCount = 0;
+	enemyCount = 0;
+	weaponShopCount = 0;
+	for (int row = 0; row < lvl1_h; row++) {
+		for (int column = 0; column < lvl1_w; column++) {
+			switch (lvl1[row][column]) {
+			case 7:
+				chest[chestCount].posX = column;
+				chest[chestCount].posY = row;
+				chest[chestCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				chest[chestCount].setMainTexture(chestClose);
+				chest[chestCount].setSecondTexture(chestOpen);
+				chestCount++;
+				break;
+			case 8:
+				statue[statueCount].posX = column;
+				statue[statueCount].posY = row;
+				statue[statueCount].setSrcDest_W_H(288, 320, tile_w * 3, tile_h * 3);
+				statue[statueCount].setType((rand() % 3));
+				if (statue[statueCount].getType() == 1) {
+					statue[statueCount].setMainTexture(statue_1);
+				}
+				else {
+					statue[statueCount].setMainTexture(statue_2);
+				}
+				statueCount++;
+				break;
+			case 10: case 11: case 12: case 13:
+				closingWall[closingWallCount].posX = column;
+				closingWall[closingWallCount].posY = row;
+				closingWall[closingWallCount].type = lvl1[row][column];
+				closingWall[closingWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				closingWall[closingWallCount].setMainTexture(ground_2);
+				closingWall[closingWallCount].setSecondTexture(closingWallTx);
+				closingWallCount++;
+				break;
+			case 1:
+				defoltWall[defoltWallCount].posX = column;
+				defoltWall[defoltWallCount].posY = row;
+				defoltWall[defoltWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				defoltWall[defoltWallCount].setMainTexture(wallTx);
+				defoltWallCount++;
+				break;
+			case 14:
+				enemy[enemyCount].posX = column;
+				enemy[enemyCount].posY = row;
+				enemy[enemyCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				enemy[enemyCount].setMainTexture(enemyTx);
+				enemyCount++;
+				break;
+			case 9:
+				weaponShop[weaponShopCount].posX = column;
+				weaponShop[weaponShopCount].posY = row;
+				weaponShop[weaponShopCount].setSrcDest_W_H(320, 32, 320, 32);
+				weaponShop[weaponShopCount].setType(rand() % weaponSettings.totalWeapons + 1);
+				if (weaponShop[weaponShopCount].getType() == 1) {
+					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w1.png"));
+					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b1.png"));
+					weaponShop[weaponShopCount].setParameters(10, 1);
+					weaponShop[weaponShopCount].cost = 10;
+				}
+				else if (weaponShop[weaponShopCount].getType() == 2) {
+					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w2.png"));
+					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b2.png"));
+					weaponShop[weaponShopCount].setParameters(20, 2);
+					weaponShop[weaponShopCount].cost = 30;
+				}
+				else if (weaponShop[weaponShopCount].getType() == 3) {
+					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w3.png"));
+					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b3.png"));
+					weaponShop[weaponShopCount].setParameters(30, 3);
+					weaponShop[weaponShopCount].cost = 50;
+				}
+				weaponShopCount++;
+				break;
+			default: break;
+			}
+		}
+	}
 }

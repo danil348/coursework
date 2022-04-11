@@ -154,6 +154,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObgect.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="RoomMap.h" />
     <ClInclude Include="TextManager.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Weapon.h" />
