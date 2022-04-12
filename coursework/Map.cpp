@@ -42,7 +42,7 @@ void Map::DrawMap(SDL_Window* window)
 		for (int column = 0; column < lvl1_w; column++) {
 			dest.x = column * tile_w + playerSettings.offsetX;
 			dest.y = row * tile_h + playerSettings.offsetY;
-			if (lvl1[row][column] == 0) {
+			if (lvl1[row][column] == 0 || lvl1[row][column] == -1) {
 				continue;
 			}
 
@@ -136,11 +136,11 @@ void Map::DrawMap(SDL_Window* window)
 							closingWall[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 							if (IntersectionWithGameObg(closingWall[i]) == true && closingWall[i].mayClose == true) {
 								for (int j = 0; j < closingWallCount; j++) {
-									if (abs(closingWall[i].posX - closingWall[j].posX) < 11 && abs(closingWall[i].posY - closingWall[j].posY) < 11) {
+									if (abs(closingWall[i].posX - closingWall[j].posX) < 12 && abs(closingWall[i].posY - closingWall[j].posY) < 12) {
 										closingWall[j].isClos = true;
 										closingWall[j].mayClose = false;
 										for (int k = 0; k < enemyCount; k++) {
-											if (abs(closingWall[i].posX - enemy[k].posX) < 11 && abs(closingWall[i].posY - enemy[k].posY) < 11) {
+											if (abs(closingWall[i].posX - enemy[k].posX) < 12 && abs(closingWall[i].posY - enemy[k].posY) < 12) {
 												enemy[k].needSpawn = true;
 											}
 										}
@@ -151,7 +151,7 @@ void Map::DrawMap(SDL_Window* window)
 							for (int j = 0; j < closingWallCount; j++) {
 								if (closingWall[j].isClos == true) {
 									for (int k = 0; k < enemyCount; k++) {
-										if (abs(closingWall[j].posX - enemy[k].posX) < 11 && abs(closingWall[j].posY - enemy[k].posY) < 11 && enemy[k].hasHp == true) {
+										if (abs(closingWall[j].posX - enemy[k].posX) < 12 && abs(closingWall[j].posY - enemy[k].posY) < 12 && enemy[k].hasHp == true) {
 											enemyDie = false;
 										}
 									}
@@ -278,6 +278,14 @@ void Map::DrawMap(SDL_Window* window)
 	rect = { WIDTH / 2, HEIGTH / 2, 1, 1 };
 	SDL_RenderFillRect(textureManager.renderer, &rect);
 #endif // DEBUG
+
+
+#ifdef DEBUG
+	if (key.keyQ == true) {
+		RoomCreater();
+	}
+#endif // DEBUG
+
 }
 
 
@@ -384,9 +392,18 @@ void Map::changingKeyState(const Uint8* arr)
 		key.space = false;
 		key.timeOfLastspace = tmpTime;
 	}
+	if (key.keyQ == true) {
+		key.keyQ = false;
+		key.timeOfLastkeyQ = tmpTime;
+	}
+
 	if (tmpTime - key.timeOfLastspace > key.spaceDelay) {
 		key.timeOfCurrentspace = tmpTime;
 		key.space = arr[SDL_SCANCODE_SPACE];
+	}
+	if (tmpTime - key.timeOfLastkeyQ > key.keyQDelay) {
+		key.timeOfCurrentkeyQ = tmpTime;
+		key.keyQ = arr[SDL_SCANCODE_Q];
 	}
 }
 
@@ -421,6 +438,8 @@ void WeaponSettings::setParameters(WeaponShop& weaponShop)
 
 void Map::RoomCreater()
 {
+	playerSettings.offsetX = 440.0f;
+	playerSettings.offsetY = 60.0f;
 
 	for (int i = 0; i < lvl1_h; i++) {
 		for (int j = 0; j < lvl1_w; j++) {
@@ -428,8 +447,10 @@ void Map::RoomCreater()
 		}
 	}
 
-	ifstream file("maps/1.txt");
+	string lvlPath = "maps/" + to_string(lvl) + ".txt";
+	ifstream file(lvlPath);
 	string tmpString = "0";
+
 	char str[3];
 	if (file.is_open()) {
 		for (int i = 0; i < lvl1_h; i++) {
@@ -440,13 +461,10 @@ void Map::RoomCreater()
 			}
 		}
 		file.close();
-	}
-
-	/*for (int i = 0; i < lvl1_h; i++) {
-		for (int j = 0; j < lvl1_w; j++) {
-			cout << lvl1[i][j] << " ";
+		if (lvl < 2) {
+			lvl++;
 		}
-	}*/
+	}
 
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
