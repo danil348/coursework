@@ -76,7 +76,7 @@ void Map::DrawMap(SDL_Window* window)
 							statue[i].setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
 							TextureManager::Drow(statue[i].getMainTexture(), statue[i].src, statue[i].dest);
 							if (IntersectionWithGameObg(statue[i]) == true && statue[i].isUsed() == false) {
-								textManager.Drow(textureManager.renderer, u8"всего 15 монет,\nа столько пользы", 300, 100, statue[i].dest.x + 70, statue[i].dest.y - 50, 232, 221, 186);
+								//textManager.Drow(textureManager.renderer, u8"всего 15 монет,\nа столько пользы", 300, 100, statue[i].dest.x + 70, statue[i].dest.y - 50, 232, 221, 186);
 								if (key.space == true) {
 									statue[i].wasUsed = true;
 								}
