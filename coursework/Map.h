@@ -30,7 +30,7 @@ struct PlayerSettings
 	int hp = 30;
 	int armor = 50;
 	int mana = 100;
-	float offsetX = 540.0f;
+	float offsetX = 440.0f;
 	float offsetY = 60.0f;
 
 };
@@ -78,6 +78,7 @@ public:
 	void changingKeyState(const Uint8* arr);
 	void changingKeyState(bool mouseDown);
 
+	void RoomCreater();
 	PlayerSettings playerSettings;
 	TextureManager textureManager;
 	WeaponSettings weaponSettings;
@@ -129,7 +130,7 @@ private:
 	int tile_h = 120;
 	
 	static const int lvl1_w = 100;
-	static const int lvl1_h = 50;
+	static const int lvl1_h = 100;
 	
 	// 1 - стена
 	// 2, 3, 4, 5, 6

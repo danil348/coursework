@@ -1,5 +1,9 @@
 #include "Map.h"
 
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <string>
 SDL_Renderer* TextureManager::renderer = nullptr;
 
 Map::Map()
@@ -15,110 +19,10 @@ Map::Map()
 	hpBoard = TextureManager::LoadTexture("assets/hp.png");
 	enemyTx = TextureManager::LoadTexture("assets/enemy.png");
 
+	RoomCreater();
+
 	//сундуки
-	for (int row = 0; row < lvl1_h; row++) {
-		for (int column = 0; column < lvl1_w; column++) {
-			switch (lvl1[row][column]) {
-			case 7: chestCount++; break;
-			case 8: statueCount++; break;
-			case 10:case 11:case 12:case 13: closingWallCount++; break;
-			case 1: defoltWallCount++; break;
-			case 14: enemyCount++; break;
-			case 9: weaponShopCount++; break;
-			default: break;
-			}
-			
-		}
-	}
-	chest = new Chest[chestCount];
-	statue = new Statue[statueCount];
-	closingWall = new ClosingWall[closingWallCount];
-	bullets = new Bullets[bulletsCount];
-	defoltWall = new GameObgect[defoltWallCount];
-	enemy = new Enemy[enemyCount];
-	weaponShop = new WeaponShop[weaponShopCount];
-	chestCount = 0;
-	statueCount = 0;
-	closingWallCount = 0;
-	defoltWallCount = 0;
-	enemyCount = 0;
-	weaponShopCount = 0;
-	for (int row = 0; row < lvl1_h; row++) {
-		for (int column = 0; column < lvl1_w; column++) {
-			switch (lvl1[row][column]) {
-			case 7:
-				chest[chestCount].posX = column;
-				chest[chestCount].posY = row;
-				chest[chestCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				chest[chestCount].setMainTexture(TextureManager::LoadTexture("assets/6.png"));
-				chest[chestCount].setSecondTexture(TextureManager::LoadTexture("assets/7.png"));
-				chestCount++;
-				break;
-			case 8:
-				statue[statueCount].posX = column;
-				statue[statueCount].posY = row;
-				statue[statueCount].setSrcDest_W_H(288, 320, tile_w * 3, tile_h * 3);
-				statue[statueCount].setType((rand() % 3));
-				if (statue[statueCount].getType() == 1) {
-					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st1.png"));
-				}
-				else {
-					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st2.png"));
-				}
-				statueCount++;
-				break;
-			case 10: case 11: case 12: case 13:
-				closingWall[closingWallCount].posX = column;
-				closingWall[closingWallCount].posY = row;
-				closingWall[closingWallCount].type = lvl1[row][column];
-				closingWall[closingWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				closingWall[closingWallCount].setMainTexture(TextureManager::LoadTexture("assets/2.png"));
-				closingWall[closingWallCount].setSecondTexture(TextureManager::LoadTexture("assets/clwall.png"));
-				closingWallCount++;
-				break;
-			case 1:
-				defoltWall[defoltWallCount].posX = column;
-				defoltWall[defoltWallCount].posY = row;
-				defoltWall[defoltWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				defoltWall[defoltWallCount].setMainTexture(TextureManager::LoadTexture("assets/0.png"));
-				defoltWallCount++;
-				break;
-			case 14:
-				enemy[enemyCount].posX = column;
-				enemy[enemyCount].posY = row;
-				enemy[enemyCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				enemy[enemyCount].setMainTexture(TextureManager::LoadTexture("assets/enemy.png"));
-				enemyCount++;
-				break;
-			case 9:
-				weaponShop[weaponShopCount].posX = column;
-				weaponShop[weaponShopCount].posY = row;
-				weaponShop[weaponShopCount].setSrcDest_W_H(320, 32, 320, 32);
-				weaponShop[weaponShopCount].setType(rand() % weaponSettings.totalWeapons + 1);
-				if (weaponShop[weaponShopCount].getType() == 1) {
-					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w1.png"));
-					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b1.png"));
-					weaponShop[weaponShopCount].setParameters(10, 1);
-					weaponShop[weaponShopCount].cost = 10;
-				}
-				else if (weaponShop[weaponShopCount].getType() == 2) {
-					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w2.png"));
-					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b2.png"));
-					weaponShop[weaponShopCount].setParameters(20, 2);
-					weaponShop[weaponShopCount].cost = 30;
-				}
-				else if (weaponShop[weaponShopCount].getType() == 3) {
-					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w3.png"));
-					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b3.png"));
-					weaponShop[weaponShopCount].setParameters(30, 3);
-					weaponShop[weaponShopCount].cost = 50;
-				}
-				weaponShopCount++;
-				break;
-			default: break;
-			}
-		}
-	}
+	
 
 	src.x = src.y = 0;
 	src.w = tile_w;
@@ -232,11 +136,11 @@ void Map::DrawMap(SDL_Window* window)
 							closingWall[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 							if (IntersectionWithGameObg(closingWall[i]) == true && closingWall[i].mayClose == true) {
 								for (int j = 0; j < closingWallCount; j++) {
-									if (abs(closingWall[i].posX - closingWall[j].posX) < 10 && abs(closingWall[i].posY - closingWall[j].posY) < 10) {
+									if (abs(closingWall[i].posX - closingWall[j].posX) < 11 && abs(closingWall[i].posY - closingWall[j].posY) < 11) {
 										closingWall[j].isClos = true;
 										closingWall[j].mayClose = false;
 										for (int k = 0; k < enemyCount; k++) {
-											if (abs(closingWall[i].posX - enemy[k].posX) < 10 && abs(closingWall[i].posY - enemy[k].posY) < 10) {
+											if (abs(closingWall[i].posX - enemy[k].posX) < 11 && abs(closingWall[i].posY - enemy[k].posY) < 11) {
 												enemy[k].needSpawn = true;
 											}
 										}
@@ -247,7 +151,7 @@ void Map::DrawMap(SDL_Window* window)
 							for (int j = 0; j < closingWallCount; j++) {
 								if (closingWall[j].isClos == true) {
 									for (int k = 0; k < enemyCount; k++) {
-										if (abs(closingWall[j].posX - enemy[k].posX) < 10 && abs(closingWall[j].posY - enemy[k].posY) < 10 && enemy[k].hasHp == true) {
+										if (abs(closingWall[j].posX - enemy[k].posX) < 11 && abs(closingWall[j].posY - enemy[k].posY) < 11 && enemy[k].hasHp == true) {
 											enemyDie = false;
 										}
 									}
@@ -255,7 +159,7 @@ void Map::DrawMap(SDL_Window* window)
 							}
 							if (enemyDie == true) {
 								for (int j = 0; j < closingWallCount; j++) {
-									if (abs(closingWall[i].posX - closingWall[j].posX) < 10 && abs(closingWall[i].posY - closingWall[j].posY) < 10) {
+									if (abs(closingWall[i].posX - closingWall[j].posX) < 11 && abs(closingWall[i].posY - closingWall[j].posY) < 11) {
 										closingWall[j].isClos = false;
 									}
 								}
@@ -271,6 +175,9 @@ void Map::DrawMap(SDL_Window* window)
 						}
 					}
 					break;
+				case 14:
+					TextureManager::Drow(ground_5, src, dest);
+					break;
 				default: break;
 				}
 
@@ -279,13 +186,18 @@ void Map::DrawMap(SDL_Window* window)
 						enemy[i].islive = true;
 						enemy[i].setSrcDest_X_Y(defoltWall, defoltWallCount, closingWall, closingWallCount, src.x, src.y, dest.x, dest.y);
 						enemy[i].update(playerSettings.mana, playerSettings.score);
-						TextureManager::Drow(enemy[i].getMainTexture(), enemy[i].src, enemy[i].dest);
-						_rect = { enemy[i].dest.x, enemy[i].dest.y - 20, 120 * enemy[i].hp / 100, 10 };
-						SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
-						SDL_RenderFillRect(textureManager.renderer, &_rect);
 					}
 				}
 			}
+		}
+	}
+
+	for (int i = 0; i < enemyCount; i++) {
+		if (enemy[i].needSpawn == true &&  enemy[i].hasHp == true) {
+			TextureManager::Drow(enemy[i].getMainTexture(), enemy[i].src, enemy[i].dest);
+			_rect = { enemy[i].dest.x, enemy[i].dest.y - 20, 120 * enemy[i].hp / 100, 10 };
+			SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
+			SDL_RenderFillRect(textureManager.renderer, &_rect);
 		}
 	}
 	if (key.leftMouseKey == true) {
@@ -482,7 +394,6 @@ void Map::changingKeyState(bool mouseDown)
 {
 	key.leftMouseKey = mouseDown;
 }
-
 void WeaponSettings::setParameters(WeaponShop& weaponShop)
 {
 	tmpWeaponTexture = weaponShop.getWeaponTexture();
@@ -505,4 +416,139 @@ void WeaponSettings::setParameters(WeaponShop& weaponShop)
 	type = tmpType;
 	weaponTexture = tmpWeaponTexture;
 	bulletTexture = tmpBulletTexture;
+}
+
+
+void Map::RoomCreater()
+{
+
+	for (int i = 0; i < lvl1_h; i++) {
+		for (int j = 0; j < lvl1_w; j++) {
+			lvl1[i][j] = 0;
+		}
+	}
+
+	ifstream file("maps/1.txt");
+	string tmpString = "0";
+	char str[3];
+	if (file.is_open()) {
+		for (int i = 0; i < lvl1_h; i++) {
+			for (int j = 0; j < lvl1_w; j++) {
+				file.getline(str, 3, ',');
+				tmpString = str;
+				lvl1[i][j] = atoi(tmpString.c_str());
+			}
+		}
+		file.close();
+	}
+
+	/*for (int i = 0; i < lvl1_h; i++) {
+		for (int j = 0; j < lvl1_w; j++) {
+			cout << lvl1[i][j] << " ";
+		}
+	}*/
+
+	for (int row = 0; row < lvl1_h; row++) {
+		for (int column = 0; column < lvl1_w; column++) {
+			switch (lvl1[row][column]) {
+			case 7: chestCount++; break;
+			case 8: statueCount++; break;
+			case 10:case 11:case 12:case 13: closingWallCount++; break;
+			case 1: defoltWallCount++; break;
+			case 14: enemyCount++; break;
+			case 9: weaponShopCount++; break;
+			default: break;
+			}
+
+		}
+	}
+	chest = new Chest[chestCount];
+	statue = new Statue[statueCount];
+	closingWall = new ClosingWall[closingWallCount];
+	bullets = new Bullets[bulletsCount];
+	defoltWall = new GameObgect[defoltWallCount];
+	enemy = new Enemy[enemyCount];
+	weaponShop = new WeaponShop[weaponShopCount];
+	chestCount = 0;
+	statueCount = 0;
+	closingWallCount = 0;
+	defoltWallCount = 0;
+	enemyCount = 0;
+	weaponShopCount = 0;
+	for (int row = 0; row < lvl1_h; row++) {
+		for (int column = 0; column < lvl1_w; column++) {
+			switch (lvl1[row][column]) {
+			case 7:
+				chest[chestCount].posX = column;
+				chest[chestCount].posY = row;
+				chest[chestCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				chest[chestCount].setMainTexture(TextureManager::LoadTexture("assets/6.png"));
+				chest[chestCount].setSecondTexture(TextureManager::LoadTexture("assets/7.png"));
+				chestCount++;
+				break;
+			case 8:
+				statue[statueCount].posX = column;
+				statue[statueCount].posY = row;
+				statue[statueCount].setSrcDest_W_H(288, 320, tile_w * 3, tile_h * 3);
+				statue[statueCount].setType((rand() % 3));
+				if (statue[statueCount].getType() == 1) {
+					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st1.png"));
+				}
+				else {
+					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st2.png"));
+				}
+				statueCount++;
+				break;
+			case 10: case 11: case 12: case 13:
+				closingWall[closingWallCount].posX = column;
+				closingWall[closingWallCount].posY = row;
+				closingWall[closingWallCount].type = lvl1[row][column];
+				closingWall[closingWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				closingWall[closingWallCount].setMainTexture(TextureManager::LoadTexture("assets/2.png"));
+				closingWall[closingWallCount].setSecondTexture(TextureManager::LoadTexture("assets/clwall.png"));
+				closingWallCount++;
+				break;
+			case 1:
+				defoltWall[defoltWallCount].posX = column;
+				defoltWall[defoltWallCount].posY = row;
+				defoltWall[defoltWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				defoltWall[defoltWallCount].setMainTexture(TextureManager::LoadTexture("assets/0.png"));
+				defoltWallCount++;
+				break;
+			case 14:
+				enemy[enemyCount].posX = column;
+				enemy[enemyCount].posY = row;
+				enemy[enemyCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				enemy[enemyCount].setMainTexture(TextureManager::LoadTexture("assets/enemy.png"));
+				enemyCount++;
+				break;
+			case 9:
+				weaponShop[weaponShopCount].posX = column;
+				weaponShop[weaponShopCount].posY = row;
+				weaponShop[weaponShopCount].setSrcDest_W_H(320, 32, 320, 32);
+				weaponShop[weaponShopCount].setType(rand() % weaponSettings.totalWeapons + 1);
+				if (weaponShop[weaponShopCount].getType() == 1) {
+					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w1.png"));
+					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b1.png"));
+					weaponShop[weaponShopCount].setParameters(10, 1);
+					weaponShop[weaponShopCount].cost = 10;
+				}
+				else if (weaponShop[weaponShopCount].getType() == 2) {
+					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w2.png"));
+					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b2.png"));
+					weaponShop[weaponShopCount].setParameters(20, 2);
+					weaponShop[weaponShopCount].cost = 30;
+				}
+				else if (weaponShop[weaponShopCount].getType() == 3) {
+					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w3.png"));
+					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b3.png"));
+					weaponShop[weaponShopCount].setParameters(30, 3);
+					weaponShop[weaponShopCount].cost = 50;
+				}
+				weaponShopCount++;
+				break;
+			default: break;
+			}
+		}
+	}
 }
