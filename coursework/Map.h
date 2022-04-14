@@ -91,6 +91,7 @@ public:
 	void WeaponDrow(int row, int column);
 	void DefoltWallDrow(int row, int column);
 	void ClosingWallDrow(int row, int column);
+	void PortalBetweenMapsDrow(int row, int column);
 	void EnemyDrow();
 	void BulletDrow();
 	void CharacteristicBoardDrow();
@@ -123,6 +124,22 @@ private:
 	SDL_Texture* coin;
 	SDL_Texture* hpBoard;
 	SDL_Texture* enemyTx;
+	SDL_Texture* chestClose;
+	SDL_Texture* chestOpen;
+	SDL_Texture* statue_1;
+	SDL_Texture* statue_2;
+	SDL_Texture* clwall;
+	SDL_Texture* dtWall;
+
+	SDL_Texture* weapon_1;
+	SDL_Texture* bullet_1;
+
+	SDL_Texture* weapon_2;
+	SDL_Texture* bullet_2;
+
+	SDL_Texture* weapon_3;
+	SDL_Texture* bullet_3;
+
 
 	int chestCount = 0;
 	Chest* chest;
@@ -146,6 +163,8 @@ private:
 	bool needSpawn = false;
 	int enemyCount = 0;
 	Enemy* enemy;
+
+	GameObgect portalBetweenMaps;
 
 	int tile_w = 120;
 	int tile_h = 120;

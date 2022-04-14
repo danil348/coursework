@@ -14,6 +14,21 @@ Map::Map()
 	coin = TextureManager::LoadTexture("assets/9.png");
 	hpBoard = TextureManager::LoadTexture("assets/hp.png");
 	enemyTx = TextureManager::LoadTexture("assets/enemy.png");
+	chestClose = TextureManager::LoadTexture("assets/6.png");
+	chestOpen = TextureManager::LoadTexture("assets/7.png");
+	statue_1 = TextureManager::LoadTexture("assets/st1.png");
+	statue_2 = TextureManager::LoadTexture("assets/st2.png");
+	clwall = TextureManager::LoadTexture("assets/clwall.png");
+	dtWall = TextureManager::LoadTexture("assets/0.png");
+
+	weapon_1 = TextureManager::LoadTexture("assets/w1.png");
+	bullet_1 = TextureManager::LoadTexture("assets/b1.png");
+
+	weapon_2 = TextureManager::LoadTexture("assets/w2.png");
+	bullet_2 = TextureManager::LoadTexture("assets/b2.png");
+
+	weapon_3 = TextureManager::LoadTexture("assets/w3.png");
+	bullet_3 = TextureManager::LoadTexture("assets/b3.png");
 
 	src.x = src.y = 0;
 	src.w = tile_w;
@@ -59,6 +74,7 @@ void Map::DrawMap(SDL_Window* window)
 				case 1: DefoltWallDrow(row, column); break;
 				case 10: case 11: case 12: case 13: ClosingWallDrow(row, column); break;
 				case 14: TextureManager::Drow(ground_5, src, dest); break;
+				case 15: PortalBetweenMapsDrow(row, column); break;
 				default: break;
 				}
 
@@ -84,12 +100,6 @@ void Map::DrawMap(SDL_Window* window)
 
 #ifdef DEBUG
 	PlayerDrow();
-#endif // DEBUG
-
-#ifdef DEBUG
-	if (key.keyQ == true) {
-		RoomCreater();
-	}
 #endif // DEBUG
 }
 
@@ -137,6 +147,15 @@ void Map::RoomCreater()
 
 		}
 	}
+	if (lvl > 2) {
+		delete[] chest;
+		delete[] statue;
+		delete[] closingWall;
+		delete[] bullets;
+		delete[] defoltWall;
+		delete[] enemy;
+		delete[] weaponShop;
+	}
 	chest = new Chest[chestCount];
 	statue = new Statue[statueCount];
 	closingWall = new ClosingWall[closingWallCount];
@@ -157,8 +176,8 @@ void Map::RoomCreater()
 				chest[chestCount].posX = column;
 				chest[chestCount].posY = row;
 				chest[chestCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				chest[chestCount].setMainTexture(TextureManager::LoadTexture("assets/6.png"));
-				chest[chestCount].setSecondTexture(TextureManager::LoadTexture("assets/7.png"));
+				chest[chestCount].setMainTexture(chestClose);
+				chest[chestCount].setSecondTexture(chestOpen);
 				chestCount++;
 				break;
 			case 8:
@@ -167,10 +186,10 @@ void Map::RoomCreater()
 				statue[statueCount].setSrcDest_W_H(288, 320, tile_w * 3, tile_h * 3);
 				statue[statueCount].setType((rand() % 3));
 				if (statue[statueCount].getType() == 1) {
-					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st1.png"));
+					statue[statueCount].setMainTexture(statue_1);
 				}
 				else {
-					statue[statueCount].setMainTexture(TextureManager::LoadTexture("assets/st2.png"));
+					statue[statueCount].setMainTexture(statue_2);
 				}
 				statueCount++;
 				break;
@@ -179,22 +198,28 @@ void Map::RoomCreater()
 				closingWall[closingWallCount].posY = row;
 				closingWall[closingWallCount].type = lvl1[row][column];
 				closingWall[closingWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				closingWall[closingWallCount].setMainTexture(TextureManager::LoadTexture("assets/2.png"));
-				closingWall[closingWallCount].setSecondTexture(TextureManager::LoadTexture("assets/clwall.png"));
+				closingWall[closingWallCount].setMainTexture(ground_2);
+				closingWall[closingWallCount].setSecondTexture(clwall);
 				closingWallCount++;
 				break;
 			case 1:
 				defoltWall[defoltWallCount].posX = column;
 				defoltWall[defoltWallCount].posY = row;
 				defoltWall[defoltWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				defoltWall[defoltWallCount].setMainTexture(TextureManager::LoadTexture("assets/0.png"));
+				defoltWall[defoltWallCount].setMainTexture(dtWall);
 				defoltWallCount++;
+				break;
+			case 15:
+				portalBetweenMaps.posX = column;
+				portalBetweenMaps.posY = row;
+				portalBetweenMaps.setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				//portalBetweenMaps.setMainTexture(TextureManager::LoadTexture("assets/0.png"));
 				break;
 			case 14:
 				enemy[enemyCount].posX = column;
 				enemy[enemyCount].posY = row;
 				enemy[enemyCount].setSrcDest_W_H(188, 188, tile_w, tile_h);
-				enemy[enemyCount].setMainTexture(TextureManager::LoadTexture("assets/enemy.png"));
+				enemy[enemyCount].setMainTexture(enemyTx);
 				enemyCount++;
 				break;
 			case 9:
@@ -203,20 +228,20 @@ void Map::RoomCreater()
 				weaponShop[weaponShopCount].setSrcDest_W_H(320, 32, 320, 32);
 				weaponShop[weaponShopCount].setType(rand() % weaponSettings.totalWeapons + 1);
 				if (weaponShop[weaponShopCount].getType() == 1) {
-					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w1.png"));
-					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b1.png"));
+					weaponShop[weaponShopCount].setWeaponTexture(weapon_1);
+					weaponShop[weaponShopCount].setBulletTexture(bullet_1);
 					weaponShop[weaponShopCount].setParameters(10, 1);
 					weaponShop[weaponShopCount].cost = 10;
 				}
 				else if (weaponShop[weaponShopCount].getType() == 2) {
-					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w2.png"));
-					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b2.png"));
+					weaponShop[weaponShopCount].setWeaponTexture(weapon_2);
+					weaponShop[weaponShopCount].setBulletTexture(bullet_2);
 					weaponShop[weaponShopCount].setParameters(20, 2);
 					weaponShop[weaponShopCount].cost = 30;
 				}
 				else if (weaponShop[weaponShopCount].getType() == 3) {
-					weaponShop[weaponShopCount].setWeaponTexture(TextureManager::LoadTexture("assets/w3.png"));
-					weaponShop[weaponShopCount].setBulletTexture(TextureManager::LoadTexture("assets/b3.png"));
+					weaponShop[weaponShopCount].setWeaponTexture(weapon_3);
+					weaponShop[weaponShopCount].setBulletTexture(bullet_3);
 					weaponShop[weaponShopCount].setParameters(30, 3);
 					weaponShop[weaponShopCount].cost = 50;
 				}
@@ -452,6 +477,21 @@ void Map::ClosingWallDrow(int row, int column)
 				TextureManager::Drow(closingWall[i].getSecondTexture(), closingWall[i].src, closingWall[i].dest);
 			}
 			break;
+		}
+	}
+}
+
+void Map::PortalBetweenMapsDrow(int row, int column)
+{
+	if (portalBetweenMaps.posX == column && portalBetweenMaps.posY == row) {
+		portalBetweenMaps.setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
+		SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
+		SDL_RenderFillRect(textureManager.renderer, &portalBetweenMaps.dest);
+		//TextureManager::Drow(statue[i].getMainTexture(), statue[i].src, statue[i].dest);
+		if (IntersectionWithGameObg(portalBetweenMaps.dest.x, portalBetweenMaps.dest.y, portalBetweenMaps.dest.w, portalBetweenMaps.dest.h) == true) {
+			if (key.keyQ == true) {
+				RoomCreater();
+			}
 		}
 	}
 }
