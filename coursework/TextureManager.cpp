@@ -20,3 +20,13 @@ void TextureManager::Drow(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest, float a
 {
 	SDL_RenderCopyEx(renderer, tex, &src, &dest, angle, NULL, SDL_FLIP_NONE);
 }
+
+void TextureManager::InvertDrow_x(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest, int center)
+{
+	if (dest.x >= center) {
+		SDL_RenderCopyEx(renderer, tex, &src, &dest, 0, NULL, SDL_FLIP_HORIZONTAL);
+	}
+	else {
+		SDL_RenderCopy(renderer, tex, &src, &dest);
+	}
+}
