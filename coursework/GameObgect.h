@@ -112,13 +112,17 @@ public:
 	int hp = 100;
 	void update(int& manaPlayer, int& scorePlayer);
 	void setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int src_x, int src_y, int dest_x, int dest_y);
+	void setScreen_W_H(int w, int h);
 	void reset();
-	bool intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount);
+	void intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount);
 private:
-	float offX = 0;
-	float offY = 0;
-	float coeffX;
-	float coeffY;
 	int manaPlayerBonus;
 	int scorePlayerBonus;
+
+	int ScreenW;
+	int ScreenH;
+	int pathLengthX = 0;
+	int pathLengthY = 0;
+	int pathX = 0;
+	int pathY = 0;
 };

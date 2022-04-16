@@ -218,6 +218,7 @@ void Map::RoomCreater()
 			case 14:
 				enemy[enemyCount].posX = column;
 				enemy[enemyCount].posY = row;
+				enemy[enemyCount].setScreen_W_H(WIDTH, HEIGTH);
 				enemy[enemyCount].setSrcDest_W_H(188, 188, tile_w, tile_h);
 				enemy[enemyCount].setMainTexture(enemyTx);
 				enemyCount++;
