@@ -389,3 +389,15 @@ SDL_Texture* WeaponShop::getBulletTexture()
 {
 	return bulletTexture;
 }
+
+void PortalBetweenMaps::animFrameUpdate()
+{
+	dopFrame++;
+	if (dopFrame % animFrameDelay == 0) {
+		animFrame++;
+		if (animFrame == animFrameCount) {
+			animFrame = 0;
+			dopFrame = 0;
+		}
+	}
+}

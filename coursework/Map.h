@@ -140,6 +140,7 @@ private:
 	SDL_Texture* weapon_3;
 	SDL_Texture* bullet_3;
 
+	SDL_Texture* portal_1;
 
 	int chestCount = 0;
 	Chest* chest;
@@ -164,7 +165,7 @@ private:
 	int enemyCount = 0;
 	Enemy* enemy;
 
-	GameObgect portalBetweenMaps;
+	PortalBetweenMaps portalBetweenMaps;
 
 	int tile_w = 120;
 	int tile_h = 120;

@@ -30,6 +30,8 @@ Map::Map()
 	weapon_3 = TextureManager::LoadTexture("assets/w3.png");
 	bullet_3 = TextureManager::LoadTexture("assets/b3.png");
 
+	portal_1 = TextureManager::LoadTexture("assets/portal2/1.png");
+
 	src.x = src.y = 0;
 	src.w = tile_w;
 	src.h = tile_h;
@@ -169,6 +171,7 @@ void Map::RoomCreater()
 	defoltWallCount = 0;
 	enemyCount = 0;
 	weaponShopCount = 0;
+	string path;
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
 			switch (lvl1[row][column]) {
@@ -212,7 +215,11 @@ void Map::RoomCreater()
 			case 15:
 				portalBetweenMaps.posX = column;
 				portalBetweenMaps.posY = row;
-				portalBetweenMaps.setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				portalBetweenMaps.setSrcDest_W_H(768, 720, tile_w*4, tile_h*4);
+				for (int i = 0; i < 8; i++) {
+					path = "assets/portal2/" + to_string(i) + ".png";
+					portalBetweenMaps.tx[i] = TextureManager::LoadTexture(path.c_str());
+				}
 				//portalBetweenMaps.setMainTexture(TextureManager::LoadTexture("assets/0.png"));
 				break;
 			case 14:
@@ -486,10 +493,13 @@ void Map::PortalBetweenMapsDrow(int row, int column)
 {
 	if (portalBetweenMaps.posX == column && portalBetweenMaps.posY == row) {
 		portalBetweenMaps.setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
-		SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
-		SDL_RenderFillRect(textureManager.renderer, &portalBetweenMaps.dest);
+		TextureManager::Drow(portalBetweenMaps.tx[portalBetweenMaps.animFrame], portalBetweenMaps.src, portalBetweenMaps.dest);
+		portalBetweenMaps.animFrameUpdate();
+		/*SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
+		SDL_RenderFillRect(textureManager.renderer, &portalBetweenMaps.dest);*/
 		//TextureManager::Drow(statue[i].getMainTexture(), statue[i].src, statue[i].dest);
 		if (IntersectionWithGameObg(portalBetweenMaps.dest.x, portalBetweenMaps.dest.y, portalBetweenMaps.dest.w, portalBetweenMaps.dest.h) == true) {
+			textManager.Drow(textureManager.renderer, u8"Q для перехода", 17*14, 28, portalBetweenMaps.dest.x - (17 * 14 - portalBetweenMaps.dest.w) / 2, portalBetweenMaps.dest.y, 232, 221, 186);
 			if (key.keyQ == true) {
 				RoomCreater();
 			}

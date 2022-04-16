@@ -126,3 +126,15 @@ private:
 	int pathX = 0;
 	int pathY = 0;
 };
+
+class PortalBetweenMaps: public GameObgect
+{
+public:
+	SDL_Texture* tx[8];
+	int animFrame = 0;
+	void animFrameUpdate();
+private:
+	int dopFrame = 0;
+	const int animFrameCount = 8;
+	int animFrameDelay = 16;
+};
