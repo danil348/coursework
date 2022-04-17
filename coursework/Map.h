@@ -36,8 +36,8 @@ struct PlayerSettings
 	int hp = 30;
 	int armor = 50;
 	int mana = 100;
-	float offsetX = 440.0f;
-	float offsetY = 60.0f;
+	float offsetX = 1120.0f;
+	float offsetY = 0.0f;
 
 };
 
@@ -70,11 +70,10 @@ struct WeaponSettings
 class Map
 {
 public:
-	Map();
+	Map(int w, int h);
 
 	void DrawMap(SDL_Window * Window);
 
-	void SetSize(int w, int h);
 	void UpdateMapX(float value);
 	void UpdateMapY(float value);
 	void changingKeyState(const Uint8* arr);

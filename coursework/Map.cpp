@@ -2,8 +2,11 @@
 
 SDL_Renderer* TextureManager::renderer = nullptr;
 
-Map::Map()
+Map::Map(int w, int h)
 {
+	WIDTH = w;
+	HEIGTH = h;
+
 	weaponSettings.bulletTexture = TextureManager::LoadTexture("assets/b1.png");
 	weaponSettings.weaponTexture = TextureManager::LoadTexture("assets/w1.png");
 	ground_1 = TextureManager::LoadTexture("assets/1.png");
@@ -107,8 +110,8 @@ void Map::DrawMap(SDL_Window* window)
 
 void Map::RoomCreater()
 {
-	playerSettings.offsetX = 440.0f;
-	playerSettings.offsetY = 60.0f;
+	playerSettings.offsetX = WIDTH / 2.0;
+	playerSettings.offsetY = HEIGTH / 2.0;
 
 	for (int i = 0; i < lvl1_h; i++) {
 		for (int j = 0; j < lvl1_w; j++) {
@@ -221,6 +224,10 @@ void Map::RoomCreater()
 					portalBetweenMaps.tx[i] = TextureManager::LoadTexture(path.c_str());
 				}
 				//portalBetweenMaps.setMainTexture(TextureManager::LoadTexture("assets/0.png"));
+				break;
+			case 16:
+				playerSettings.offsetX -= column * tile_w + tile_w / 2;
+				playerSettings.offsetY -= row * tile_h + tile_h / 2;
 				break;
 			case 14:
 				enemy[enemyCount].posX = column;
@@ -336,11 +343,6 @@ bool Map::IntersectionWithGameObg(ClosingWall wall)
 	return 0;
 }
 
-void Map::SetSize(int w, int h)
-{
-	WIDTH = w;
-	HEIGTH = h;
-}
 
 void Map::changingKeyState(const Uint8* arr)
 {

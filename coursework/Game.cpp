@@ -32,13 +32,14 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 
 		isRunning = true;
 	}
-	map = new Map();
+	
+	int w, h;
+	SDL_GetRendererOutputSize(map->textureManager.renderer, &w, &h);
+
+	map = new Map(w, h);
 	event.key.keysym.scancode = SDL_SCANCODE_0;
 	event.type = NULL;
 
-	int w, h;
-	SDL_GetRendererOutputSize(map->textureManager.renderer, &w, &h);
-	map->SetSize(w, h);
 }
 
 
