@@ -2,7 +2,6 @@
 #include "TextureManager.h"
 #include "GameObgect.h"
 #include "TextManager.h"
-#include "Weapon.h"
 #include <string>
 #include <fstream>
 
@@ -33,8 +32,8 @@ struct PlayerSettings
 	float damage = 25.0f;
 	float shotDamage = 10.0f;
 	int score = 114;
-	int hp = 30;
-	int armor = 50;
+	int hp = 100;
+	int armor = 100;
 	int mana = 100;
 	float offsetX = 1120.0f;
 	float offsetY = 0.0f;

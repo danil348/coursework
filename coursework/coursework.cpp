@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	int frameTime;
 
     game = new Game();
-    game->init("dota 2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, true);
+    game->init("Special Operation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, true);
 
 	while (game->running())
 	{

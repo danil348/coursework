@@ -147,7 +147,6 @@
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -160,7 +159,6 @@
     <ClInclude Include="Sound.h" />
     <ClInclude Include="TextManager.h" />
     <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
