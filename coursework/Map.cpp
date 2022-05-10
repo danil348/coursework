@@ -283,6 +283,15 @@ void Map::UpdateMapX(float value)
 				bullets[i].offX += value;
 			}
 		}
+		for (int i = 0; i < enemyCount; i++) {
+			if (enemy[i].islive == true) {
+				for (int j = 0; j < enemy[i].bulletsCount; j++) {
+					if (enemy[i].bl[j].isFly == true) {
+						enemy[i].bl[j].offX += value;
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -298,6 +307,15 @@ void Map::UpdateMapY(float value)
 		for (int i = 0; i < bulletsCount; i++) {
 			if (bullets[i].isFly == true) {
 				bullets[i].offY += value;
+			}
+		}
+		for (int i = 0; i < enemyCount; i++) {
+			if (enemy[i].islive == true) {
+				for (int j = 0; j < enemy[i].bulletsCount; j++) {
+					if (enemy[i].bl[j].isFly == true) {
+						enemy[i].bl[j].offY += value;
+					}
+				}
 			}
 		}
 	}
@@ -498,9 +516,6 @@ void Map::PortalBetweenMapsDrow(int row, int column)
 		portalBetweenMaps.setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 		TextureManager::Drow(portalBetweenMaps.tx[portalBetweenMaps.animFrame], portalBetweenMaps.src, portalBetweenMaps.dest);
 		portalBetweenMaps.animFrameUpdate();
-		/*SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
-		SDL_RenderFillRect(textureManager.renderer, &portalBetweenMaps.dest);*/
-		//TextureManager::Drow(statue[i].getMainTexture(), statue[i].src, statue[i].dest);
 		if (IntersectionWithGameObg(portalBetweenMaps.dest.x, portalBetweenMaps.dest.y, portalBetweenMaps.dest.w, portalBetweenMaps.dest.h) == true) {
 			textManager.Drow(textureManager.renderer, u8"Q для перехода", 17*14, 28, portalBetweenMaps.dest.x - (17 * 14 - portalBetweenMaps.dest.w) / 2, portalBetweenMaps.dest.y, 232, 221, 186);
 			if (key.keyQ == true) {
@@ -518,6 +533,38 @@ void Map::EnemyDrow()
 			dopDest = { enemy[i].dest.x - tile_w / 5, enemy[i].dest.y - 20, tile_w * enemy[i].hp / 100, 10 };
 			SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
 			SDL_RenderFillRect(textureManager.renderer, &dopDest);
+		}
+		if (enemy[i].islive == true) {
+			for (int j = 0; j < enemy[i].bulletsCount; j++) {
+
+				if (enemy[i].bl[j].isFly == true) {
+					if (enemy[i].bl[j].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, tile_w, tile_h, playerSettings.offsetX, playerSettings.offsetY, weaponSettings.bulletDamage, playerSettings.dest) == true) {
+						if (enemy[i].bl[j].intersectionType == 2) {
+							if (playerSettings.armor > 0) {
+								playerSettings.armor -= enemy[i].damage;
+								if (playerSettings.armor < 0) {
+									playerSettings.armor = 0;
+								}
+							}
+							else if (playerSettings.hp > 0) {
+								playerSettings.hp -= enemy[i].damage;
+								if (playerSettings.hp < 0) {
+									playerSettings.hp = 0;
+									/*
+									// тут игрока убивают
+									*/
+								}
+							}
+							
+						}
+						enemy[i].bl[j].reset();
+					}
+				}
+				if (enemy[i].bl[j].isFly == true) {
+					enemy[i].bl[j].fly(enemy[i].dest.x, enemy[i].dest.y);
+					TextureManager::Drow(weaponSettings.bulletTexture, enemy[i].bl[j].src, enemy[i].bl[j].dest);
+				}
+			}
 		}
 	}
 }

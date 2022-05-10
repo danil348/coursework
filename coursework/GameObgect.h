@@ -100,6 +100,41 @@ public:
 private:
 };
 
+class Bullets;
+class Enemy;
+
+
+class Bullets
+{
+public:
+	Bullets();
+	float offX = 0;
+	float offY = 0;
+	bool isFly = false;
+	int intersectionType = 0;
+	SDL_Rect src, dest;
+
+	void fly();
+	void fly(int enX, int enY);
+	void setAngl(int x, int y, int w, int h, float offsetR);
+	void setAngl(int x, int y, int w, int h, float offsetR, int enx, int eny);
+	void reset();
+	bool intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, Enemy* enemy, int enemyCount, int tile_w, int tile_h, int offsetX, int offsetY, float damage);
+	bool intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int tile_w, int tile_h, int offsetX, int offsetY, float damage, SDL_Rect player);
+private:
+	float dist = 0.0f;
+	int maxDist = 8000;
+	float offsetRadius;
+	int angle;
+	int screanW;
+	int screanH;
+	float cosVal;
+	float sinVal;
+	int Bx, By;
+	int tmpBx, tmpBy;
+	float speed = 1;
+	bool flag = false;
+};
 
 class Enemy: public GameObgect
 {
@@ -110,11 +145,18 @@ public:
 	bool hasHp = true;
 	bool isSpawn = false;
 	int hp = 100;
+	int damage = 1;
 	void update(int& manaPlayer, int& scorePlayer);
 	void setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int src_x, int src_y, int dest_x, int dest_y);
 	void setScreen_W_H(int w, int h);
 	void reset();
 	void intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount);
+
+	int bulletsCount = 120;
+	Bullets* bl = new Bullets[bulletsCount];
+	int bulletDelay = 1000;
+	int timeOfCurrentBullet = 0;
+	int timeOfLastBullet = 0;
 private:
 	int manaPlayerBonus;
 	int scorePlayerBonus;
@@ -126,6 +168,9 @@ private:
 	int pathX = 0;
 	int pathY = 0;
 };
+
+
+
 
 class PortalBetweenMaps: public GameObgect
 {
