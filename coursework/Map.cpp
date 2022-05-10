@@ -2,11 +2,8 @@
 
 SDL_Renderer* TextureManager::renderer = nullptr;
 
-Map::Map(int w, int h)
+Map::Map()
 {
-	WIDTH = w;
-	HEIGTH = h;
-
 	weaponSettings.bulletTexture = TextureManager::LoadTexture("assets/b1.png");
 	weaponSettings.weaponTexture = TextureManager::LoadTexture("assets/w1.png");
 	ground_1 = TextureManager::LoadTexture("assets/1.png");
@@ -42,8 +39,6 @@ Map::Map(int w, int h)
 	dest.x = dest.y = 0;
 	dest.w = tile_w;
 	dest.h = tile_h;
-
-	RoomCreater();
 }
 
 
@@ -110,9 +105,9 @@ void Map::RoomCreater()
 {
 	playerSettings.offsetX = WIDTH / 2.0;
 	playerSettings.offsetY = HEIGTH / 2.0;
-	playerSettings.playerTexture = TextureManager::LoadTexture("assets/b2.png");
 	playerSettings.dest.x = WIDTH / 2 - playerSettings.dest.w / 2;
 	playerSettings.dest.y = HEIGTH / 2 - playerSettings.dest.h / 2;
+	playerSettings.playerTexture = TextureManager::LoadTexture("assets/b2.png");
 
 	for (int i = 0; i < lvl1_h; i++) {
 		for (int j = 0; j < lvl1_w; j++) {
@@ -669,6 +664,30 @@ void Map::CloseFightUpdate()
 				break;
 			}
 		}
+	}
+}
+
+void Map::Update_W_H(int w, int h) 
+{
+	if (tmpWIDTH == NULL && tmpHEIGTH == NULL) {
+		tmpWIDTH = w;
+		tmpHEIGTH = h;
+		WIDTH = w;
+		HEIGTH = h;
+		playerSettings.offsetX -= (tmpWIDTH - w) / 4;
+		playerSettings.offsetY -= (tmpHEIGTH - h) / 4;
+		playerSettings.dest.x = WIDTH / 2 - playerSettings.dest.w / 2;
+		playerSettings.dest.y = HEIGTH / 2 - playerSettings.dest.h / 2;
+	}
+	if (tmpWIDTH != w || tmpHEIGTH != h) {
+		playerSettings.offsetX -= (tmpWIDTH - w) / 4;
+		playerSettings.offsetY -= (tmpHEIGTH - h)/4;
+		playerSettings.dest.x = WIDTH / 2 - playerSettings.dest.w / 2;
+		playerSettings.dest.y = HEIGTH / 2 - playerSettings.dest.h / 2;
+		tmpWIDTH = WIDTH;
+		tmpHEIGTH = HEIGTH;
+		WIDTH = w;
+		HEIGTH = h;
 	}
 }
 

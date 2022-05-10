@@ -23,8 +23,9 @@ int main(int argc, char** argv)
 	{
 		frameStart = clock();
 
-		game->habdleEvents();
-		game->render();
+		game->handleEvents();
+		game->menuRender();
+		game->gameRender();
 		
 		frameTime = clock() - frameStart;
 		while (frameTime < frameDelay)

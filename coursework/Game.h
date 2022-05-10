@@ -4,6 +4,7 @@
 #include <iostream>
 #include <Windows.h>
 #include "Map.h"
+#include "Menu.h" 
 
 using namespace std;
 class Game
@@ -11,9 +12,10 @@ class Game
 public:
 	void init(const char* title, int xpos, int ypos, bool fullscrean);
 
-	void habdleEvents();
+	void handleEvents();
 	void update();
-	void render();
+	void menuRender();
+	void gameRender();
 	void clean();
 	bool running();
 	SDL_Event event;

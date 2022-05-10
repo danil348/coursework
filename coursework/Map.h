@@ -72,12 +72,13 @@ struct WeaponSettings
 class Map
 {
 public:
-	Map(int w, int h);
+	Map();
 
 	void DrawMap(SDL_Window * Window);
 
 	void UpdateMapX(float value);
 	void UpdateMapY(float value);
+	void Update_W_H(int w, int h);
 	void changingKeyState(const Uint8* arr);
 	void changingKeyState(bool mouseDown);
 
@@ -111,6 +112,8 @@ private:
 	TextManager textManager;
 	Key key;
 
+	int tmpWIDTH = NULL;
+	int tmpHEIGTH = NULL;
 	int WIDTH;
 	int HEIGTH;
 
