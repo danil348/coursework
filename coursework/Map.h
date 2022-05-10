@@ -86,7 +86,7 @@ public:
 	bool IntersectionWithGameObg(ClosingWall wall);
 	bool IntersectionWithGameObg(int x, int y, int w, int h);
 
-	void RoomCreater();
+	void RoomCreater(bool isFirstRoom);
 
 	void ChestDrow(int row, int column);
 	void StatueDrow(int row, int column);

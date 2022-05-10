@@ -33,16 +33,30 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 		isRunning = true;
 	}
 	
-	int w, h;
-	SDL_GetRendererOutputSize(map->textureManager.renderer, &w, &h);
-
 	map = new Map;
 	menu = new Menu;
-	map->Update_W_H(w, h);
-	map->RoomCreater();
+	menu->fisrtItems[0].activeTexture = TextureManager::LoadTexture("assets/menu_newgameActive.png");
+	menu->fisrtItems[0].texture = TextureManager::LoadTexture("assets/menu_newgame.png");
+	menu->fisrtItems[1].activeTexture = TextureManager::LoadTexture("assets/menu_settingActive.png");
+	menu->fisrtItems[1].texture = TextureManager::LoadTexture("assets/menu_setting.png");
+	menu->fisrtItems[2].activeTexture = TextureManager::LoadTexture("assets/menu_exitActive.png");
+	menu->fisrtItems[2].texture = TextureManager::LoadTexture("assets/menu_exit.png");
+
+	menu->settingsItems[0].activeTexture = TextureManager::LoadTexture("assets/menu_soundActive.png");
+	menu->settingsItems[0].texture = TextureManager::LoadTexture("assets/menu_sound.png");
+	menu->settingsItems[1].activeTexture = TextureManager::LoadTexture("assets/menu_screenActive.png");
+	menu->settingsItems[1].texture = TextureManager::LoadTexture("assets/menu_screen.png");
+
+	menu->soundOff = TextureManager::LoadTexture("assets/menu_soundoff.png");
+	menu->soundOn = TextureManager::LoadTexture("assets/menu_soundon.png");
+
+	menu->fullscreen = TextureManager::LoadTexture("assets/menu_fullscreen.png");
+	menu->screen1 = TextureManager::LoadTexture("assets/screen1.png");
+	menu->screen2 = TextureManager::LoadTexture("assets/screen2.png");
+	menu->screen3 = TextureManager::LoadTexture("assets/screen3.png");
+
 	event.key.keysym.scancode = SDL_SCANCODE_0;
 	event.type = NULL;
-
 }
 
 
@@ -51,12 +65,9 @@ void Game::handleEvents()
 	SDL_PollEvent(&event);
 
 
-	int w, h;
 	SDL_GetRendererOutputSize(map->textureManager.renderer, &w, &h);
 	map->Update_W_H(w, h);
-	if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ||
-		event.key.keysym.scancode == SDL_SCANCODE_RETURN ||
-		event.type == SDL_QUIT) {
+	if (keyboard_state_array[SDL_SCANCODE_ESCAPE]) {
 		menu->timeOfLastKey = clock();
 		if (menu->timeOfLastKey - menu->timeOfCurrentKey > menu->keyDelay) {
 			menu->isRunning = !menu->isRunning;
@@ -64,8 +75,6 @@ void Game::handleEvents()
 		}
 	}
 	else if (menu->isRunning == false) {
-
-
 		if (keyboard_state_array[SDL_SCANCODE_W] && !(keyboard_state_array[SDL_SCANCODE_S]))
 		{
 			map->UpdateMapY(map->playerSettings.speed);
@@ -87,10 +96,98 @@ void Game::handleEvents()
 		map->changingKeyState((GetKeyState(VK_LBUTTON) & 0x8000));
 		map->changingKeyState(keyboard_state_array);
 	}
+	else if (menu->isRunning == true) {
+		menu->timeOfLastKey = clock();
+		if (menu->timeOfLastKey - menu->timeOfCurrentKey > menu->keyDelay) {
+			if (keyboard_state_array[SDL_SCANCODE_UP]) {
+				menu->activeMenu--;
+				if (menu->typeMenu == 0) {
+					if (menu->activeMenu < 0) {
+						menu->activeMenu = menu->mainMenuCount - 1;
+					}
+				}
+				else if (menu->typeMenu == 1) {
+					if (menu->activeMenu < 0) {
+						menu->activeMenu = menu->settingsMenuCount - 1;
+					}
+				}
+			}
+			else if (keyboard_state_array[SDL_SCANCODE_DOWN]) {
+				menu->activeMenu++;
+				if (menu->typeMenu == 0) {
+					if (menu->activeMenu >= menu->mainMenuCount) {
+						menu->activeMenu = 0;
+					}
+				}
+				else if (menu->typeMenu == 1) {
+					if (menu->activeMenu >= menu->settingsMenuCount) {
+						menu->activeMenu = 0;
+					}
+				}
+			}
+			if (keyboard_state_array[SDL_SCANCODE_RETURN]) {
 
-	if (menu->isRunning == true) {
-		if (keyboard_state_array[SDL_SCANCODE_P] == true) {
-			SDL_SetWindowSize(window, 1300, 800);
+				if (menu->typeMenu == 1) {
+					menu->typeMenu = 0;
+					menu->activeMenu = 1;
+
+					for (int i = 0; i < menu->gameSettings.itemCount; i++) {
+						if (menu->gameSettings.screen[i][2] == 1) {
+							if (menu->gameSettings.screen[i][0] == 1 && menu->gameSettings.screen[i][1] == 1) {
+								SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+							}
+							else {
+								SDL_SetWindowFullscreen(window, 0);
+
+								SDL_SetWindowSize(window, menu->gameSettings.screen[i][0], menu->gameSettings.screen[i][1]);
+								SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+							}
+						}
+					}
+				
+				}else  if (menu->typeMenu == 0) {
+					if (menu->activeMenu == 2) {
+						exit(0);
+					}
+					else if (menu->activeMenu == 1) {
+						menu->typeMenu = 1;
+						menu->activeMenu = 0;
+					}
+					else if (menu->activeMenu == 0) {
+						map->Update_W_H(w, h);
+						map->RoomCreater(true);
+						menu->isRunning = false;
+					}
+				}
+
+			}
+
+			if (keyboard_state_array[SDL_SCANCODE_LEFT] == true && menu->typeMenu == 1 && menu->activeMenu == 0) {
+				menu->gameSettings.sound = !menu->gameSettings.sound;
+			}
+			if (keyboard_state_array[SDL_SCANCODE_RIGHT] == true && menu->typeMenu == 1 && menu->activeMenu == 0) {
+				menu->gameSettings.sound = !menu->gameSettings.sound;
+			}
+
+			if (keyboard_state_array[SDL_SCANCODE_LEFT] == true && menu->typeMenu == 1 && menu->activeMenu == 1) {
+				menu->gameSettings.screen[menu->gameSettings.activeItem][2] = 0;
+				menu->gameSettings.activeItem--;
+				if (menu->gameSettings.activeItem < 0) {
+					menu->gameSettings.activeItem = menu->gameSettings.itemCount - 1;
+				}
+				menu->gameSettings.screen[menu->gameSettings.activeItem][2] = 1;
+
+			}
+			if (keyboard_state_array[SDL_SCANCODE_RIGHT] == true && menu->typeMenu == 1 && menu->activeMenu == 1) {
+				menu->gameSettings.screen[menu->gameSettings.activeItem][2] = 0;
+				menu->gameSettings.activeItem++;
+				if (menu->gameSettings.activeItem >= menu->gameSettings.itemCount) {
+					menu->gameSettings.activeItem = 0;
+				}
+				menu->gameSettings.screen[menu->gameSettings.activeItem][2] = 1;
+			}
+
+			menu->timeOfCurrentKey = clock();
 		}
 	}
 }
@@ -105,6 +202,61 @@ void Game::menuRender()
 	if (menu->isRunning == true) {
 		SDL_SetRenderDrawColor(map->textureManager.renderer, 27, 28, 50, 0);
 		SDL_RenderClear(map->textureManager.renderer);
+		if (menu->typeMenu == 0) {
+			for (int i = 0; i < menu->mainMenuCount; i++) {
+				menu->_src = { 0,0,300,90 };
+				menu->_dest = { w / 2 - menu->_src.w / 2,200 * i,300,90 };
+				if (i == menu->activeMenu) {
+					TextureManager::Drow(menu->fisrtItems[i].activeTexture, menu->_src, menu->_dest);
+				}
+				else {
+					TextureManager::Drow(menu->fisrtItems[i].texture, menu->_src, menu->_dest);
+				}
+			}
+		}
+		else if (menu->typeMenu == 1) {
+			for (int i = 0; i < menu->settingsMenuCount; i++) {
+				menu->_src = { 0,0,300,90 };
+				menu->_dest = { w / 2 - menu->_src.w / 2  - 100, 200 * i,300,90 };
+				
+				if (i == menu->activeMenu) {
+					TextureManager::Drow(menu->settingsItems[i].activeTexture, menu->_src, menu->_dest);
+				}
+				else {
+					TextureManager::Drow(menu->settingsItems[i].texture, menu->_src, menu->_dest);
+				}
+
+				if (i == 0) {
+					menu->_src = { 0,0,150,90 };
+					menu->_dest = { w / 2 - menu->_src.w / 2 + 100, 200 * i,150,90 };
+					if (menu->gameSettings.sound == false) {
+						TextureManager::Drow(menu->soundOff, menu->_src, menu->_dest);
+					}
+					else {
+						TextureManager::Drow(menu->soundOn, menu->_src, menu->_dest);
+					}
+				}
+				else if (i == 1) {
+					menu->_src = { 0,0,300,90 };
+					menu->_dest = { w / 2 - menu->_src.w / 2 + 250, 200 * i + 10,300,90 };
+					if (menu->gameSettings.screen[3][2] == 1) {
+						TextureManager::Drow(menu->fullscreen, menu->_src, menu->_dest);
+					}
+					else {
+						if (menu->gameSettings.screen[0][2] == 1) {
+							TextureManager::Drow(menu->screen1, menu->_src, menu->_dest);
+						}
+						else if (menu->gameSettings.screen[1][2] == 1) {
+							TextureManager::Drow(menu->screen2, menu->_src, menu->_dest);
+						}
+						else if (menu->gameSettings.screen[2][2] == 1) {
+							TextureManager::Drow(menu->screen3, menu->_src, menu->_dest);
+						}
+					}
+				}
+				
+			}
+		}
 		SDL_RenderPresent(map->textureManager.renderer);
 	}
 }

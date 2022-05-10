@@ -73,7 +73,7 @@ void Map::DrawMap(SDL_Window* window)
 				switch (lvl1[row][column]) {
 				case 1: DefoltWallDrow(row, column); break;
 				case 10: case 11: case 12: case 13: ClosingWallDrow(row, column); break;
-				case 14: TextureManager::Drow(ground_5, src, dest); break;
+				//case 14: TextureManager::Drow(ground_5, src, dest); break;
 				case 15: PortalBetweenMapsDrow(row, column); break;
 				default: break;
 				}
@@ -101,8 +101,11 @@ void Map::DrawMap(SDL_Window* window)
 	PlayerDrow();
 }
 
-void Map::RoomCreater()
+void Map::RoomCreater(bool isFirstRoom)
 {
+	if (isFirstRoom == true) {
+		lvl = 1;
+	}
 	playerSettings.offsetX = WIDTH / 2.0;
 	playerSettings.offsetY = HEIGTH / 2.0;
 	playerSettings.dest.x = WIDTH / 2 - playerSettings.dest.w / 2;
@@ -411,7 +414,7 @@ void WeaponSettings::setParameters(WeaponShop& weaponShop)
 
 void Map::ChestDrow(int row, int column)
 {
-	TextureManager::Drow(ground_5, src, dest);
+	//TextureManager::Drow(ground_5, src, dest);
 	for (int i = 0; i < chestCount; i++) {
 		if (chest[i].posX == column && chest[i].posY == row) {
 			chest[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
@@ -426,9 +429,9 @@ void Map::ChestDrow(int row, int column)
 
 void Map::StatueDrow(int row, int column)
 {
-	TextureManager::Drow(ground_5, src, dest);
-	dopDest = { dest.x + tile_w, dest.y, tile_w, tile_h };
-	TextureManager::Drow(ground_4, src, dopDest);
+	//TextureManager::Drow(ground_5, src, dest);
+	//dopDest = { dest.x + tile_w, dest.y, tile_w, tile_h };
+	//TextureManager::Drow(ground_4, src, dopDest);
 	for (int i = 0; i < statueCount; i++) {
 		if (statue[i].posX == column && statue[i].posY == row) {
 			statue[i].setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
@@ -495,7 +498,7 @@ void Map::ClosingWallDrow(int row, int column)
 				enemyDie = false;
 			}
 			if (closingWall[i].isClos == false) {
-				TextureManager::Drow(closingWall[i].getMainTexture(), closingWall[i].src, closingWall[i].dest);
+				//TextureManager::Drow(closingWall[i].getMainTexture(), closingWall[i].src, closingWall[i].dest);
 			}
 			else {
 				TextureManager::Drow(closingWall[i].getSecondTexture(), closingWall[i].src, closingWall[i].dest);
@@ -514,7 +517,7 @@ void Map::PortalBetweenMapsDrow(int row, int column)
 		if (IntersectionWithGameObg(portalBetweenMaps.dest.x, portalBetweenMaps.dest.y, portalBetweenMaps.dest.w, portalBetweenMaps.dest.h) == true) {
 			textManager.Drow(textureManager.renderer, u8"Q для перехода", 17*14, 28, portalBetweenMaps.dest.x - (17 * 14 - portalBetweenMaps.dest.w) / 2, portalBetweenMaps.dest.y, 232, 221, 186);
 			if (key.keyQ == true) {
-				RoomCreater();
+				RoomCreater(false);
 			}
 		}
 	}
@@ -546,7 +549,19 @@ void Map::EnemyDrow()
 								if (playerSettings.hp < 0) {
 									playerSettings.hp = 0;
 									/*
+									* 
+									* 
+									* 
+									* 
+									* 
+									* 
 									// тут игрока убивают
+									* 
+									* 
+									* 
+									* 
+									* 
+									* 
 									*/
 								}
 							}
@@ -693,9 +708,9 @@ void Map::Update_W_H(int w, int h)
 
 void Map::WeaponDrow(int row, int column)
 {
-	TextureManager::Drow(ground_5, src, dest);
-	dopDest = { dest.x + tile_w, dest.y, tile_w, tile_h };
-	TextureManager::Drow(ground_4, src, dopDest);
+	//TextureManager::Drow(ground_5, src, dest);
+	//dopDest = { dest.x + tile_w, dest.y, tile_w, tile_h };
+	//TextureManager::Drow(ground_4, src, dopDest);
 	for (int i = 0; i < weaponShopCount; i++) {
 		if (weaponShop[i].posX == column && weaponShop[i].posY == row) {
 			weaponShop[i].setSrcDest_X_Y(src.x, src.y, dest.x - weaponShop[i].dest.w / 2, dest.y);
