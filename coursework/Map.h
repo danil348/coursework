@@ -38,7 +38,9 @@ struct PlayerSettings
 	int mana = 100;
 	float offsetX = 1120.0f;
 	float offsetY = 0.0f;
-
+	SDL_Texture* playerTexture;
+	SDL_Rect src = { 0,0,60,60 };
+	SDL_Rect dest = { 0,0,120,120 };
 };
 
 struct WeaponSettings

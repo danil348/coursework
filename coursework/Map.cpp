@@ -103,15 +103,16 @@ void Map::DrawMap(SDL_Window* window)
 	CoinCounterDrow();
 	CharacteristicBoardDrow();
 
-#ifdef DEBUG
 	PlayerDrow();
-#endif // DEBUG
 }
 
 void Map::RoomCreater()
 {
 	playerSettings.offsetX = WIDTH / 2.0;
 	playerSettings.offsetY = HEIGTH / 2.0;
+	playerSettings.playerTexture = TextureManager::LoadTexture("assets/b2.png");
+	playerSettings.dest.x = WIDTH / 2 - playerSettings.dest.w / 2;
+	playerSettings.dest.y = HEIGTH / 2 - playerSettings.dest.h / 2;
 
 	for (int i = 0; i < lvl1_h; i++) {
 		for (int j = 0; j < lvl1_w; j++) {
@@ -307,16 +308,16 @@ bool Map::Intersection(int type)
 	switch (type) {
 	case 10: case 11: case 12: case 13:
 		for (int j = 0; j < closingWallCount; j++) {
-			if (WIDTH / 2 >= closingWall[j].posX * tile_w + playerSettings.offsetX && WIDTH / 2 <= closingWall[j].posX * tile_w + playerSettings.offsetX + tile_w &&
-				HEIGTH / 2 >= closingWall[j].posY * tile_h + playerSettings.offsetY && HEIGTH / 2 <= closingWall[j].posY * tile_h + playerSettings.offsetY + tile_h &&
+			if (WIDTH / 2 + playerSettings.dest.w / 2 >= closingWall[j].posX * tile_w + playerSettings.offsetX && WIDTH / 2 - playerSettings.dest.w / 2 <= closingWall[j].posX * tile_w + playerSettings.offsetX + tile_w &&
+				HEIGTH / 2 + playerSettings.dest.h/2 >= closingWall[j].posY * tile_h + playerSettings.offsetY && HEIGTH / 2 - playerSettings.dest.h/2 <= closingWall[j].posY * tile_h + playerSettings.offsetY + tile_h &&
 				closingWall[j].isClos == true) {
 				return 1;
 			}
 		}
 	case 1:
 		for (int j = 0; j < defoltWallCount; j++) {
-			if (WIDTH / 2 >= defoltWall[j].posX * tile_w + playerSettings.offsetX && WIDTH / 2 <= defoltWall[j].posX * tile_w + playerSettings.offsetX + tile_w &&
-				HEIGTH / 2 >= defoltWall[j].posY * tile_h + playerSettings.offsetY && HEIGTH / 2 <= defoltWall[j].posY * tile_h + playerSettings.offsetY + tile_h) {
+			if (WIDTH / 2 + playerSettings.dest.w / 2 >= defoltWall[j].posX * tile_w + playerSettings.offsetX && WIDTH / 2 - playerSettings.dest.w / 2 <= defoltWall[j].posX * tile_w + playerSettings.offsetX + tile_w &&
+				HEIGTH / 2 + playerSettings.dest.h / 2 >= defoltWall[j].posY * tile_h + playerSettings.offsetY && HEIGTH / 2 - playerSettings.dest.h / 2 <= defoltWall[j].posY * tile_h + playerSettings.offsetY + tile_h) {
 				return 1;
 			}
 		}
@@ -334,10 +335,10 @@ bool Map::IntersectionWithGameObg(int x, int y, int w, int h)
 bool Map::IntersectionWithGameObg(ClosingWall wall)
 {
 	switch (wall.type) {
-	case 10: return (WIDTH / 2 >= wall.dest.x - 10 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10 && HEIGTH / 2 > wall.dest.y + wall.dest.h + 1 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10);
-	case 11: return (HEIGTH / 2 > wall.dest.y - 10 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10 && WIDTH / 2 < wall.dest.x - 1 && WIDTH / 2 > wall.dest.x - 10);
-	case 12: return (WIDTH / 2 > wall.dest.x - 10 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10 && HEIGTH / 2 < wall.dest.y - 1 && HEIGTH / 2 > wall.dest.y - 10);
-	case 13: return (HEIGTH / 2 > wall.dest.y - 10 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10 && WIDTH / 2 > wall.dest.x + wall.dest.w + 1 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10);
+	case 10: return (WIDTH / 2 >= wall.dest.x - 10 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10 && HEIGTH / 2 - playerSettings.dest.h/2 > wall.dest.y + wall.dest.h + 1 && HEIGTH / 2 - playerSettings.dest.h/2 < wall.dest.y + wall.dest.h + 10);
+	case 11: return (HEIGTH / 2 > wall.dest.y - 10 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10 && WIDTH / 2 + playerSettings.dest.w / 2 < wall.dest.x - 1 && WIDTH / 2 + playerSettings.dest.w / 2 > wall.dest.x - 10);
+	case 12: return (WIDTH / 2 > wall.dest.x - 10 && WIDTH / 2 < wall.dest.x + wall.dest.w + 10 && HEIGTH / 2 + playerSettings.dest.h / 2 < wall.dest.y - 1 && HEIGTH / 2 + playerSettings.dest.h / 2 > wall.dest.y - 10);
+	case 13: return (HEIGTH / 2  > wall.dest.y - 10 && HEIGTH / 2 < wall.dest.y + wall.dest.h + 10 && WIDTH / 2 - playerSettings.dest.w/2 > wall.dest.x + wall.dest.w + 1 && WIDTH / 2 - playerSettings.dest.w/2 < wall.dest.x + wall.dest.w + 10);
 	default: return 0;
 	}
 	return 0;
@@ -606,11 +607,8 @@ void Map::PlayerDrow()
 	if (weaponSettings.weaponAngle < 0) {
 		weaponSettings.weaponAngle = 270 + weaponSettings.weaponAngle + 90;
 	}
+	TextureManager::Drow(playerSettings.playerTexture, playerSettings.src, playerSettings.dest);
 	TextureManager::Drow(weaponSettings.weaponTexture, dopSrc, dopDest, weaponSettings.weaponAngle);
-
-	SDL_SetRenderDrawColor(textureManager.renderer, 255, 0, 0, 0);
-	dopDest = { WIDTH / 2, HEIGTH / 2, 1, 1 };
-	SDL_RenderFillRect(textureManager.renderer, &dopDest);
 }
 
 void Map::CloseFightUpdate()
