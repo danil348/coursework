@@ -1,0 +1,27 @@
+{
+ "bullet": {
+  "bulletDamage": 10.0,
+  "bulletDelay": 100,
+  "bulletOffsetRadius": 140.0,
+  "cost": 0,
+  "manaCost": 1,
+  "totalWeapons": 3,
+  "type": 0,
+  "weaponAngle": 0
+ },
+ "game": {
+  "activeScreen": 3,
+  "sound": true
+ },
+ "player": {
+  "armor": 100,
+  "damage": 25.0,
+  "hp": 100,
+  "mana": 100,
+  "offsetX": 1120.0,
+  "offsetY": 0.0,
+  "score": 114,
+  "shotDamage": 10.0,
+  "speed": 3.700000047683716
+ }
+}

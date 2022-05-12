@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="coursework.cpp" />
+    <ClCompile Include="DataStorage.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObgect.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -152,10 +153,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataStorage.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObgect.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="TextManager.h" />
     <ClInclude Include="TextureManager.h" />
@@ -179,6 +182,7 @@
     <Import Project="..\packages\sdl2_mixer.nuget.2.0.4\build\native\sdl2_mixer.nuget.targets" Condition="Exists('..\packages\sdl2_mixer.nuget.2.0.4\build\native\sdl2_mixer.nuget.targets')" />
     <Import Project="..\packages\vii.SDL2_mixer.redist.2.0.2\build\native\vii.SDL2_mixer.redist.targets" Condition="Exists('..\packages\vii.SDL2_mixer.redist.2.0.2\build\native\vii.SDL2_mixer.redist.targets')" />
     <Import Project="..\packages\vii.SDL2_mixer.2.0.2\build\native\vii.SDL2_mixer.targets" Condition="Exists('..\packages\vii.SDL2_mixer.2.0.2\build\native\vii.SDL2_mixer.targets')" />
+    <Import Project="..\packages\nlohmann.json.3.10.5\build\native\nlohmann.json.targets" Condition="Exists('..\packages\nlohmann.json.3.10.5\build\native\nlohmann.json.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -201,5 +205,6 @@
     <Error Condition="!Exists('..\packages\sdl2_mixer.nuget.2.0.4\build\native\sdl2_mixer.nuget.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2_mixer.nuget.2.0.4\build\native\sdl2_mixer.nuget.targets'))" />
     <Error Condition="!Exists('..\packages\vii.SDL2_mixer.redist.2.0.2\build\native\vii.SDL2_mixer.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vii.SDL2_mixer.redist.2.0.2\build\native\vii.SDL2_mixer.redist.targets'))" />
     <Error Condition="!Exists('..\packages\vii.SDL2_mixer.2.0.2\build\native\vii.SDL2_mixer.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\vii.SDL2_mixer.2.0.2\build\native\vii.SDL2_mixer.targets'))" />
+    <Error Condition="!Exists('..\packages\nlohmann.json.3.10.5\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\nlohmann.json.3.10.5\build\native\nlohmann.json.targets'))" />
   </Target>
 </Project>

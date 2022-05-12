@@ -3,6 +3,7 @@
 #include "GameObgect.h"
 #include "TextManager.h"
 #include <string>
+#include "Settings.h"
 #include <fstream>
 
 #define DEBUG
@@ -80,6 +81,7 @@ public:
 	void Update_W_H(int w, int h);
 	void changingKeyState(const Uint8* arr);
 	void changingKeyState(bool mouseDown);
+	void UpdateSetiings();
 
 	bool Intersection(int type);
 	bool IntersectionWithGameObg(ClosingWall wall);
@@ -107,6 +109,7 @@ public:
 	PlayerSettings playerSettings;
 	TextureManager textureManager;
 	WeaponSettings weaponSettings;
+	Settings settings;
 private:
 	TextManager textManager;
 	Key key;

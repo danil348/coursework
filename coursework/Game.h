@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <iostream>
 #include <Windows.h>
+#include "DataStorage.h"
 #include "Map.h"
 #include "Menu.h" 
 
@@ -19,6 +20,7 @@ public:
 	void clean();
 	bool running();
 	SDL_Event event;
+	DataStorage dataStorage;
 	int w, h;
 private:
 	bool isRunning = false;

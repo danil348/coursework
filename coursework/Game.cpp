@@ -1,15 +1,32 @@
 #include "Game.h"
 
-Map* map;
+Map* _map;
 Menu* menu;
 
 void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 {
+	_map = new Map;
+	dataStorage.getSetting(_map->settings);
+	_map->UpdateSetiings();
+	menu = new Menu;
+	bool flag = 0;
 
-	int flag = 0;
-	if (fullscrean) {
-		flag = SDL_WINDOW_FULLSCREEN;
+	int w;
+	int h;
+	for (int i = 0; i < _map->settings.itemCount; i++) {
+		if (_map->settings.screen[i][2] == 1) {
+			if (_map->settings.screen[i][0] == 1) {
+				flag = 1;
+				w = h = 10;
+			}
+			else {
+				w = _map->settings.screen[i][0];
+				h = _map->settings.screen[i][1];
+			}
+		}
 	}
+
+
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 		isRunning = false;
@@ -20,21 +37,23 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 	}
 	else {
 		printf("Initialised!\n");
-		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1300, 900, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		if (flag == true) {
+			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		}
 		if (window) {
 			printf("Window created!\n");
 		}
 		//SDL_SetWindowFullscreen(window, 1);
-		map->textureManager.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-		if (map->textureManager.renderer) {
-			SDL_SetRenderDrawColor(map->textureManager.renderer, 255, 255, 255, 255);
+		_map->textureManager.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+		if (_map->textureManager.renderer) {
+			SDL_SetRenderDrawColor(_map->textureManager.renderer, 255, 255, 255, 255);
 			printf("Renderer created!\n");
 		}
 		isRunning = true;
 	}
 	
-	map = new Map;
-	menu = new Menu;
+
 	menu->fisrtItems[0].activeTexture = TextureManager::LoadTexture("assets/menu_newgameActive.png");
 	menu->fisrtItems[0].texture = TextureManager::LoadTexture("assets/menu_newgame.png");
 	menu->fisrtItems[1].activeTexture = TextureManager::LoadTexture("assets/menu_settingActive.png");
@@ -65,8 +84,8 @@ void Game::handleEvents()
 	SDL_PollEvent(&event);
 
 
-	SDL_GetRendererOutputSize(map->textureManager.renderer, &w, &h);
-	map->Update_W_H(w, h);
+	SDL_GetRendererOutputSize(_map->textureManager.renderer, &w, &h);
+	_map->Update_W_H(w, h);
 	if (keyboard_state_array[SDL_SCANCODE_ESCAPE]) {
 		menu->timeOfLastKey = clock();
 		if (menu->timeOfLastKey - menu->timeOfCurrentKey > menu->keyDelay) {
@@ -77,24 +96,24 @@ void Game::handleEvents()
 	else if (menu->isRunning == false) {
 		if (keyboard_state_array[SDL_SCANCODE_W] && !(keyboard_state_array[SDL_SCANCODE_S]))
 		{
-			map->UpdateMapY(map->playerSettings.speed);
+			_map->UpdateMapY(_map->playerSettings.speed);
 		}
 		else if (!keyboard_state_array[SDL_SCANCODE_W] && keyboard_state_array[SDL_SCANCODE_S])
 		{
-			map->UpdateMapY(-map->playerSettings.speed);
+			_map->UpdateMapY(-_map->playerSettings.speed);
 		}
 
 		if (keyboard_state_array[SDL_SCANCODE_D] && !keyboard_state_array[SDL_SCANCODE_A])
 		{
-			map->UpdateMapX(-map->playerSettings.speed);
+			_map->UpdateMapX(-_map->playerSettings.speed);
 		}
 		else if (!keyboard_state_array[SDL_SCANCODE_D] && keyboard_state_array[SDL_SCANCODE_A])
 		{
-			map->UpdateMapX(map->playerSettings.speed);
+			_map->UpdateMapX(_map->playerSettings.speed);
 		}
 
-		map->changingKeyState((GetKeyState(VK_LBUTTON) & 0x8000));
-		map->changingKeyState(keyboard_state_array);
+		_map->changingKeyState((GetKeyState(VK_LBUTTON) & 0x8000));
+		_map->changingKeyState(keyboard_state_array);
 	}
 	else if (menu->isRunning == true) {
 		menu->timeOfLastKey = clock();
@@ -131,15 +150,15 @@ void Game::handleEvents()
 					menu->typeMenu = 0;
 					menu->activeMenu = 1;
 
-					for (int i = 0; i < menu->gameSettings.itemCount; i++) {
-						if (menu->gameSettings.screen[i][2] == 1) {
-							if (menu->gameSettings.screen[i][0] == 1 && menu->gameSettings.screen[i][1] == 1) {
+					for (int i = 0; i < _map->settings.itemCount; i++) {
+						if (_map->settings.screen[i][2] == 1) {
+							if (_map->settings.screen[i][0] == 1 && _map->settings.screen[i][1] == 1) {
 								SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 							}
 							else {
 								SDL_SetWindowFullscreen(window, 0);
 
-								SDL_SetWindowSize(window, menu->gameSettings.screen[i][0], menu->gameSettings.screen[i][1]);
+								SDL_SetWindowSize(window, _map->settings.screen[i][0], _map->settings.screen[i][1]);
 								SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 							}
 						}
@@ -147,15 +166,15 @@ void Game::handleEvents()
 				
 				}else  if (menu->typeMenu == 0) {
 					if (menu->activeMenu == 2) {
-						exit(0);
+						isRunning = false;
 					}
 					else if (menu->activeMenu == 1) {
 						menu->typeMenu = 1;
 						menu->activeMenu = 0;
 					}
 					else if (menu->activeMenu == 0) {
-						map->Update_W_H(w, h);
-						map->RoomCreater(true);
+						_map->Update_W_H(w, h);
+						_map->RoomCreater(true);
 						menu->isRunning = false;
 					}
 				}
@@ -163,28 +182,28 @@ void Game::handleEvents()
 			}
 
 			if (keyboard_state_array[SDL_SCANCODE_LEFT] == true && menu->typeMenu == 1 && menu->activeMenu == 0) {
-				menu->gameSettings.sound = !menu->gameSettings.sound;
+				_map->settings.sound = !_map->settings.sound;
 			}
 			if (keyboard_state_array[SDL_SCANCODE_RIGHT] == true && menu->typeMenu == 1 && menu->activeMenu == 0) {
-				menu->gameSettings.sound = !menu->gameSettings.sound;
+				_map->settings.sound = !_map->settings.sound;
 			}
 
 			if (keyboard_state_array[SDL_SCANCODE_LEFT] == true && menu->typeMenu == 1 && menu->activeMenu == 1) {
-				menu->gameSettings.screen[menu->gameSettings.activeItem][2] = 0;
-				menu->gameSettings.activeItem--;
-				if (menu->gameSettings.activeItem < 0) {
-					menu->gameSettings.activeItem = menu->gameSettings.itemCount - 1;
+				_map->settings.screen[_map->settings.activeItem][2] = 0;
+				_map->settings.activeItem--;
+				if (_map->settings.activeItem < 0) {
+					_map->settings.activeItem = _map->settings.itemCount - 1;
 				}
-				menu->gameSettings.screen[menu->gameSettings.activeItem][2] = 1;
+				_map->settings.screen[_map->settings.activeItem][2] = 1;
 
 			}
 			if (keyboard_state_array[SDL_SCANCODE_RIGHT] == true && menu->typeMenu == 1 && menu->activeMenu == 1) {
-				menu->gameSettings.screen[menu->gameSettings.activeItem][2] = 0;
-				menu->gameSettings.activeItem++;
-				if (menu->gameSettings.activeItem >= menu->gameSettings.itemCount) {
-					menu->gameSettings.activeItem = 0;
+				_map->settings.screen[_map->settings.activeItem][2] = 0;
+				_map->settings.activeItem++;
+				if (_map->settings.activeItem >= _map->settings.itemCount) {
+					_map->settings.activeItem = 0;
 				}
-				menu->gameSettings.screen[menu->gameSettings.activeItem][2] = 1;
+				_map->settings.screen[_map->settings.activeItem][2] = 1;
 			}
 
 			menu->timeOfCurrentKey = clock();
@@ -200,8 +219,8 @@ void Game::update()
 void Game::menuRender()
 {
 	if (menu->isRunning == true) {
-		SDL_SetRenderDrawColor(map->textureManager.renderer, 27, 28, 50, 0);
-		SDL_RenderClear(map->textureManager.renderer);
+		SDL_SetRenderDrawColor(_map->textureManager.renderer, 27, 28, 50, 0);
+		SDL_RenderClear(_map->textureManager.renderer);
 		if (menu->typeMenu == 0) {
 			for (int i = 0; i < menu->mainMenuCount; i++) {
 				menu->_src = { 0,0,300,90 };
@@ -229,7 +248,7 @@ void Game::menuRender()
 				if (i == 0) {
 					menu->_src = { 0,0,150,90 };
 					menu->_dest = { w / 2 - menu->_src.w / 2 + 100, 200 * i,150,90 };
-					if (menu->gameSettings.sound == false) {
+					if (_map->settings.sound == false) {
 						TextureManager::Drow(menu->soundOff, menu->_src, menu->_dest);
 					}
 					else {
@@ -239,17 +258,17 @@ void Game::menuRender()
 				else if (i == 1) {
 					menu->_src = { 0,0,300,90 };
 					menu->_dest = { w / 2 - menu->_src.w / 2 + 250, 200 * i + 10,300,90 };
-					if (menu->gameSettings.screen[3][2] == 1) {
+					if (_map->settings.screen[3][2] == 1) {
 						TextureManager::Drow(menu->fullscreen, menu->_src, menu->_dest);
 					}
 					else {
-						if (menu->gameSettings.screen[0][2] == 1) {
+						if (_map->settings.screen[0][2] == 1) {
 							TextureManager::Drow(menu->screen1, menu->_src, menu->_dest);
 						}
-						else if (menu->gameSettings.screen[1][2] == 1) {
+						else if (_map->settings.screen[1][2] == 1) {
 							TextureManager::Drow(menu->screen2, menu->_src, menu->_dest);
 						}
-						else if (menu->gameSettings.screen[2][2] == 1) {
+						else if (_map->settings.screen[2][2] == 1) {
 							TextureManager::Drow(menu->screen3, menu->_src, menu->_dest);
 						}
 					}
@@ -257,24 +276,25 @@ void Game::menuRender()
 				
 			}
 		}
-		SDL_RenderPresent(map->textureManager.renderer);
+		SDL_RenderPresent(_map->textureManager.renderer);
 	}
 }
 
 void Game::gameRender()
 {
 	if (menu->isRunning == false) {
-		SDL_SetRenderDrawColor(map->textureManager.renderer, 27, 28, 50, 0);
-		SDL_RenderClear(map->textureManager.renderer);
-		map->DrawMap(window);
-		SDL_RenderPresent(map->textureManager.renderer);
+		SDL_SetRenderDrawColor(_map->textureManager.renderer, 27, 28, 50, 0);
+		SDL_RenderClear(_map->textureManager.renderer);
+		_map->DrawMap(window);
+		SDL_RenderPresent(_map->textureManager.renderer);
 	}
 }
 
 void Game::clean()
 {
+	dataStorage.saveSetting(_map->settings);
 	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(map->textureManager.renderer);
+	SDL_DestroyRenderer(_map->textureManager.renderer);
 	TTF_Quit();
 	SDL_Quit();
 

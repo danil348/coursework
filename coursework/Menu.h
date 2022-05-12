@@ -8,21 +8,6 @@ struct Item
 };
 
 
-struct GameSettings
-{
-	bool sound = true;
-	int row = 4;
-	int col = 3;
-	int activeItem = 0;
-	int itemCount = 4;
-	int screen[4][3] = {
-		{1920, 1080, 1},
-		{1680, 1050, 0},
-		{1280, 1024, 0},
-		{1, 1, 0},
-	};
-};
-
 class Menu
 {
 public:
@@ -47,8 +32,6 @@ public:
 	SDL_Texture* screen2;
 	SDL_Texture* screen3;
 
-
-	GameSettings gameSettings;
 	SDL_Rect _src;
 	SDL_Rect _dest;
 private:

@@ -388,6 +388,11 @@ void Map::changingKeyState(bool mouseDown)
 	key.leftMouseKey = mouseDown;
 }
 
+void Map::UpdateSetiings()
+{
+	playerSettings.score = settings.score;
+}
+
 void WeaponSettings::setParameters(WeaponShop& weaponShop)
 {
 	tmpWeaponTexture = weaponShop.getWeaponTexture();
