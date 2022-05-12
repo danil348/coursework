@@ -111,6 +111,14 @@ public:
 	WeaponSettings weaponSettings;
 	Settings settings;
 private:
+
+	string lvlPath;
+	string tmpString;
+	string path;
+	char str[3];
+	int _row;
+	int _column;
+
 	TextManager textManager;
 	Key key;
 
@@ -136,6 +144,8 @@ private:
 	SDL_Texture* statue_2;
 	SDL_Texture* clwall;
 	SDL_Texture* dtWall;
+
+	SDL_Texture* portal[8];
 
 	SDL_Texture* weapon_1;
 	SDL_Texture* bullet_1;

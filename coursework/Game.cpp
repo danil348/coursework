@@ -5,29 +5,6 @@ Menu* menu;
 
 void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 {
-	_map = new Map;
-	dataStorage.getSetting(_map->settings);
-	_map->UpdateSetiings();
-	menu = new Menu;
-	bool flag = 0;
-
-	int w;
-	int h;
-	for (int i = 0; i < _map->settings.itemCount; i++) {
-		if (_map->settings.screen[i][2] == 1) {
-			if (_map->settings.screen[i][0] == 1) {
-				flag = 1;
-				w = h = 10;
-			}
-			else {
-				w = _map->settings.screen[i][0];
-				h = _map->settings.screen[i][1];
-			}
-		}
-	}
-
-
-
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 		isRunning = false;
 		printf("SDL Error: %S", SDL_GetError());
@@ -37,14 +14,10 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 	}
 	else {
 		printf("Initialised!\n");
-		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-		if (flag == true) {
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		}
+		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 12, 12, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 		if (window) {
 			printf("Window created!\n");
 		}
-		//SDL_SetWindowFullscreen(window, 1);
 		_map->textureManager.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 		if (_map->textureManager.renderer) {
 			SDL_SetRenderDrawColor(_map->textureManager.renderer, 255, 255, 255, 255);
@@ -54,6 +27,20 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 	}
 	
 
+	_map = new Map;
+	dataStorage.getSetting(_map->settings);
+	_map->UpdateSetiings();
+	menu = new Menu;
+	for (int i = 0; i < _map->settings.itemCount; i++) {
+		if (_map->settings.screen[i][2] == 1) {
+			if (_map->settings.screen[i][0] == 1) {
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+			}
+			else {
+				SDL_SetWindowSize(window, _map->settings.screen[i][0], _map->settings.screen[i][1]);
+			}
+		}
+	}
 	menu->fisrtItems[0].activeTexture = TextureManager::LoadTexture("assets/menu_newgameActive.png");
 	menu->fisrtItems[0].texture = TextureManager::LoadTexture("assets/menu_newgame.png");
 	menu->fisrtItems[1].activeTexture = TextureManager::LoadTexture("assets/menu_settingActive.png");

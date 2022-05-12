@@ -6,6 +6,9 @@ Map::Map()
 {
 	weaponSettings.bulletTexture = TextureManager::LoadTexture("assets/b1.png");
 	weaponSettings.weaponTexture = TextureManager::LoadTexture("assets/w1.png");
+
+	playerSettings.playerTexture = TextureManager::LoadTexture("assets/b2.png");
+
 	ground_1 = TextureManager::LoadTexture("assets/1.png");
 	ground_2 = TextureManager::LoadTexture("assets/2.png");
 	ground_3 = TextureManager::LoadTexture("assets/3.png");
@@ -30,7 +33,10 @@ Map::Map()
 	weapon_3 = TextureManager::LoadTexture("assets/w3.png");
 	bullet_3 = TextureManager::LoadTexture("assets/b3.png");
 
-	portal_1 = TextureManager::LoadTexture("assets/portal2/1.png");
+	for (int i = 0; i < 8; i++) {
+		path = "assets/portal2/" + to_string(i) + ".png";
+		portal[i] = TextureManager::LoadTexture(path.c_str());
+	}
 
 	src.x = src.y = 0;
 	src.w = tile_w;
@@ -110,25 +116,23 @@ void Map::RoomCreater(bool isFirstRoom)
 	playerSettings.offsetY = HEIGTH / 2.0;
 	playerSettings.dest.x = WIDTH / 2 - playerSettings.dest.w / 2;
 	playerSettings.dest.y = HEIGTH / 2 - playerSettings.dest.h / 2;
-	playerSettings.playerTexture = TextureManager::LoadTexture("assets/b2.png");
 
-	for (int i = 0; i < lvl1_h; i++) {
-		for (int j = 0; j < lvl1_w; j++) {
-			lvl1[i][j] = 0;
+	for (_row = 0; _row < lvl1_h; _row++) {
+		for (_column = 0; _column < lvl1_w; _column++) {
+			lvl1[_row][_column] = 0;
 		}
 	}
 
-	string lvlPath = "maps/" + to_string(lvl) + ".txt";
+	lvlPath = "maps/" + to_string(lvl) + ".txt";
+	tmpString = "0";
 	ifstream file(lvlPath);
-	string tmpString = "0";
 
-	char str[3];
 	if (file.is_open()) {
-		for (int i = 0; i < lvl1_h; i++) {
-			for (int j = 0; j < lvl1_w; j++) {
+		for (_row = 0; _row < lvl1_h; _row++) {
+			for (_column = 0; _column < lvl1_w; _column++) {
 				file.getline(str, 3, ',');
 				tmpString = str;
-				lvl1[i][j] = atoi(tmpString.c_str());
+				lvl1[_row][_column] = atoi(tmpString.c_str());
 			}
 		}
 		file.close();
@@ -137,9 +141,9 @@ void Map::RoomCreater(bool isFirstRoom)
 		}
 	}
 
-	for (int row = 0; row < lvl1_h; row++) {
-		for (int column = 0; column < lvl1_w; column++) {
-			switch (lvl1[row][column]) {
+	for (_row = 0; _row < lvl1_h; _row++) {
+		for (_column = 0; _column < lvl1_w; _column++) {
+			switch (lvl1[_row][_column]) {
 			case 7: chestCount++; break;
 			case 8: statueCount++; break;
 			case 10:case 11:case 12:case 13: closingWallCount++; break;
@@ -151,15 +155,15 @@ void Map::RoomCreater(bool isFirstRoom)
 
 		}
 	}
-	if (lvl > 2) {
-		delete[] chest;
-		delete[] statue;
-		delete[] closingWall;
-		delete[] bullets;
-		delete[] defoltWall;
-		delete[] enemy;
-		delete[] weaponShop;
-	}
+
+	delete[] chest;
+	delete[] statue;
+	delete[] closingWall;
+	delete[] bullets;
+	delete[] defoltWall;
+	delete[] enemy;
+	delete[] weaponShop;
+
 	chest = new Chest[chestCount];
 	statue = new Statue[statueCount];
 	closingWall = new ClosingWall[closingWallCount];
@@ -173,21 +177,21 @@ void Map::RoomCreater(bool isFirstRoom)
 	defoltWallCount = 0;
 	enemyCount = 0;
 	weaponShopCount = 0;
-	string path;
-	for (int row = 0; row < lvl1_h; row++) {
-		for (int column = 0; column < lvl1_w; column++) {
-			switch (lvl1[row][column]) {
+
+	for (_row = 0; _row < lvl1_h; _row++) {
+		for (_column = 0; _column < lvl1_w; _column++) {
+			switch (lvl1[_row][_column]) {
 			case 7:
-				chest[chestCount].posX = column;
-				chest[chestCount].posY = row;
+				chest[chestCount].posX = _column;
+				chest[chestCount].posY = _row;
 				chest[chestCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
 				chest[chestCount].setMainTexture(chestClose);
 				chest[chestCount].setSecondTexture(chestOpen);
 				chestCount++;
 				break;
 			case 8:
-				statue[statueCount].posX = column;
-				statue[statueCount].posY = row;
+				statue[statueCount].posX = _column;
+				statue[statueCount].posY = _row;
 				statue[statueCount].setSrcDest_W_H(288, 320, tile_w * 3, tile_h * 3);
 				statue[statueCount].setType((rand() % 3));
 				if (statue[statueCount].getType() == 1) {
@@ -199,46 +203,44 @@ void Map::RoomCreater(bool isFirstRoom)
 				statueCount++;
 				break;
 			case 10: case 11: case 12: case 13:
-				closingWall[closingWallCount].posX = column;
-				closingWall[closingWallCount].posY = row;
-				closingWall[closingWallCount].type = lvl1[row][column];
+				closingWall[closingWallCount].posX = _column;
+				closingWall[closingWallCount].posY = _row;
+				closingWall[closingWallCount].type = lvl1[_row][_column];
 				closingWall[closingWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
 				closingWall[closingWallCount].setMainTexture(ground_2);
 				closingWall[closingWallCount].setSecondTexture(clwall);
 				closingWallCount++;
 				break;
 			case 1:
-				defoltWall[defoltWallCount].posX = column;
-				defoltWall[defoltWallCount].posY = row;
+				defoltWall[defoltWallCount].posX = _column;
+				defoltWall[defoltWallCount].posY = _row;
 				defoltWall[defoltWallCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
 				defoltWall[defoltWallCount].setMainTexture(dtWall);
 				defoltWallCount++;
 				break;
 			case 15:
-				portalBetweenMaps.posX = column;
-				portalBetweenMaps.posY = row;
+				portalBetweenMaps.posX = _column;
+				portalBetweenMaps.posY = _row;
 				portalBetweenMaps.setSrcDest_W_H(768, 720, tile_w*4, tile_h*4);
 				for (int i = 0; i < 8; i++) {
-					path = "assets/portal2/" + to_string(i) + ".png";
-					portalBetweenMaps.tx[i] = TextureManager::LoadTexture(path.c_str());
+					portalBetweenMaps.tx[i] = portal[i];
 				}
-				//portalBetweenMaps.setMainTexture(TextureManager::LoadTexture("assets/0.png"));
 				break;
 			case 16:
-				playerSettings.offsetX -= column * tile_w + tile_w / 2;
-				playerSettings.offsetY -= row * tile_h + tile_h / 2;
+				playerSettings.offsetX -= _column * tile_w + tile_w / 2;
+				playerSettings.offsetY -= _row * tile_h + tile_h / 2;
 				break;
 			case 14:
-				enemy[enemyCount].posX = column;
-				enemy[enemyCount].posY = row;
+				enemy[enemyCount].posX = _column;
+				enemy[enemyCount].posY = _row;
 				enemy[enemyCount].setScreen_W_H(WIDTH, HEIGTH);
 				enemy[enemyCount].setSrcDest_W_H(188, 188, tile_w, tile_h);
 				enemy[enemyCount].setMainTexture(enemyTx);
 				enemyCount++;
 				break;
 			case 9:
-				weaponShop[weaponShopCount].posX = column;
-				weaponShop[weaponShopCount].posY = row;
+				weaponShop[weaponShopCount].posX = _column;
+				weaponShop[weaponShopCount].posY = _row;
 				weaponShop[weaponShopCount].setSrcDest_W_H(320, 32, 320, 32);
 				weaponShop[weaponShopCount].setType(rand() % weaponSettings.totalWeapons + 1);
 				if (weaponShop[weaponShopCount].getType() == 1) {
