@@ -160,6 +160,8 @@ void Game::handleEvents()
 						menu->activeMenu = 0;
 					}
 					else if (menu->activeMenu == 0) {
+						dataStorage.refreshSetting(_map->settings);
+						dataStorage.getSetting(_map->settings);
 						_map->Update_W_H(w, h);
 						_map->RoomCreater(true);
 						menu->isRunning = false;

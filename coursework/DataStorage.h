@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include "Settings.h"
+#include <Windows.h>
 #include <nlohmann/json.hpp>
 
 using namespace std;

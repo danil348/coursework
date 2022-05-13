@@ -18,6 +18,7 @@ void DataStorage::getSetting(Settings& settings)
     }
     settings.screen[JsonSetting["game"]["activeScreen"]][2] = 1;
 
+    settings.mana = JsonSetting["player"]["mana"];
     /*JsonSetting["bullet"]["bulletOffsetRadius"] = settings.bulletOffsetRadius;
     JsonSetting["bullet"]["bulletDelay"] = settings.bulletDelay;
     JsonSetting["bullet"]["bulletDamage"] = settings.bulletDamage;
@@ -117,7 +118,8 @@ void DataStorage::createFileJson(Settings settings)
 
 void DataStorage::refreshSetting(Settings& settings)
 {
-    ifstream writer;
+    CopyFile(L"storege/defolt_settings.json", L"storege/settings.json", false);
+    /*ifstream writer;
     writer.open(DefoltFile);
     if (writer.is_open()) {
         writer >> JsonSetting;
@@ -133,5 +135,5 @@ void DataStorage::refreshSetting(Settings& settings)
         JsonSetting["score"] = settings.score;
         _writer << JsonSetting.dump(1);
     }
-    _writer.close();
+    _writer.close();*/
 }

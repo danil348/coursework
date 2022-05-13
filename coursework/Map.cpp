@@ -392,7 +392,7 @@ void Map::changingKeyState(bool mouseDown)
 
 void Map::UpdateSetiings()
 {
-	playerSettings.score = settings.score;
+	settings.score = settings.score;
 }
 
 void WeaponSettings::setParameters(WeaponShop& weaponShop)
@@ -426,7 +426,7 @@ void Map::ChestDrow(int row, int column)
 		if (chest[i].posX == column && chest[i].posY == row) {
 			chest[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 			if (IntersectionWithGameObg(chest[i].dest.x, chest[i].dest.y, chest[i].dest.w, chest[i].dest.h) == true && chest[i].isOpen() == false) {
-				chest[i].getBonus(playerSettings.hp, playerSettings.armor, playerSettings.mana, playerSettings.score);
+				chest[i].getBonus(settings.hp, settings.armor, settings.mana, settings.score);
 			}
 			TextureManager::Drow(chest[i].getMainTexture(), chest[i].src, chest[i].dest);
 			break;
@@ -450,7 +450,7 @@ void Map::StatueDrow(int row, int column)
 				}
 			}
 			if (statue[i].wasUsed == true) {
-				statue[i].getBonus(playerSettings.hp, playerSettings.armor, playerSettings.mana, playerSettings.score);
+				statue[i].getBonus(settings.hp, settings.armor, settings.mana, settings.score);
 			}
 			break;
 		}
@@ -545,16 +545,16 @@ void Map::EnemyDrow()
 				if (enemy[i].bl[j].isFly == true) {
 					if (enemy[i].bl[j].intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, tile_w, tile_h, playerSettings.offsetX, playerSettings.offsetY, weaponSettings.bulletDamage, playerSettings.dest) == true) {
 						if (enemy[i].bl[j].intersectionType == 2) {
-							if (playerSettings.armor > 0) {
-								playerSettings.armor -= enemy[i].damage;
-								if (playerSettings.armor < 0) {
-									playerSettings.armor = 0;
+							if (settings.armor > 0) {
+								settings.armor -= enemy[i].damage;
+								if (settings.armor < 0) {
+									settings.armor = 0;
 								}
 							}
-							else if (playerSettings.hp > 0) {
-								playerSettings.hp -= enemy[i].damage;
-								if (playerSettings.hp < 0) {
-									playerSettings.hp = 0;
+							else if (settings.hp > 0) {
+								settings.hp -= enemy[i].damage;
+								if (settings.hp < 0) {
+									settings.hp = 0;
 									/*
 									* 
 									* 
@@ -592,7 +592,7 @@ void Map::EnemyCreator(int row, int column)
 		if (enemy[i].needSpawn == true && enemy[i].posX == column && enemy[i].posY == row && enemy[i].hasHp == true) {
 			enemy[i].islive = true;
 			enemy[i].setSrcDest_X_Y(defoltWall, defoltWallCount, closingWall, closingWallCount, src.x, src.y, dest.x, dest.y);
-			enemy[i].update(playerSettings.mana, playerSettings.score);
+			enemy[i].update(settings.mana, settings.score);
 		}
 	}
 }
@@ -621,21 +621,21 @@ void Map::CharacteristicBoardDrow()
 	dopDest = { 0,0, 292, 148 };
 	TextureManager::Drow(hpBoard, dopSrc, dopDest);
 
-	dopDest = { 52,16, 212 * playerSettings.hp / 100, 28 };
+	dopDest = { 52,16, 212 * settings.hp / 100, 28 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 237, 65, 63, 0);
 	SDL_RenderFillRect(textureManager.renderer, &dopDest);
-	textManager.Drow(textureManager.renderer, to_string(playerSettings.hp), 52, 26, 138, 20, 255, 255, 255);
+	textManager.Drow(textureManager.renderer, to_string(settings.hp), 52, 26, 138, 20, 255, 255, 255);
 
 
-	dopDest = { 52, 56, 212 * playerSettings.armor / 100,28 };
+	dopDest = { 52, 56, 212 * settings.armor / 100,28 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 136, 142, 140, 0);
 	SDL_RenderFillRect(textureManager.renderer, &dopDest);
-	textManager.Drow(textureManager.renderer, to_string(playerSettings.armor), 52, 26, 138, 60, 255, (playerSettings.armor > 0) ? 255 : 33, (playerSettings.armor > 0) ? 255 : 33);
+	textManager.Drow(textureManager.renderer, to_string(settings.armor), 52, 26, 138, 60, 255, (settings.armor > 0) ? 255 : 33, (settings.armor > 0) ? 255 : 33);
 
-	dopDest = { 52, 96, 212 * playerSettings.mana / 100,28 };
+	dopDest = { 52, 96, 212 * settings.mana / 100,28 };
 	SDL_SetRenderDrawColor(textureManager.renderer, 15, 123, 178, 0);
 	SDL_RenderFillRect(textureManager.renderer, &dopDest);
-	textManager.Drow(textureManager.renderer, to_string(playerSettings.mana), 52, 26, 138, 100, 255, (playerSettings.mana > 0) ? 255 : 33, (playerSettings.mana > 0) ? 255 : 33);
+	textManager.Drow(textureManager.renderer, to_string(settings.mana), 52, 26, 138, 100, 255, (settings.mana > 0) ? 255 : 33, (settings.mana > 0) ? 255 : 33);
 }
 
 void Map::BulletCreator()
@@ -644,8 +644,8 @@ void Map::BulletCreator()
 		weaponSettings.timeOfCurrentBullet = clock();
 		for (int i = 0; i < bulletsCount; i++) {
 			if (bullets[i].isFly == false && weaponSettings.timeOfCurrentBullet - weaponSettings.timeOfLastBullet > weaponSettings.bulletDelay &&
-				playerSettings.mana >= weaponSettings.manaCost) {
-				playerSettings.mana -= weaponSettings.manaCost;
+				settings.mana >= weaponSettings.manaCost) {
+				settings.mana -= weaponSettings.manaCost;
 				bullets[i].setAngl(key.mousePosX, key.mousePosY, WIDTH, HEIGTH, weaponSettings.bulletOffsetRadius);
 				weaponSettings.timeOfLastBullet = clock();
 				break;
@@ -660,7 +660,7 @@ void Map::CoinCounterDrow()
 	dopDest = { 10, 170, 40, 40 };
 	dopSrc = { 0, 0, 56, 80 };
 	TextureManager::Drow(coin, dopSrc, dopDest);
-	textManager.Drow(textureManager.renderer, to_string(playerSettings.score), 50, 50, 80, 170, 232, 221, 186);
+	textManager.Drow(textureManager.renderer, to_string(settings.score), 50, 50, 80, 170, 232, 221, 186);
 }
 
 void Map::PlayerDrow()
@@ -728,8 +728,8 @@ void Map::WeaponDrow(int row, int column)
 				}
 				textManager.Drow(textureManager.renderer, u8"Dm: " + to_string(int(weaponShop[i].bulletDamage)) + u8" M: " + to_string(weaponShop[i].manaCost), 120, 25, weaponShop[i].dest.x + weaponShop[i].dest.w / 2, weaponShop[i].dest.y - weaponShop[i].dest.h, 232, 221, 186);
 				if (key.space == true) {
-					if (weaponShop[i].alrBuy == false && playerSettings.score >= weaponShop[i].cost) {
-						playerSettings.score -= weaponShop[i].cost;
+					if (weaponShop[i].alrBuy == false && settings.score >= weaponShop[i].cost) {
+						settings.score -= weaponShop[i].cost;
 						weaponShop[i].alrBuy = true;
 						weaponShop[i].isBuy = true;
 					}
