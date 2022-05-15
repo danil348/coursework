@@ -33,6 +33,11 @@ Map::Map()
 	weapon_3 = TextureManager::LoadTexture("assets/w3.png");
 	bullet_3 = TextureManager::LoadTexture("assets/b3.png");
 
+	spikesUp = TextureManager::LoadTexture("assets/spikesUp.png");
+	spikesDown = TextureManager::LoadTexture("assets/spikesDown.png");
+	spikesUpB = TextureManager::LoadTexture("assets/spikesUpB.png");
+	spikesDownB = TextureManager::LoadTexture("assets/spikesDownB.png");
+
 	for (int i = 0; i < 8; i++) {
 		path = "assets/portal2/" + to_string(i) + ".png";
 		portal[i] = TextureManager::LoadTexture(path.c_str());
@@ -272,8 +277,8 @@ void Map::RoomCreater(bool isFirstRoom)
 				spikes[spikesCount].posX = _column;
 				spikes[spikesCount].posY = _row;
 				spikes[spikesCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
-				spikes[spikesCount].setMainTexture(chestClose);
-				spikes[spikesCount].setSecondTexture(chestOpen);
+				spikes[spikesCount].setMainTexture(spikesDown);
+				spikes[spikesCount].setSecondTexture(spikesUp);
 				spikesCount++;
 			default: break;
 			}
@@ -707,6 +712,8 @@ void Map::SpikesDrow(int row, int column)
 		if (IntersectionWithGameObg(spikes[i].dest.x, spikes[i].dest.y, spikes[i].dest.w, spikes[i].dest.h) == true && spikes[i].IsRaised() == true && spikes[i].used == false) {
 			spikes[i].used = true;
 			settings.hp -= 10;
+			spikes[i].setMainTexture(spikesUpB);
+			spikes[i].setSecondTexture(spikesDownB);
 			if (settings.hp < 0) {
 				settings.hp = 0;
 			}

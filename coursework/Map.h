@@ -145,6 +145,10 @@ private:
 	SDL_Texture* statue_2;
 	SDL_Texture* clwall;
 	SDL_Texture* dtWall;
+	SDL_Texture* spikesUp;
+	SDL_Texture* spikesDown;
+	SDL_Texture* spikesUpB;
+	SDL_Texture* spikesDownB;
 
 	SDL_Texture* portal[8];
 
