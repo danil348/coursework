@@ -710,6 +710,12 @@ void Map::Update_W_H(int w, int h)
 		tmpHEIGTH = HEIGTH;
 		WIDTH = w;
 		HEIGTH = h;
+		for (int i = 0; i < enemyCount; i++) {
+			if (enemy[i].hasHp == true) {
+				enemy[i].setScreen_W_H(w, h);
+				enemy[i].update(settings.mana, settings.score);
+			}
+		}
 	}
 }
 
