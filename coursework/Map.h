@@ -85,6 +85,7 @@ public:
 
 	bool Intersection(int type);
 	bool IntersectionWithGameObg(ClosingWall wall);
+	bool IntersectionWithGameObg(Spikes spikes);
 	bool IntersectionWithGameObg(int x, int y, int w, int h);
 
 	void RoomCreater(bool isFirstRoom);

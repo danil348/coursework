@@ -362,12 +362,16 @@ bool Map::Intersection(int type)
 	return 0;
 }
 
+bool Map::IntersectionWithGameObg(Spikes spikes)
+{
+	return (WIDTH / 2 - playerSettings.dest.w / 2 > spikes.dest.x - playerSettings.dest.w &&
+		WIDTH / 2 - playerSettings.dest.w / 2 < spikes.dest.x + playerSettings.dest.w &&
+		HEIGTH / 2 - playerSettings.dest.h / 2 > spikes.dest.y - playerSettings.dest.h &&
+		HEIGTH / 2 - playerSettings.dest.h / 2 < spikes.dest.y + playerSettings.dest.h);
+}
 bool Map::IntersectionWithGameObg(int x, int y, int w, int h)
 {
-	return (WIDTH / 2 - playerSettings.dest.w / 2 > x - playerSettings.dest.w &&
-		WIDTH / 2 - playerSettings.dest.w / 2 < x + playerSettings.dest.w &&
-		HEIGTH / 2 - playerSettings.dest.h / 2 > y - playerSettings.dest.h &&
-		HEIGTH / 2 - playerSettings.dest.h / 2 < y + playerSettings.dest.h);
+	return (WIDTH / 2 >= x && WIDTH / 2 <= x + w && HEIGTH / 2 >= y - h && HEIGTH / 2 <= y +h * 2);
 }
 
 bool Map::IntersectionWithGameObg(ClosingWall wall)
@@ -709,7 +713,7 @@ void Map::SpikesDrow(int row, int column)
 			spikes[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
 			TextureManager::Drow(spikes[i].getMainTexture(), spikes[i].src, spikes[i].dest);
 		}
-		if (IntersectionWithGameObg(spikes[i].dest.x, spikes[i].dest.y, spikes[i].dest.w, spikes[i].dest.h) == true && spikes[i].IsRaised() == true && spikes[i].used == false) {
+		if (IntersectionWithGameObg(spikes[i]) == true && spikes[i].IsRaised() == true && spikes[i].used == false) {
 			spikes[i].used = true;
 			settings.hp -= 10;
 			spikes[i].setMainTexture(spikesUpB);
