@@ -81,6 +81,7 @@ void Map::DrawMap(SDL_Window* window)
 				case 10: case 11: case 12: case 13: ClosingWallDrow(row, column); break;
 				//case 14: TextureManager::Drow(ground_5, src, dest); break;
 				case 15: PortalBetweenMapsDrow(row, column); break;
+				case 17: SpikesDrow(row, column); break;
 				default: break;
 				}
 
@@ -150,6 +151,7 @@ void Map::RoomCreater(bool isFirstRoom)
 			case 1: defoltWallCount++; break;
 			case 14: enemyCount++; break;
 			case 9: weaponShopCount++; break;
+			case 17: spikesCount++; break;
 			default: break;
 			}
 
@@ -163,6 +165,7 @@ void Map::RoomCreater(bool isFirstRoom)
 	delete[] defoltWall;
 	delete[] enemy;
 	delete[] weaponShop;
+	delete[] spikes;
 
 	chest = new Chest[chestCount];
 	statue = new Statue[statueCount];
@@ -171,12 +174,14 @@ void Map::RoomCreater(bool isFirstRoom)
 	defoltWall = new GameObgect[defoltWallCount];
 	enemy = new Enemy[enemyCount];
 	weaponShop = new WeaponShop[weaponShopCount];
+	spikes = new Spikes[spikesCount];
 	chestCount = 0;
 	statueCount = 0;
 	closingWallCount = 0;
 	defoltWallCount = 0;
 	enemyCount = 0;
 	weaponShopCount = 0;
+	spikesCount = 0;
 
 	for (_row = 0; _row < lvl1_h; _row++) {
 		for (_column = 0; _column < lvl1_w; _column++) {
@@ -263,6 +268,13 @@ void Map::RoomCreater(bool isFirstRoom)
 				}
 				weaponShopCount++;
 				break;
+			case 17:
+				spikes[spikesCount].posX = _column;
+				spikes[spikesCount].posY = _row;
+				spikes[spikesCount].setSrcDest_W_H(tile_w, tile_h, tile_w, tile_h);
+				spikes[spikesCount].setMainTexture(chestClose);
+				spikes[spikesCount].setSecondTexture(chestOpen);
+				spikesCount++;
 			default: break;
 			}
 		}
@@ -347,7 +359,10 @@ bool Map::Intersection(int type)
 
 bool Map::IntersectionWithGameObg(int x, int y, int w, int h)
 {
-	return (WIDTH / 2 >= x && WIDTH / 2 <= x + w && HEIGTH / 2 >= y - h && HEIGTH / 2 <= y +h * 2);
+	return (WIDTH / 2 - playerSettings.dest.w / 2 > x - playerSettings.dest.w &&
+		WIDTH / 2 - playerSettings.dest.w / 2 < x + playerSettings.dest.w &&
+		HEIGTH / 2 - playerSettings.dest.h / 2 > y - playerSettings.dest.h &&
+		HEIGTH / 2 - playerSettings.dest.h / 2 < y + playerSettings.dest.h);
 }
 
 bool Map::IntersectionWithGameObg(ClosingWall wall)
@@ -673,6 +688,30 @@ void Map::PlayerDrow()
 	}
 	TextureManager::Drow(playerSettings.playerTexture, playerSettings.src, playerSettings.dest);
 	TextureManager::Drow(weaponSettings.weaponTexture, dopSrc, dopDest, weaponSettings.weaponAngle);
+}
+
+void Map::SpikesDrow(int row, int column)
+{
+	spikeCurrentTime = clock();
+	if (spikeCurrentTime - spikeLastTime >= spikesDelay) {
+		spikeLastTime = spikeCurrentTime;
+		for (int i = 0; i < spikesCount; i++) {
+			spikes[i].changeState();
+		}
+	}
+	for (int i = 0; i < spikesCount; i++) {
+		if (spikes[i].posX == column && spikes[i].posY == row) {
+			spikes[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
+			TextureManager::Drow(spikes[i].getMainTexture(), spikes[i].src, spikes[i].dest);
+		}
+		if (IntersectionWithGameObg(spikes[i].dest.x, spikes[i].dest.y, spikes[i].dest.w, spikes[i].dest.h) == true && spikes[i].IsRaised() == true && spikes[i].used == false) {
+			spikes[i].used = true;
+			settings.hp -= 10;
+			if (settings.hp < 0) {
+				settings.hp = 0;
+			}
+		}
+	}
 }
 
 void Map::CloseFightUpdate()

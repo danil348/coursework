@@ -23,10 +23,10 @@ public:
 	void setSrc(int w, int h, int x, int y);
 	void setDest(int w, int h, int x, int y);
 
-private:
-	bool playerIsClose = false;
 	SDL_Texture* maintx;
 	SDL_Texture* second;
+private:
+	bool playerIsClose = false;
 };
 
 class Chest: public GameObgect
@@ -169,9 +169,6 @@ private:
 	int pathY = 0;
 };
 
-
-
-
 class PortalBetweenMaps: public GameObgect
 {
 public:
@@ -182,4 +179,17 @@ private:
 	int dopFrame = 0;
 	const int animFrameCount = 8;
 	int animFrameDelay = 16;
+};
+
+class Spikes : public GameObgect
+{
+public:
+	void changeState();
+	bool IsRaised();
+	bool used = false;
+private:
+	void switchTexture();
+
+	bool isRaised = false;
+	SDL_Texture* tmpTexture;
 };

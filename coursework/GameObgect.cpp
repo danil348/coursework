@@ -553,3 +553,22 @@ void Bullets::reset()
 	isFly = false;
 	intersectionType = 0;
 }
+
+void Spikes::switchTexture()
+{
+	tmpTexture = maintx;
+	maintx = second;
+	second = tmpTexture;
+}
+
+void Spikes::changeState()
+{
+	isRaised = !isRaised;
+	used = false;
+	switchTexture();
+}
+
+bool Spikes::IsRaised()
+{
+	return isRaised;
+}

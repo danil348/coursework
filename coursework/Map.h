@@ -40,7 +40,7 @@ struct PlayerSettings
 	float offsetY = 0.0f;
 	SDL_Texture* playerTexture;
 	SDL_Rect src = { 0,0,60,60 };
-	SDL_Rect dest = { 0,0,120,120 };
+	SDL_Rect dest = { 0,0,100,100};
 };
 
 struct WeaponSettings
@@ -95,6 +95,7 @@ public:
 	void DefoltWallDrow(int row, int column);
 	void ClosingWallDrow(int row, int column);
 	void PortalBetweenMapsDrow(int row, int column);
+	void SpikesDrow(int row, int column);
 	void EnemyDrow();
 	void BulletDrow();
 	void CharacteristicBoardDrow();
@@ -173,6 +174,12 @@ private:
 
 	int defoltWallCount = 0;
 	GameObgect* defoltWall;
+
+	int spikesCount = 0;
+	int spikesDelay = 2000;
+	int spikeCurrentTime = 0;
+	int spikeLastTime = 0;
+	Spikes* spikes;
 
 	int weaponShopCount = 0;
 	WeaponShop* weaponShop;
