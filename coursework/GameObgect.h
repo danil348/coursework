@@ -150,7 +150,7 @@ public:
 	void setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int src_x, int src_y, int dest_x, int dest_y);
 	void setScreen_W_H(int w, int h);
 	void reset();
-	void intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount);
+	void intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int dest_x, int dest_y);
 
 	int bulletsCount = 120;
 	Bullets* bl = new Bullets[bulletsCount];
@@ -158,6 +158,9 @@ public:
 	int timeOfCurrentBullet = 0;
 	int timeOfLastBullet = 0;
 private:
+	bool intersection(GameObgect* defoltWall, int Count, int dest_x, int dest_y);
+	bool intersection(ClosingWall* closingWall, int Count, int dest_x, int dest_y);
+
 	int manaPlayerBonus;
 	int scorePlayerBonus;
 

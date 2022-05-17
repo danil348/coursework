@@ -445,7 +445,7 @@ void WeaponSettings::setParameters(WeaponShop& weaponShop)
 
 void Map::ChestDrow(int row, int column)
 {
-	//TextureManager::Drow(ground_5, src, dest);
+	TextureManager::Drow(ground_5, src, dest);
 	for (int i = 0; i < chestCount; i++) {
 		if (chest[i].posX == column && chest[i].posY == row) {
 			chest[i].setSrcDest_X_Y(src.x, src.y, dest.x, dest.y);
@@ -460,15 +460,15 @@ void Map::ChestDrow(int row, int column)
 
 void Map::StatueDrow(int row, int column)
 {
-	//TextureManager::Drow(ground_5, src, dest);
-	//dopDest = { dest.x + tile_w, dest.y, tile_w, tile_h };
-	//TextureManager::Drow(ground_4, src, dopDest);
+	TextureManager::Drow(ground_5, src, dest);
+	dopDest = { dest.x + tile_w, dest.y, tile_w, tile_h };
+	TextureManager::Drow(ground_4, src, dopDest);
 	for (int i = 0; i < statueCount; i++) {
 		if (statue[i].posX == column && statue[i].posY == row) {
 			statue[i].setSrcDest_X_Y(src.x, src.y, dest.x - tile_w, dest.y - tile_h * 2);
 			TextureManager::Drow(statue[i].getMainTexture(), statue[i].src, statue[i].dest);
 			if (IntersectionWithGameObg(statue[i].dest.x, statue[i].dest.y, statue[i].dest.w , statue[i].dest.h) == true && statue[i].isUsed() == false) {
-				//textManager.Drow(textureManager.renderer, u8"всего 15 монет,\nа столько пользы", 300, 100, statue[i].dest.x + 70, statue[i].dest.y - 50, 232, 221, 186);
+				textManager.Drow(textureManager.renderer, u8"всего 15 монет,\nа столько пользы", 300, 100, statue[i].dest.x + 70, statue[i].dest.y - 50, 232, 221, 186);
 				if (key.space == true) {
 					statue[i].wasUsed = true;
 				}
@@ -771,9 +771,9 @@ void Map::Update_W_H(int w, int h)
 
 void Map::WeaponDrow(int row, int column)
 {
-	//TextureManager::Drow(ground_5, src, dest);
-	//dopDest = { dest.x + tile_w, dest.y, tile_w, tile_h };
-	//TextureManager::Drow(ground_4, src, dopDest);
+	TextureManager::Drow(ground_5, src, dest);
+	dopDest = { dest.x + tile_w, dest.y, tile_w, tile_h };
+	TextureManager::Drow(ground_4, src, dopDest);
 	for (int i = 0; i < weaponShopCount; i++) {
 		if (weaponShop[i].posX == column && weaponShop[i].posY == row) {
 			weaponShop[i].setSrcDest_X_Y(src.x, src.y, dest.x - weaponShop[i].dest.w / 2, dest.y);

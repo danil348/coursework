@@ -239,7 +239,7 @@ void Enemy::update(int& manaPlayer, int& scorePlayer)
 
 void Enemy::setSrcDest_X_Y(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int src_x, int src_y, int dest_x, int dest_y)
 {
-	intersection(defoltWall, defoltWallCount, closingWall, closingWallCount);
+	intersection(defoltWall, defoltWallCount, closingWall, closingWallCount, dest_x, dest_y);
 	dest.x = dest_x + pathX;
 	dest.y = dest_y + pathY;
 	src.x = src_x;
@@ -256,7 +256,7 @@ void Enemy::reset()
 {
 }
 
-void Enemy::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount)
+void Enemy::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWall* closingWall, int closingWallCount, int dest_x, int dest_y)
 {
 	if (pathLengthX == 0) {
 		pathLengthX = rand() % 1000;
@@ -274,92 +274,61 @@ void Enemy::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingWal
 	if (pathLengthX > 0) {
 		pathX++;
 		pathLengthX--;
-		for (int j = 0; j < defoltWallCount; j++) {
-			if (dest.x + dest.w >= defoltWall[j].dest.x && dest.x + dest.w <= defoltWall[j].dest.x + defoltWall[j].dest.w &&
-				dest.x - 10 + dest.w < defoltWall[j].dest.x && dest.y >= defoltWall[j].dest.y &&
-				dest.y <= defoltWall[j].dest.y + defoltWall[j].dest.h) {
-				pathLengthX *= -1;
-				pathX--;
-				break;
-			}
-		}
-		for (int j = 0; j < closingWallCount; j++) {
-			if (dest.x + dest.w >= closingWall[j].dest.x && dest.x + dest.w <= closingWall[j].dest.x + closingWall[j].dest.w &&
-				dest.x - 10 + dest.w < closingWall[j].dest.x && dest.y >= closingWall[j].dest.y &&
-				dest.y <= closingWall[j].dest.y + closingWall[j].dest.h) {
-				pathLengthX *= -1;
-				pathX--;
-				break;
-			}
+		if (intersection(defoltWall, defoltWallCount, dest_x, dest_y) == true || intersection(closingWall, closingWallCount, dest_x, dest_y) == true) {
+			pathLengthX *= -1;
+			pathX--;
 		}
 	}
 	else {
 		pathX--;
 		pathLengthX++;
-		for (int j = 0; j < defoltWallCount; j++) {
-			if (dest.x >= defoltWall[j].dest.x && dest.x < defoltWall[j].dest.x + defoltWall[j].dest.w &&
-				dest.x + 10 < defoltWall[j].dest.x + defoltWall[j].dest.w && dest.y >= defoltWall[j].dest.y &&
-				dest.y <= defoltWall[j].dest.y + defoltWall[j].dest.h) {
-				pathLengthX *= -1;
-				pathX++;
-				break;
-			}
-		}
-		for (int j = 0; j < closingWallCount; j++) {
-			if (dest.x >= closingWall[j].dest.x && dest.x < closingWall[j].dest.x + closingWall[j].dest.w &&
-				dest.x + 10 < closingWall[j].dest.x + closingWall[j].dest.w && dest.y >= closingWall[j].dest.y &&
-				dest.y <= closingWall[j].dest.y + closingWall[j].dest.h) {
-				pathLengthX *= -1;
-				pathX++;
-				break;
-			}
+		if (intersection(defoltWall, defoltWallCount, dest_x, dest_y) == true || intersection(closingWall, closingWallCount, dest_x, dest_y) == true) {
+			pathLengthX *= -1;
+			pathX++;
 		}
 	}
-
 	if (pathLengthY > 0) {
 		pathY++;
 		pathLengthY--;
-		for (int j = 0; j < defoltWallCount; j++) {
-			if (dest.x >= defoltWall[j].dest.x && dest.x <= defoltWall[j].dest.x + defoltWall[j].dest.w &&
-				dest.y + dest.h - 10 < defoltWall[j].dest.y && dest.y + dest.h >= defoltWall[j].dest.y &&
-				dest.y <= defoltWall[j].dest.y + defoltWall[j].dest.h) {
-				pathLengthY *= -1;
-				pathY--;
-				break;
-			}
-		}
-		for (int j = 0; j < closingWallCount; j++) {
-			if (dest.x >= closingWall[j].dest.x && dest.x <= closingWall[j].dest.x + closingWall[j].dest.w &&
-				dest.y + dest.h - 10 < closingWall[j].dest.y && dest.y + dest.h >= closingWall[j].dest.y &&
-				dest.y <= closingWall[j].dest.y + closingWall[j].dest.h) {
-				pathLengthY *= -1;
-				pathY--;
-				break;
-			}
+		if (intersection(defoltWall, defoltWallCount, dest_x, dest_y) == true || intersection(closingWall, closingWallCount, dest_x, dest_y) == true) {
+			pathLengthY *= -1;
+			pathY--;
 		}
 	}
 	else {
 		pathY--;
 		pathLengthY++;
-		for (int j = 0; j < defoltWallCount; j++) {
-			if (dest.x >= defoltWall[j].dest.x && dest.x <= defoltWall[j].dest.x + defoltWall[j].dest.w &&
-				dest.y + 10 > defoltWall[j].dest.y + defoltWall[j].dest.h && dest.y >= defoltWall[j].dest.y &&
-				dest.y <= defoltWall[j].dest.y + defoltWall[j].dest.h) {
-				pathLengthY *= -1;
-				pathY--;
-				break;
-			}
-		}
-		for (int j = 0; j < closingWallCount; j++) {
-			if (dest.x >= closingWall[j].dest.x && dest.x <= closingWall[j].dest.x + closingWall[j].dest.w &&
-				dest.y + 10 > closingWall[j].dest.y + closingWall[j].dest.h && dest.y >= closingWall[j].dest.y &&
-				dest.y <= closingWall[j].dest.y + closingWall[j].dest.h) {
-				pathLengthY *= -1;
-				pathY--;
-				break;
-			}
+		if (intersection(defoltWall, defoltWallCount, dest_x, dest_y) == true || intersection(closingWall, closingWallCount, dest_x, dest_y) == true) {
+			pathLengthY *= -1;
+			pathY++;
 		}
 	}
+}
+
+bool Enemy::intersection(GameObgect* defoltWall, int Count, int dest_x, int dest_y)
+{
+	for (int j = 0; j < Count; j++) {
+		if (dest_x + pathX > defoltWall[j].dest.x - dest.w &&
+			dest_x + pathX < defoltWall[j].dest.x + defoltWall[j].dest.w &&
+			dest_y + pathY > defoltWall[j].dest.y - dest.h &&
+			dest_y + pathY < defoltWall[j].dest.y + defoltWall[j].dest.h) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+bool Enemy::intersection(ClosingWall* closingWall, int Count, int dest_x, int dest_y)
+{
+	for (int j = 0; j < Count; j++) {
+		if (dest_x + pathX > closingWall[j].dest.x - dest.w &&
+			dest_x + pathX < closingWall[j].dest.x + closingWall[j].dest.w &&
+			dest_y + pathY > closingWall[j].dest.y - dest.h &&
+			dest_y + pathY < closingWall[j].dest.y + closingWall[j].dest.h) {
+			return 1;
+		}
+	}
+	return 0;
 }
 
 void WeaponShop::setWeaponTexture(SDL_Texture* value)
