@@ -10,7 +10,7 @@ class GameObgect
 public:
 	SDL_Rect src, dest;
 	int posX, posY;
-	//asd
+
 	void setMainTexture(SDL_Texture* value);
 	void setSecondTexture(SDL_Texture* value);
 	void chengeMainTexture();
