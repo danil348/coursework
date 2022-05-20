@@ -19,6 +19,8 @@ void DataStorage::getSetting(Settings& settings)
     settings.screen[JsonSetting["game"]["activeScreen"]][2] = 1;
 
     settings.mana = JsonSetting["player"]["mana"];
+    settings.hp = JsonSetting["player"]["hp"];
+    settings.armor = JsonSetting["player"]["armor"];
     /*JsonSetting["bullet"]["bulletOffsetRadius"] = settings.bulletOffsetRadius;
     JsonSetting["bullet"]["bulletDelay"] = settings.bulletDelay;
     JsonSetting["bullet"]["bulletDamage"] = settings.bulletDamage;

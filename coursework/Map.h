@@ -39,8 +39,8 @@ struct PlayerSettings
 	float offsetX = 1120.0f;
 	float offsetY = 0.0f;
 	SDL_Texture* playerTexture;
-	SDL_Rect src = { 0,0,60,60 };
-	SDL_Rect dest = { 0,0,100,100};
+	SDL_Rect src = { 0,0,1184,1184 };
+	SDL_Rect dest = { 0,0,150,150};
 };
 
 struct WeaponSettings
@@ -111,7 +111,9 @@ public:
 	PlayerSettings playerSettings;
 	TextureManager textureManager;
 	WeaponSettings weaponSettings;
+	TextManager textManager;
 	Settings settings;
+	bool playerIsdeadh = false;
 private:
 
 	string lvlPath;
@@ -121,7 +123,6 @@ private:
 	int _row;
 	int _column;
 
-	TextManager textManager;
 	Key key;
 
 	int tmpWIDTH = NULL;

@@ -8,6 +8,7 @@ using namespace std;
 class TextureManager
 {
 public:
+	// static дл€ того, чтобы обращатьс€ к функци€м без объ€влени€ объекта класса
 	static SDL_Texture* LoadTexture(const char* texture);
 	static void Drow(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest);
 	static void Drow(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest, float angle);

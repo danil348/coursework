@@ -61,6 +61,8 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscrean)
 	menu->screen2 = TextureManager::LoadTexture("assets/screen2.png");
 	menu->screen3 = TextureManager::LoadTexture("assets/screen3.png");
 
+	sound.addSoundEffect("switch.wav");
+
 	event.key.keysym.scancode = SDL_SCANCODE_0;
 	event.type = NULL;
 }
@@ -73,7 +75,7 @@ void Game::handleEvents()
 
 	SDL_GetRendererOutputSize(_map->textureManager.renderer, &w, &h);
 	_map->Update_W_H(w, h);
-	if (keyboard_state_array[SDL_SCANCODE_ESCAPE]) {
+	if (keyArray[SDL_SCANCODE_ESCAPE]) {
 		menu->timeOfLastKey = clock();
 		if (menu->timeOfLastKey - menu->timeOfCurrentKey > menu->keyDelay) {
 			menu->isRunning = !menu->isRunning;
@@ -81,31 +83,32 @@ void Game::handleEvents()
 		}
 	}
 	else if (menu->isRunning == false) {
-		if (keyboard_state_array[SDL_SCANCODE_W] && !(keyboard_state_array[SDL_SCANCODE_S]))
+		if (keyArray[SDL_SCANCODE_W] && !(keyArray[SDL_SCANCODE_S]))
 		{
 			_map->UpdateMapY(_map->playerSettings.speed);
 		}
-		else if (!keyboard_state_array[SDL_SCANCODE_W] && keyboard_state_array[SDL_SCANCODE_S])
+		else if (!keyArray[SDL_SCANCODE_W] && keyArray[SDL_SCANCODE_S])
 		{
 			_map->UpdateMapY(-_map->playerSettings.speed);
 		}
 
-		if (keyboard_state_array[SDL_SCANCODE_D] && !keyboard_state_array[SDL_SCANCODE_A])
+		if (keyArray[SDL_SCANCODE_D] && !keyArray[SDL_SCANCODE_A])
 		{
 			_map->UpdateMapX(-_map->playerSettings.speed);
 		}
-		else if (!keyboard_state_array[SDL_SCANCODE_D] && keyboard_state_array[SDL_SCANCODE_A])
+		else if (!keyArray[SDL_SCANCODE_D] && keyArray[SDL_SCANCODE_A])
 		{
 			_map->UpdateMapX(_map->playerSettings.speed);
 		}
 
 		_map->changingKeyState((GetKeyState(VK_LBUTTON) & 0x8000));
-		_map->changingKeyState(keyboard_state_array);
+		_map->changingKeyState(keyArray);
 	}
 	else if (menu->isRunning == true) {
 		menu->timeOfLastKey = clock();
 		if (menu->timeOfLastKey - menu->timeOfCurrentKey > menu->keyDelay) {
-			if (keyboard_state_array[SDL_SCANCODE_UP]) {
+			if (keyArray[SDL_SCANCODE_UP]) {
+				sound.playSoundEffect(0);
 				menu->activeMenu--;
 				if (menu->typeMenu == 0) {
 					if (menu->activeMenu < 0) {
@@ -118,7 +121,8 @@ void Game::handleEvents()
 					}
 				}
 			}
-			else if (keyboard_state_array[SDL_SCANCODE_DOWN]) {
+			else if (keyArray[SDL_SCANCODE_DOWN]) {
+				sound.playSoundEffect(0);
 				menu->activeMenu++;
 				if (menu->typeMenu == 0) {
 					if (menu->activeMenu >= menu->mainMenuCount) {
@@ -131,7 +135,8 @@ void Game::handleEvents()
 					}
 				}
 			}
-			if (keyboard_state_array[SDL_SCANCODE_RETURN]) {
+			if (keyArray[SDL_SCANCODE_RETURN]) {
+				sound.playSoundEffect(0);
 
 				if (menu->typeMenu == 1) {
 					menu->typeMenu = 0;
@@ -165,19 +170,21 @@ void Game::handleEvents()
 						_map->Update_W_H(w, h);
 						_map->RoomCreater(true);
 						menu->isRunning = false;
+						_map->playerIsdeadh = false;
+						needPlayEnd = true;
 					}
 				}
 
 			}
 
-			if (keyboard_state_array[SDL_SCANCODE_LEFT] == true && menu->typeMenu == 1 && menu->activeMenu == 0) {
+			if (keyArray[SDL_SCANCODE_LEFT] == true && menu->typeMenu == 1 && menu->activeMenu == 0) {
 				_map->settings.sound = !_map->settings.sound;
 			}
-			if (keyboard_state_array[SDL_SCANCODE_RIGHT] == true && menu->typeMenu == 1 && menu->activeMenu == 0) {
+			if (keyArray[SDL_SCANCODE_RIGHT] == true && menu->typeMenu == 1 && menu->activeMenu == 0) {
 				_map->settings.sound = !_map->settings.sound;
 			}
 
-			if (keyboard_state_array[SDL_SCANCODE_LEFT] == true && menu->typeMenu == 1 && menu->activeMenu == 1) {
+			if (keyArray[SDL_SCANCODE_LEFT] == true && menu->typeMenu == 1 && menu->activeMenu == 1) {
 				_map->settings.screen[_map->settings.activeItem][2] = 0;
 				_map->settings.activeItem--;
 				if (_map->settings.activeItem < 0) {
@@ -186,7 +193,7 @@ void Game::handleEvents()
 				_map->settings.screen[_map->settings.activeItem][2] = 1;
 
 			}
-			if (keyboard_state_array[SDL_SCANCODE_RIGHT] == true && menu->typeMenu == 1 && menu->activeMenu == 1) {
+			if (keyArray[SDL_SCANCODE_RIGHT] == true && menu->typeMenu == 1 && menu->activeMenu == 1) {
 				_map->settings.screen[_map->settings.activeItem][2] = 0;
 				_map->settings.activeItem++;
 				if (_map->settings.activeItem >= _map->settings.itemCount) {
@@ -202,12 +209,27 @@ void Game::handleEvents()
 
 void Game::update()
 {
-
+	if (timeOfLastend == 0 && needPlayEnd == true && _map->playerIsdeadh == true) {
+		timeOfLastend = clock();
+	}
+	
+	if (_map->playerIsdeadh == true) {
+		menu->isRunning = true;
+		if (needPlayEnd == true) {
+			endplay = true;
+			timeOfCurrentend = clock();
+			playEnd();
+			if (timeOfCurrentend - timeOfLastend  > endDelay) {
+				needPlayEnd = false;
+				endplay = false;
+			}
+		}
+	}
 }
 
 void Game::menuRender()
 {
-	if (menu->isRunning == true) {
+	if (menu->isRunning == true && endplay == false) {
 		SDL_SetRenderDrawColor(_map->textureManager.renderer, 27, 28, 50, 0);
 		SDL_RenderClear(_map->textureManager.renderer);
 		if (menu->typeMenu == 0) {
@@ -271,7 +293,7 @@ void Game::menuRender()
 
 void Game::gameRender()
 {
-	if (menu->isRunning == false) {
+	if (menu->isRunning == false && _map->playerIsdeadh == false) {
 		SDL_SetRenderDrawColor(_map->textureManager.renderer, 27, 28, 50, 0);
 		SDL_RenderClear(_map->textureManager.renderer);
 		_map->DrawMap(window);
@@ -293,4 +315,16 @@ void Game::clean()
 bool Game::running()
 {
 	return isRunning;
+}
+
+void Game::playEnd()
+{
+	SDL_SetRenderDrawColor(_map->textureManager.renderer, 27, 28, 50, 0);
+	SDL_RenderClear(_map->textureManager.renderer);			
+	_map->textManager.Drow(_map->textureManager.renderer, u8"Game Over", 17 * 14*2, 28*2, w/2- 17 * 14, h/2 - 28, 232, 221, 186);
+	SDL_SetRenderDrawColor(_map->textureManager.renderer, 232, 221, 186, 0);
+	SDL_RenderDrawLine(_map->textureManager.renderer, 0, h / 2 - 28 - 50, w, h / 2 - 28 - 50);
+	SDL_RenderDrawLine(_map->textureManager.renderer, 0, h / 2 - 28 + 100, w, h / 2 - 28 + 100);
+	
+	SDL_RenderPresent(_map->textureManager.renderer);
 }

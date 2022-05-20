@@ -7,7 +7,7 @@ Map::Map()
 	weaponSettings.bulletTexture = TextureManager::LoadTexture("assets/b1.png");
 	weaponSettings.weaponTexture = TextureManager::LoadTexture("assets/w1.png");
 
-	playerSettings.playerTexture = TextureManager::LoadTexture("assets/b2.png");
+	playerSettings.playerTexture = TextureManager::LoadTexture("assets/pla.png");
 
 	ground_1 = TextureManager::LoadTexture("assets/1.png");
 	ground_2 = TextureManager::LoadTexture("assets/2.png");
@@ -56,7 +56,20 @@ Map::Map()
 void Map::DrawMap(SDL_Window* window)
 {
 	SDL_GetMouseState(&key.mousePosX, &key.mousePosY);
-
+	for (int row = 0; row < lvl1_h; row++) {
+		for (int column = 0; column < lvl1_w; column++) {
+			dest.x = column * tile_w + playerSettings.offsetX;
+			dest.y = row * tile_h + playerSettings.offsetY;
+			switch (lvl1[row][column]) {
+			case 2: TextureManager::Drow(ground_1, src, dest); break;
+			case 3: TextureManager::Drow(ground_2, src, dest); break;
+			case 4: TextureManager::Drow(ground_3, src, dest); break;
+			case 5: TextureManager::Drow(ground_4, src, dest); break;
+			case 6: TextureManager::Drow(ground_5, src, dest); break;
+			default: break;
+			}
+		}
+	}
 	for (int row = 0; row < lvl1_h; row++) {
 		for (int column = 0; column < lvl1_w; column++) {
 			dest.x = column * tile_w + playerSettings.offsetX;
@@ -69,11 +82,6 @@ void Map::DrawMap(SDL_Window* window)
 			if (lvl1[row][column] >= 2 && lvl1[row][column] <= 9 && dest.x > -tile_w && dest.x < WIDTH + tile_w &&
 				dest.y > -tile_h && dest.y < HEIGTH + tile_h && lvl1[row][column-1] != 8 && lvl1[row][column - 1] != 9) {
 				switch (lvl1[row][column]) {
-				case 2: TextureManager::Drow(ground_1, src, dest); break;
-				case 3: TextureManager::Drow(ground_2, src, dest); break;
-				case 4: TextureManager::Drow(ground_3, src, dest); break;
-				case 5: TextureManager::Drow(ground_4, src, dest); break;
-				case 6: TextureManager::Drow(ground_5, src, dest); break;
 				case 7: ChestDrow(row, column); break;
 				case 8: StatueDrow(row, column); break;
 				case 9: WeaponDrow(row, column); break;
@@ -84,8 +92,9 @@ void Map::DrawMap(SDL_Window* window)
 				switch (lvl1[row][column]) {
 				case 1: DefoltWallDrow(row, column); break;
 				case 10: case 11: case 12: case 13: ClosingWallDrow(row, column); break;
-				//case 14: TextureManager::Drow(ground_5, src, dest); break;
-				case 15: PortalBetweenMapsDrow(row, column); break;
+				case 14: TextureManager::Drow(ground_5, src, dest); break;
+				case 16: TextureManager::Drow(ground_5, src, dest); break;
+				case 15: TextureManager::Drow(ground_3, src, dest); PortalBetweenMapsDrow(row, column); break;
 				case 17: SpikesDrow(row, column); break;
 				default: break;
 				}
@@ -142,7 +151,7 @@ void Map::RoomCreater(bool isFirstRoom)
 			}
 		}
 		file.close();
-		if (lvl < 2) {
+		if (lvl < 3) {
 			lvl++;
 		}
 	}
@@ -529,7 +538,7 @@ void Map::ClosingWallDrow(int row, int column)
 				enemyDie = false;
 			}
 			if (closingWall[i].isClos == false) {
-				//TextureManager::Drow(closingWall[i].getMainTexture(), closingWall[i].src, closingWall[i].dest);
+				TextureManager::Drow(closingWall[i].getMainTexture(), closingWall[i].src, closingWall[i].dest);
 			}
 			else {
 				TextureManager::Drow(closingWall[i].getSecondTexture(), closingWall[i].src, closingWall[i].dest);
@@ -575,25 +584,11 @@ void Map::EnemyDrow()
 									settings.armor = 0;
 								}
 							}
-							else if (settings.hp > 0) {
+							else if (settings.hp >= 0) {
 								settings.hp -= enemy[i].damage;
-								if (settings.hp < 0) {
+								if (settings.hp <= 0) {
 									settings.hp = 0;
-									/*
-									* 
-									* 
-									* 
-									* 
-									* 
-									* 
-									// тут игрока убивают
-									* 
-									* 
-									* 
-									* 
-									* 
-									* 
-									*/
+									playerIsdeadh = true;
 								}
 							}
 							
@@ -720,6 +715,7 @@ void Map::SpikesDrow(int row, int column)
 			spikes[i].setSecondTexture(spikesDownB);
 			if (settings.hp < 0) {
 				settings.hp = 0;
+				playerIsdeadh = true;
 			}
 		}
 	}

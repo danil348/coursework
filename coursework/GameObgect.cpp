@@ -462,21 +462,27 @@ bool Bullets::intersection(GameObgect* defoltWall, int defoltWallCount, ClosingW
 		return 1;
 	}
 	for (int j = 0; j < defoltWallCount; j++) {
-		if (Bx >= defoltWall[j].dest.x && Bx <= defoltWall[j].dest.x + defoltWall[j].dest.w &&
-			By >= defoltWall[j].dest.y && By <= defoltWall[j].dest.y + defoltWall[j].dest.h) {
+		if (Bx >= defoltWall[j].dest.x && 
+			Bx <= defoltWall[j].dest.x + defoltWall[j].dest.w &&
+			By >= defoltWall[j].dest.y && 
+			By <= defoltWall[j].dest.y + defoltWall[j].dest.h) {
 			return 1;
 		}
 	}
 	for (int j = 0; j < closingWallCount; j++) {
-		if (Bx >= closingWall[j].dest.x && Bx <= closingWall[j].dest.x + closingWall[j].dest.w &&
-			By >= closingWall[j].dest.y && By <= closingWall[j].dest.y + closingWall[j].dest.h &&
+		if (Bx >= closingWall[j].dest.x && 
+			Bx <= closingWall[j].dest.x + closingWall[j].dest.w &&
+			By >= closingWall[j].dest.y && 
+			By <= closingWall[j].dest.y + closingWall[j].dest.h &&
 			closingWall[j].isClos == true) {
 			return 1;
 		}
 	}
 	for (int j = 0; j < enemyCount; j++) {
-		if (Bx >= enemy[j].dest.x && Bx <= enemy[j].dest.x + enemy[j].dest.w &&
-			By >= enemy[j].dest.y && By <= enemy[j].dest.y + enemy[j].dest.h &&
+		if (Bx >= enemy[j].dest.x && 
+			Bx <= enemy[j].dest.x + enemy[j].dest.w &&
+			By >= enemy[j].dest.y && 
+			By <= enemy[j].dest.y + enemy[j].dest.h &&
 			enemy[j].islive == true) {
 			enemy[j].hp -= damage;
 			return 1;

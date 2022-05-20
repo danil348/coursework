@@ -24,6 +24,7 @@ int main(int argc, char** argv)
 		frameStart = clock();
 
 		game->handleEvents();
+		game->update();
 		game->menuRender();
 		game->gameRender();
 		
